@@ -1,0 +1,9 @@
+## Interface: 40200
+## Author: SinaC
+## Credits: Smelly, Hydra, Krevlorne, Ildyria
+## Version: 1.1
+## Title: |cffC495DDTukui|r Class Monitor
+## Notes: Class monitor for Tukui
+## RequiredDeps: Tukui
+
+Tukui_ClassMonitor.xml
