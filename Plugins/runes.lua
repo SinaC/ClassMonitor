@@ -10,7 +10,7 @@ local runes = {}
 cmRunes = CreateFrame("Frame", "cmRunes", UIParent)
 
 -- Create the runes
-for i = 1, 6 do	
+for i = 1, 6 do
 	local rune = CreateFrame("Frame", "cmRunesRune"..i, UIParent)
 	rune:CreatePanel(nil, O.width, O.height, "CENTER", UIParent, "CENTER", 0, 0)
 	rune.sStatus = CreateFrame("StatusBar", "cmRunesRuneStatus"..i, rune)
@@ -64,19 +64,25 @@ cmRunes:RegisterEvent("PLAYER_REGEN_DISABLED")
 cmRunes:RegisterEvent("PLAYER_REGEN_ENABLED")
 cmRunes:RegisterEvent("PLAYER_ENTERING_WORLD")
 cmRunes:SetScript("OnEvent", function(self, event)
-	-- TODO autohide
 	if event == "PLAYER_REGEN_DISABLED" then
-		--UIFrameFadeIn(self, (0.3 * (1-self:GetAlpha())), self:GetAlpha(), 1)
+		if O.autohide then
+			UIFrameFadeIn(self, (0.3 * (1-self:GetAlpha())), self:GetAlpha(), 1)
+		end
 		OnUpdate:SetScript("OnUpdate", updateFunc)
 	elseif event == "PLAYER_REGEN_ENABLED" then
-		--UIFrameFadeOut(self, (0.3 * (0+self:GetAlpha())), self:GetAlpha(), 0)
+		if O.autohide then
+			UIFrameFadeOut(self, (0.3 * (0+self:GetAlpha())), self:GetAlpha(), 0)
+		end
 		OnUpdate:SetScript("OnUpdate", nil)
 	elseif event == "PLAYER_ENTERING_WORLD" then
 		RuneFrame:ClearAllPoints()
 		if not InCombatLockdown() then
-			cmRunes:SetAlpha(0)
+			if O.autohide then
+				cmRunes:SetAlpha(0)
+			else
+				cmRunes:SetAlpha(1)
+			end
 		end
-		cmRunes:SetAlpha(1)
 	end
 end)
 

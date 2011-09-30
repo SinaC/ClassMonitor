@@ -8,7 +8,19 @@ local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C 
 if T.myclass == "DRUID" then
 	CMOptions.combo.enable = true
 	CMOptions.power.enable = true
-	-- TODO: add eclipse bar
+	--CMOptions.eclipse.enable = true
+
+	-- CMOptions.power.visibility = {
+		-- events = { "UPDATE_SHAPESHIFT_FORM", "PLAYER_ENTERING_WORLD" }, 
+		-- func = function( self, ... )
+			-- local form = GetShapeshiftFormID()
+			-- if form and ( form == 4 --[[ Aquatic Form --]] or form == 3 --[[ Travel Form --]] or form == 27 --[[ Swift Flight Form --]] or form == 29 --[[ Flight Form --]] ) then
+				-- self:Hide()
+			-- else
+				-- self:Show()
+			-- end
+		-- end)
+	-- }
 end
 
 if T.myclass == "ROGUE" then
@@ -68,5 +80,22 @@ end
 ----------------------------------------------------------------------------
 
 if T.myname == "Enimouchet" then
-	CMOptions.power.anchor = {"CENTER", UIParent, "CENTER", -543, 172}
+	CMOptions.holy.anchors = { 
+		{"CENTER", UIParent, "CENTER", -630, 190}, -- Holy
+		{"CENTER", UIParent, "CENTER", -87, -100}, -- Protection
+		{"CENTER", UIParent, "CENTER", -87, -100} -- Retribution
+	}
+	CMOptions.power.anchors = { 
+		{"CENTER", UIParent, "CENTER", -543, 172}, -- Holy
+		{"CENTER", UIParent, "CENTER", 0, -123}, -- Protection
+		{"CENTER", UIParent, "CENTER", 0, -123} -- Retribution
+	}
+end
+
+if T.myname == "Meuhhnon" then
+	CMOptions.power.anchors = { 
+		{"CENTER", UIParent, "CENTER", 0, -123}, -- Balance
+		{"CENTER", UIParent, "CENTER", 0, -123}, -- Feral
+		{"CENTER", UIParent, "CENTER", -500, 290} -- Restoration
+	}
 end

@@ -12,13 +12,14 @@ CMOptions = {
 		width = T.Scale(50),  			-- width of bars
 		height = T.Scale(15), 			-- height of bars
 		anchor = {"CENTER", UIParent, "CENTER", -107, -100},	-- default anchor
+		filled = false,
 		-- Coloring options for combo points
 		colors = { 
-			[1] = {.69, .31, .31, 1},
-			[2] = {.65, .42, .31, 1},
-			[3] = {.65, .63, .35, 1},
-			[4] = {.46, .63, .35, 1},
-			[5] = {.33, .63, .33, 1},
+			{0.69, 0.31, 0.31, 1}, -- 1
+			{0.65, 0.42, 0.31, 1}, -- 2
+			{0.65, 0.63, 0.35, 1}, -- 3
+			{0.46, 0.63, 0.35, 1}, -- 4
+			{0.33, 0.63, 0.33, 1}, -- 5
 		},
 	},
 	-- Holy Power plugin
@@ -27,8 +28,9 @@ CMOptions = {
 		spacing = T.Scale(3),			-- spacing between holy powers
 		width = T.Scale(85),  			-- width of bars
 		height = T.Scale(15), 			-- height of bars
-		anchor = {"CENTER", UIParent, "CENTER", -630, 190},		-- default anchor
-		color = { 228/255, 225/255, 16/255, 1},
+		anchor = {"CENTER", UIParent, "CENTER", -87, -100},		-- default anchor
+		filled = true,
+		color = {228/255, 225/255, 16/255, 1},
 	},
 	-- Soul Shard plugin
 	["soul"] = { 
@@ -37,7 +39,8 @@ CMOptions = {
 		width = T.Scale(85),  			-- width of bars
 		height = T.Scale(15), 			-- height of bars
 		anchor = {"CENTER", UIParent, "CENTER", -87, -100},	-- default anchor
-		color = { 255/255, 101/255, 101/255, 1},
+		filled = false,
+		color = {255/255, 101/255, 101/255, 1},
 	},
 	-- Shadow Orbs plugin
 	["orbs"] = { 
@@ -46,7 +49,8 @@ CMOptions = {
 		width = T.Scale(85),  			-- width of bars
 		height = T.Scale(15), 			-- height of bars
 		anchor = {"CENTER", UIParent, "CENTER", -87, -100},	-- default anchor
-		color = { 0.5, 0, 0.7, 1},
+		filled = false,
+		color = {0.5, 0, 0.7, 1},
 	},
 	-- Arcane Blast plugin
 	["arcane"] = { 
@@ -55,7 +59,8 @@ CMOptions = {
 		width = T.Scale(63),  			-- width of bars
 		height = T.Scale(15), 			-- height of bars
 		anchor = {"CENTER", UIParent, "CENTER", -99, -100},	-- default anchor
-		color = { 0.5, 0, 0.7, 1},
+		filled = false,
+		color = {153/255, 51/255, 1, 1},
 	},
 	-- Ready, Set, Aim... plugin
 	["rsa"] = { 
@@ -64,14 +69,20 @@ CMOptions = {
 		width = T.Scale(50),  			-- width of bars
 		height = T.Scale(15), 			-- height of bars
 		anchor = {"CENTER", UIParent, "CENTER", -87, -100},	-- default anchor
-		color = { 0.5, 0, 0.7, 1},
+		filled = false,
+		color = {0.5, 0, 0.7, 1},
+		-- [1] = {.69, .31, .31, 1},
+		-- [2] = {.65, .42, .31, 1},
+		-- [3] = {.65, .63, .35, 1},
+		-- [4] = {.46, .63, .35, 1},
+		-- [5] = {.33, .63, .33, 1},
 	},
 	-- Runes plugin
 	["runes"] = {
 		enable = false,					-- enable runes
 		spacing = T.Scale(3),			-- spacing between runes
-		width = T.Scale(41),			-- width of bars
-		height = T.Scale(15),			-- height of bars
+		width = T.Scale(41),			-- width of rune
+		height = T.Scale(15),			-- height of rune
 		anchor = {"CENTER", UIParent, "CENTER", -110, -100},	-- default anchor
 		updatethreshold = 0.1,			-- time between rune CD update
 		autohide = false,
@@ -95,25 +106,28 @@ CMOptions = {
 	-- Eclipse plugin
 	["eclipse"] = {
 		enable = false,
+		width = T.Scale(262), 			-- width of bar
+		height = T.Scale(10),			-- height of bar
+		anchor = {"CENTER", UIParent, "CENTER", 0, -123},		-- default anchor
 		color = {
-			["MOON"] = { 1, 1, 1, 1 }, -- TODO
-			["SUN"] = { 1, 1, 1, 1 }, -- TODO
+			{0.50, 0.52, 0.70, 1}, -- Lunar
+			{0.80, 0.82, 0.60, 1}, -- Solar
 		},
 	},
 	-- Power plugin (rage/mana/energy/focus)
 	["power"] = {
 		enable = false,
 		text = true,					-- display power text
-		width = T.Scale(262), 			-- perfectly fits width of combo points
+		width = T.Scale(262), 			-- width of bar
 		height = T.Scale(10),			-- height of bar
 		anchor = {"CENTER", UIParent, "CENTER", 0, -123},		-- default anchor
 		autohide = false,
 		color = {
-			["MANA"] = { 0, 0.44, 0.87, 1 },
-			["RAGE"] = { 0.77, 0.13, 0.23, 1 },
-			["ENERGY"] = { 1, 0.96, 0.41, 1 },
-			["FOCUS"] = { 0.67, 0.83, 0.45, 1 },
-			["RUNIC_POWER"] = { 0, 0.82, 1, 1 },
+			["MANA"] = {0, 0.44, 0.87, 1},
+			["RAGE"] = {0.77, 0.13, 0.23, 1},
+			["ENERGY"] = {1, 0.96, 0.41, 1},
+			["FOCUS"] = {0.67, 0.83, 0.45, 1},
+			["RUNIC_POWER"] = {0, 0.82, 1, 1},
 		},
 	},
 }

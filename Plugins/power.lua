@@ -1,6 +1,9 @@
 -- Power Plugin
 local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
 
+-- TODO: add a visibility function (we dont want to see this bar while in travel/flying form)
+-- TODO: add %
+
 local O = CMOptions["power"]
 if O.enable ~= true then return end
 local color = RAID_CLASS_COLORS[T.myclass] -- default color
@@ -8,7 +11,7 @@ local color = RAID_CLASS_COLORS[T.myclass] -- default color
 local cmPower = CreateFrame("Frame", "cmPower", UIParent)
 cmPower:CreatePanel(nil, O.width , O.height, unpack(O.anchor))
 
-cmPower.sStatus = CreateFrame("StatusBar", "sStatus", cmPower)
+cmPower.sStatus = CreateFrame("StatusBar", "cmPowerStatus", cmPower)
 cmPower.sStatus:SetStatusBarTexture(C.media.normTex)
 cmPower.sStatus:SetFrameLevel(6)
 cmPower.sStatus:SetStatusBarColor(color.r, color.g, color.b)
@@ -27,8 +30,19 @@ end
 local function OnUpdate()
 	local value = UnitPower("player")
     cmPower.sStatus:SetValue(value)
-	if O.text == true then 
-		cmPower.text:SetText(value)
+	if O.text == true then
+		local p = UnitPowerType("player")
+		if p == SPELL_POWER_MANA then
+			local valueMax = UnitPowerMax("player", p)
+			if value == valueMax then
+				cmPower.text:SetText(value)
+			else
+				local percentage = ( value * 100 ) / valueMax
+				cmPower.text:SetFormattedText("%2d%% - %u", percentage, value )
+			end
+		else
+			cmPower.text:SetText(value)
+		end
 	end
 end
 
@@ -63,29 +77,6 @@ cmPower:SetScript("OnEvent", function(self, event)
 		else
 			cmPower:Hide()
 		end
-		-- if p == SPELL_POWER_ENERGY  then
-			-- if event == "PLAYER_REGEN_DISABLED" then
-				-- cmPower:Show()
-			-- elseif event == "UNIT_POWER" then
-				-- if InCombatLockdown( then
-					-- cmPower:Show()
-				-- end
-			-- else
-				-- cmPower:Hide()
-			-- end
-		-- elseif p == SPELL_POWER_MANA then -- and T.myclass ~= "DRUID" then
-			-- if event == "PLAYER_REGEN_DISABLED" then
-				-- cmPower:Show()
-			-- elseif event == "UNIT_POWER" then
-				-- if InCombatLockdown( then
-					-- cmPower:Show()
-				-- end
-			-- else
-				-- cmPower:Hide()
-			-- end
-		-- else
-			-- cmPower:Hide()
-		-- end
 	end
 end)
 
@@ -100,3 +91,5 @@ if O.autohide ~= true then
 		cmPower:Show()
 	end
 end
+
+SetMultipleAnchorHandler( cmPower, O )

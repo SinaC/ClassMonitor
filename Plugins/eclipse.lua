@@ -1,7 +1,242 @@
---http://www.wowwiki.com/API_GetEclipseDirection
+-- Eclipse plugin
+local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
+
+local O = CMOptions["eclipse"]
+if O.enable ~= true then return end
+
+local cmEclipse = CreateFrame("Frame", nil, self)
+cmEclipse:Point(O.anchor)
+cmEclipse:Size(O.width, O.height)
+cmEclipse:SetFrameStrata("MEDIUM")
+cmEclipse:SetFrameLevel(8)
+cmEclipse:SetTemplate("Default")
+cmEclipse:SetBackdropBorderColor(0,0,0,0)
+--cmEclipse:SetScript("OnShow", function() T.DruidBarDisplay(self, false) end)
+--cmEclipse:SetScript("OnHide", function() T.DruidBarDisplay(self, false) end)
+
+local cmLunar = CreateFrame("StatusBar", nil, cmEclipse)
+cmLunar:SetPoint("LEFT", cmEclipse, "LEFT", 0, 0)
+cmLunar:SetSize(cmEclipse:GetWidth(), cmEclipse:GetHeight())
+cmLunar:SetStatusBarTexture(C.media.normTex)
+cmLunar:SetStatusBarColor(unpack(O.color[1]))
+cmEclipse.cmLunar = cmLunar
+
+local cmSolar = CreateFrame("StatusBar", nil, cmEclipse)
+cmSolar:SetPoint("LEFT", cmLunar:GetStatusBarTexture(), 'RIGHT', 0, 0)
+cmSolar:SetSize(cmEclipse:GetWidth(), cmEclipse:GetHeight())
+cmSolar:SetStatusBarTexture(C.media.normTex)
+cmSolar:SetStatusBarColor(unpack(O.color[2]))
+cmEclipse.cmSolar = cmSolar
+
+local function UnitPower( self, event, unit, powerType )
+	if event == "UNIT_POWER" and powerType ~= "ECLIPSE" then return end
+
+	local power = UnitPower("player", SPELL_POWER_ECLIPSE)
+	local maxPower = UnitPowerMax("player", SPELL_POWER_ECLIPSE)
+
+	if cmLunar then
+		cmLunar:SetMinMaxValues(-maxPower, maxPower)
+		cmLunar:SetValue(power)
+	end
+
+	if cmSolar then
+		cmSolar:SetMinMaxValues(-maxPower, maxPower)
+		cmSolar:SetValue(power * -1)
+	end
+end
+
+local function UpdateVisibility( self, event )
+	-- check form/mastery
+	local showBar = false
+	local form = GetShapeshiftFormID()
+	if not form then
+		local ptt = GetPrimaryTalentTree()
+		if ptt and ptt == 1 then -- player has balance spec
+			showBar = true
+		end
+	elseif form == MOONKIN_FORM then
+		showBar = true
+	end
+
+	if showBar then
+		cmEclipse:Show()
+	else
+		cmEclipse:Hide()
+	end
+end
+
+local function UnitAura(self, event, unit)
+	local hasSolarEclipse = false
+	local hasLunarEclipse = false
+
+	for i = 1, 40, 1 do
+		local _, _, _, _, _, _, _, _, _, _, spellID = UnitAura(unit, i, 'HELPFUL')
+		if ( not spellID ) then break end
+
+		if spellID == ECLIPSE_BAR_SOLAR_BUFF_ID then
+			hasSolarEclipse = true
+		elseif spellID == ECLIPSE_BAR_LUNAR_BUFF_ID then
+			hasLunarEclipse = true
+		end
+	end
+	
+	-- TODO: change border while in eclipse
+
+	-- if hasLunarEclipse then
+        -- self.glow:ClearAllPoints();
+        -- local glowInfo = ECLIPSE_ICONS["moon"].big;
+        -- self.glow:SetPoint("CENTER", self.moon, "CENTER", 0, 0);
+        -- self.glow:SetWidth(glowInfo.x);
+        -- self.glow:SetHeight(glowInfo.y);
+        -- self.glow:SetTexCoord(glowInfo.left, glowInfo.right, glowInfo.top, glowInfo.bottom);
+        -- self.sunBar:SetAlpha(0);
+        -- self.darkMoon:SetAlpha(0);
+        -- self.moonBar:SetAlpha(1);
+        -- self.darkSun:SetAlpha(1);
+        -- self.glow:SetAlpha(1);
+        -- self.glow.pulse:Play();
+    -- elseif hasSolarEclipse then
+        -- self.glow:ClearAllPoints();
+        -- local glowInfo = ECLIPSE_ICONS["sun"].big;
+        -- self.glow:SetPoint("CENTER", self.sun, "CENTER", 0, 0);
+        -- self.glow:SetWidth(glowInfo.x);
+        -- self.glow:SetHeight(glowInfo.y);
+        -- self.glow:SetTexCoord(glowInfo.left, glowInfo.right, glowInfo.top, glowInfo.bottom);
+        -- self.moonBar:SetAlpha(0);
+        -- self.darkSun:SetAlpha(0);
+        -- self.sunBar:SetAlpha(1);
+        -- self.darkMoon:SetAlpha(1);
+        -- self.glow:SetAlpha(1);
+        -- self.glow.pulse:Play();
+    -- else
+        -- self.sunBar:SetAlpha(0);
+        -- self.moonBar:SetAlpha(0);
+        -- self.darkSun:SetAlpha(0);
+        -- self.darkMoon:SetAlpha(0);
+        -- self.glow:SetAlpha(0);
+    -- end
+
+	cmEclipse.hasSolarEclipse = hasSolarEclipse
+	cmEclipse.hasLunarEclipse = hasLunarEclipse
+end
+
+-- local function EclipseDirectionChange(self, event, isLunar)
+	-- cmEclipse.directionIsLunar = isLunar
+-- end
+
+cmEclipse:SetScript("UNIT_POWER", UnitPower)
+cmEclipse:SetScript("UPDATE_VISIBILITY", UpdateVisibility)
+cmEclipse:SetScript("PLAYER_TALENT_UPDATE", UpdateVisibility)
+cmEclipse:SetScript("UPDATE_SHAPESHIFT_FORM", UpdateVisibility)
+cmEclipse:SetScript("UNIT_AURA", UnitAura)
+-- cmEclipse:SetScript("ECLIPSE_DIRECTION_CHANGE", EclipseDirectionChange)
 
 
---Tukui\Tukui\modules\unitframes\core\oUF\elements\eclipsebar.lua
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+--http://www.wowinterface.com/forums/showthread.php?t=36129
+
+-- if playerClass == "DRUID" then
+	-- self.Name:SetPoint("TOPLEFT", self.Health, "TOPLEFT", 18, 40)
+	-- self.Debuffs:SetPoint(cfg.PlayerDebufAnchor1, self.Health, cfg.PlayerDebufAnchor2, cfg.PlayerDebufOffset_X, cfg.PlayerDebufOffset_Y+20)
+	-- local eclipseBar = CreateFrame('Frame', nil, self)
+	-- eclipseBar:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', 23, 56)
+	-- eclipseBar:SetSize(cfg.widthP-45, 12)
+	-- eclipseBar:SetBackdrop{edgeFile = cfg.glowtex2, edgeSize = 5, insets = {left = 3, right = 3, top = 3, bottom = 3}}
+	-- eclipseBar:SetBackdropColor(0, 0, 0, 0)
+	-- eclipseBar:SetBackdropBorderColor(0, 0, 0, 0.8)	
+	
+	-- local lunarBar = CreateFrame('StatusBar', nil, eclipseBar)
+	-- lunarBar:SetPoint('LEFT', eclipseBar, 'LEFT', 0, 0)
+	-- lunarBar:SetSize(cfg.widthP-42, 12)
+	-- lunarBar:SetStatusBarTexture(cfg.PPtex)
+	-- lunarBar:SetStatusBarColor(1, 3/5, 0)
+	-- eclipseBar.LunarBar = lunarBar
+	
+	-- local solarBar = CreateFrame('StatusBar', nil, eclipseBar)
+	-- solarBar:SetPoint('LEFT', lunarBar:GetStatusBarTexture(), 'RIGHT', 0, 0)
+	-- solarBar:SetSize(cfg.widthP-42, 12)
+	-- solarBar:SetStatusBarTexture(cfg.PPtex)
+	-- solarBar:SetStatusBarColor(0, 0, 1)
+	-- eclipseBar.SolarBar = solarBar
+
+	-- local eclipseBarText = solarBar:CreateFontString(nil, 'OVERLAY')
+	-- eclipseBarText:SetPoint('CENTER', eclipseBar, 'CENTER', 0, 0)
+	-- eclipseBarText:SetFont(cfg.NumbFont, cfg.NumbFS, "THINOUTLINE")
+	-- self:Tag(eclipseBarText, '[eecc]')
+
+	-- self.Glow.eclipseBar = CreateFrame("Frame", nil, eclipseBar)
+	-- self.Glow.eclipseBar:SetPoint("TOPLEFT", eclipseBar, "TOPLEFT", -5, 5)
+	-- self.Glow.eclipseBar:SetPoint("BOTTOMRIGHT", eclipseBar, "BOTTOMRIGHT", 5, -5)
+	-- self.Glow.eclipseBar:SetBackdrop{edgeFile = cfg.glowtex2, edgeSize = 5, insets = {left = 3, right = 3, top = 3, bottom = 3}}
+	-- self.Glow.eclipseBar:SetBackdropColor(0, 0, 0, 0)
+	-- self.Glow.eclipseBar:SetBackdropBorderColor(0, 0, 0, 0.8)
+			
+	-- self.iconS = eclipseBar:CreateTexture(nil, 'OVERLAY')
+	-- self.iconS:SetPoint("LEFT", eclipseBar, "RIGHT", 4, 2)
+	-- self.iconS:SetHeight(20)
+	-- self.iconS:SetWidth(20)
+	-- self.iconS:SetTexture(select(3,GetSpellInfo(48517)))
+	-- self.iconS:SetVertexColor(unpack(cfg.trdcolor))
+
+	-- self.iconL = eclipseBar:CreateTexture(nil, 'OVERLAY')
+	-- self.iconL:SetPoint("RIGHT", eclipseBar, "LEFT", -4, 2)
+	-- self.iconL:SetHeight(20)
+	-- self.iconL:SetWidth(20)
+	-- self.iconL:SetTexture(select(3,GetSpellInfo(48518)))
+	-- self.iconL:SetVertexColor(unpack(cfg.trdcolor))
+			
+	-- local bgl = CreateFrame("Frame", nil, eclipseBar)
+	-- bgl:SetPoint("TOPLEFT", self.iconL, "TOPLEFT", -10, 10)
+	-- bgl:SetPoint("BOTTOMRIGHT", self.iconL, "BOTTOMRIGHT", 10, -10)
+	-- bgl:SetBackdrop{edgeFile = cfg.glowtex, edgeSize = 10, insets = {left = 3, right = 3, top = 3, bottom = 3}}
+	-- bgl:SetBackdropColor(0,0,0,0)
+	-- bgl:SetBackdropBorderColor(1,1,1,0)
+			
+	-- local bgs = CreateFrame("Frame", nil, eclipseBar)
+	-- bgs:SetPoint("TOPLEFT", self.iconS, "TOPLEFT", -10, 10)
+	-- bgs:SetPoint("BOTTOMRIGHT", self.iconS, "BOTTOMRIGHT", 10, -10)
+	-- bgs:SetBackdrop{edgeFile = cfg.glowtex, edgeSize = 10, insets = {left = 3, right = 3, top = 3, bottom = 3}}
+	-- bgs:SetBackdropColor(0,0,0,0)
+	-- bgs:SetBackdropBorderColor(1,1,1,0)
+			
+	-- local eclipseBarSpark = solarBar:CreateFontString(nil, 'OVERLAY')
+	-- eclipseBarSpark:SetFont(cfg.NumbFont, cfg.NumbFS+4, "THINOUTLINE")
+			
+	-- local eclipseBarBuff = function(self, unit)
+		-- if self.hasSolarEclipse then
+			-- self.bgs:SetBackdropBorderColor(1,1,1,1)
+		-- elseif self.hasLunarEclipse then
+			-- self.bgl:SetBackdropBorderColor(1,1,1,1)
+		-- else
+			-- self.bgs:SetBackdropBorderColor(1,1,1,0)
+			-- self.bgl:SetBackdropBorderColor(1,1,1,0)
+		-- end
+		-- if(self.directionIsLunar) then
+		-- eclipseBarSpark:SetPoint('CENTER', eclipseBar, 'LEFT', 18, -1)
+		-- eclipseBarSpark:SetText(">>>")
+		-- else
+		-- eclipseBarSpark:SetPoint('CENTER', eclipseBar, 'RIGHT', -12, -1)
+		-- eclipseBarSpark:SetText("<<<")
+		-- end
+	-- end
+	-- eclipseBar.bgs = bgs
+	-- eclipseBar.bgl = bgl
+	-- self.EclipseBar = eclipseBar
+	-- self.EclipseBar.PostUnitAura = eclipseBarBuff
+-- end
+
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+--Tukui\Tukui\modules\unitframes\core\oUF\elements\cmEclipse.lua
 
 -- if(select(2, UnitClass('player')) ~= 'DRUID') then return end
 
@@ -16,19 +251,19 @@
 -- local UNIT_POWER = function(self, event, unit, powerType)
 	-- if(self.unit ~= unit or (event == 'UNIT_POWER' and powerType ~= 'ECLIPSE')) then return end
 
-	-- local eb = self.EclipseBar
+	-- local eb = self.cmEclipse
 
 	-- local power = UnitPower('player', SPELL_POWER_ECLIPSE)
 	-- local maxPower = UnitPowerMax('player', SPELL_POWER_ECLIPSE)
 
-	-- if(eb.LunarBar) then
-		-- eb.LunarBar:SetMinMaxValues(-maxPower, maxPower)
-		-- eb.LunarBar:SetValue(power)
+	-- if(eb.cmLunar) then
+		-- eb.cmLunar:SetMinMaxValues(-maxPower, maxPower)
+		-- eb.cmLunar:SetValue(power)
 	-- end
 
-	-- if(eb.SolarBar) then
-		-- eb.SolarBar:SetMinMaxValues(-maxPower, maxPower)
-		-- eb.SolarBar:SetValue(power * -1)
+	-- if(eb.cmSolar) then
+		-- eb.cmSolar:SetMinMaxValues(-maxPower, maxPower)
+		-- eb.cmSolar:SetValue(power * -1)
 	-- end
 
 	-- if(eb.PostUpdatePower) then
@@ -37,7 +272,7 @@
 -- end
 
 -- local UPDATE_VISIBILITY = function(self, event)
-	-- local eb = self.EclipseBar
+	-- local eb = self.cmEclipse
 
 	-- -- check form/mastery
 	-- local showBar
@@ -79,7 +314,7 @@
 		-- i = i + 1
 	-- until not spellID
 
-	-- local eb = self.EclipseBar
+	-- local eb = self.cmEclipse
 	-- eb.hasSolarEclipse = hasSolarEclipse
 	-- eb.hasLunarEclipse = hasLunarEclipse
 
@@ -89,7 +324,7 @@
 -- end
 
 -- local ECLIPSE_DIRECTION_CHANGE = function(self, event, isLunar)
-	-- local eb = self.EclipseBar
+	-- local eb = self.cmEclipse
 
 	-- eb.directionIsLunar = isLunar
 
@@ -109,16 +344,16 @@
 -- end
 
 -- local function Enable(self)
-	-- local eb = self.EclipseBar
+	-- local eb = self.cmEclipse
 	-- if(eb) then
 		-- eb.__owner = self
 		-- eb.ForceUpdate = ForceUpdate
 
-		-- if(eb.LunarBar and not eb.LunarBar:GetStatusBarTexture()) then
-			-- eb.LunarBar:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+		-- if(eb.cmLunar and not eb.cmLunar:GetStatusBarTexture()) then
+			-- eb.cmLunar:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 		-- end
-		-- if(eb.SolarBar and not eb.SolarBar:GetStatusBarTexture()) then
-			-- eb.SolarBar:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+		-- if(eb.cmSolar and not eb.cmSolar:GetStatusBarTexture()) then
+			-- eb.cmSolar:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
 		-- end
 
 		-- self:RegisterEvent('ECLIPSE_DIRECTION_CHANGE', ECLIPSE_DIRECTION_CHANGE)
@@ -132,7 +367,7 @@
 -- end
 
 -- local function Disable(self)
-	-- local eb = self.EclipseBar
+	-- local eb = self.cmEclipse
 	-- if(eb) then
 		-- self:UnregisterEvent('ECLIPSE_DIRECTION_CHANGE', ECLIPSE_DIRECTION_CHANGE)
 		-- self:UnregisterEvent('PLAYER_TALENT_UPDATE', UPDATE_VISIBILITY)
@@ -142,7 +377,7 @@
 	-- end
 -- end
 
--- oUF:AddElement('EclipseBar', Update, Enable, Disable)
+-- oUF:AddElement('cmEclipse', Update, Enable, Disable)
 
 ----------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------
@@ -150,7 +385,6 @@
 ----------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------
-
 --Tukui\Tukui\core.lua
 
 -- T.EclipseDirection = function(self)
@@ -164,9 +398,9 @@
 -- end
 
 -- T.DruidBarDisplay = function(self, login)
-	-- local eb = self.EclipseBar
+	-- local eb = self.cmEclipse
 	-- local dm = self.DruidMana
-	-- local txt = self.EclipseBar.Text
+	-- local txt = self.cmEclipse.Text
 	-- local shadow = self.shadow
 	-- local bg = self.DruidManaBackground
 	-- local buffs = self.Buffs
