@@ -1,34 +1,7 @@
 -- Eclipse plugin
 local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
 
-local O = CMOptions["eclipse"]
-if O.enable ~= true then return end
-
-local cmEclipse = CreateFrame("Frame", nil, self)
-cmEclipse:Point(O.anchor)
-cmEclipse:Size(O.width, O.height)
-cmEclipse:SetFrameStrata("MEDIUM")
-cmEclipse:SetFrameLevel(8)
-cmEclipse:SetTemplate("Default")
-cmEclipse:SetBackdropBorderColor(0,0,0,0)
---cmEclipse:SetScript("OnShow", function() T.DruidBarDisplay(self, false) end)
---cmEclipse:SetScript("OnHide", function() T.DruidBarDisplay(self, false) end)
-
-local cmLunar = CreateFrame("StatusBar", nil, cmEclipse)
-cmLunar:SetPoint("LEFT", cmEclipse, "LEFT", 0, 0)
-cmLunar:SetSize(cmEclipse:GetWidth(), cmEclipse:GetHeight())
-cmLunar:SetStatusBarTexture(C.media.normTex)
-cmLunar:SetStatusBarColor(unpack(O.color[1]))
-cmEclipse.cmLunar = cmLunar
-
-local cmSolar = CreateFrame("StatusBar", nil, cmEclipse)
-cmSolar:SetPoint("LEFT", cmLunar:GetStatusBarTexture(), 'RIGHT', 0, 0)
-cmSolar:SetSize(cmEclipse:GetWidth(), cmEclipse:GetHeight())
-cmSolar:SetStatusBarTexture(C.media.normTex)
-cmSolar:SetStatusBarColor(unpack(O.color[2]))
-cmEclipse.cmSolar = cmSolar
-
-local function UnitPower( self, event, unit, powerType )
+local function UnitPower(self, event, unit, powerType)
 	if event == "UNIT_POWER" and powerType ~= "ECLIPSE" then return end
 
 	local power = UnitPower("player", SPELL_POWER_ECLIPSE)
@@ -45,7 +18,7 @@ local function UnitPower( self, event, unit, powerType )
 	end
 end
 
-local function UpdateVisibility( self, event )
+local function UpdateVisibility(self, event)
 	-- check form/mastery
 	local showBar = false
 	local form = GetShapeshiftFormID()
@@ -71,7 +44,7 @@ local function UnitAura(self, event, unit)
 
 	for i = 1, 40, 1 do
 		local _, _, _, _, _, _, _, _, _, _, spellID = UnitAura(unit, i, 'HELPFUL')
-		if ( not spellID ) then break end
+		if not spellID then break end
 
 		if spellID == ECLIPSE_BAR_SOLAR_BUFF_ID then
 			hasSolarEclipse = true
@@ -119,17 +92,45 @@ local function UnitAura(self, event, unit)
 	cmEclipse.hasSolarEclipse = hasSolarEclipse
 	cmEclipse.hasLunarEclipse = hasLunarEclipse
 end
+	
+function CreateEclipseMonitor(name, anchor, width, height, colors)
+	local cmEclipse = CreateFrame("Frame", name, self)
+	cmEclipse:Point(unpack(anchor))
+	cmEclipse:Size(width, height)
+	cmEclipse:SetFrameStrata("MEDIUM")
+	cmEclipse:SetFrameLevel(8)
+	cmEclipse:SetTemplate("Default")
+	cmEclipse:SetBackdropBorderColor(0,0,0,0)
+	--cmEclipse:SetScript("OnShow", function() T.DruidBarDisplay(self, false) end)
+	--cmEclipse:SetScript("OnHide", function() T.DruidBarDisplay(self, false) end)
+
+	local cmLunar = CreateFrame("StatusBar", name.."_lunar", cmEclipse)
+	cmLunar:SetPoint("LEFT", cmEclipse, "LEFT", 0, 0)
+	cmLunar:SetSize(cmEclipse:GetWidth(), cmEclipse:GetHeight())
+	cmLunar:SetStatusBarTexture(C.media.normTex)
+	cmLunar:SetStatusBarColor(unpack(colors[1]))
+	cmEclipse.cmLunar = cmLunar
+
+	local cmSolar = CreateFrame("StatusBar", name.."_solar", cmEclipse)
+	cmSolar:SetPoint("LEFT", cmLunar:GetStatusBarTexture(), 'RIGHT', 0, 0)
+	cmSolar:SetSize(cmEclipse:GetWidth(), cmEclipse:GetHeight())
+	cmSolar:SetStatusBarTexture(C.media.normTex)
+	cmSolar:SetStatusBarColor(unpack(colors[2]))
+	cmEclipse.cmSolar = cmSolar
 
 -- local function EclipseDirectionChange(self, event, isLunar)
 	-- cmEclipse.directionIsLunar = isLunar
 -- end
 
-cmEclipse:SetScript("UNIT_POWER", UnitPower)
-cmEclipse:SetScript("UPDATE_VISIBILITY", UpdateVisibility)
-cmEclipse:SetScript("PLAYER_TALENT_UPDATE", UpdateVisibility)
-cmEclipse:SetScript("UPDATE_SHAPESHIFT_FORM", UpdateVisibility)
-cmEclipse:SetScript("UNIT_AURA", UnitAura)
--- cmEclipse:SetScript("ECLIPSE_DIRECTION_CHANGE", EclipseDirectionChange)
+	cmEclipse:SetScript("UNIT_POWER", UnitPower)
+	cmEclipse:SetScript("UPDATE_VISIBILITY", UpdateVisibility)
+	cmEclipse:SetScript("PLAYER_TALENT_UPDATE", UpdateVisibility)
+	cmEclipse:SetScript("UPDATE_SHAPESHIFT_FORM", UpdateVisibility)
+	cmEclipse:SetScript("UNIT_AURA", UnitAura)
+	-- cmEclipse:SetScript("ECLIPSE_DIRECTION_CHANGE", EclipseDirectionChange)
+	
+	return cmEclipse
+end
 
 
 ----------------------------------------------------------------------------------------------------------------------------------

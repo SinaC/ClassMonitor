@@ -1,97 +1,94 @@
 -- Runes plugin (based on fRunes by Krevlorne [https://github.com/Krevlorne])
 local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
 
-local O = CMOptions["runes"]
-if O.enable ~= true then return end
+function CreateRunesMonitor(name, updatethreshold, autohide, orientation, anchor, width, height, spacing, colors, runemap)
+	-- Create the frame
+	local cmRunes = CreateFrame("Frame", "Frame_"..name, UIParent)
+	-- Create the runes
+	local runes = {}
+	for i = 1, 6 do
+		local rune
+		if i == 1 then
+			rune = CreateFrame("Frame", name, UIParent)
+			rune:CreatePanel("Default", width, height, unpack(anchor))
+		else
+			rune = CreateFrame("Frame", name.."_"..i, UIParent)
+			rune:CreatePanel("Default", width, height, "LEFT", runes[i-1], "RIGHT", spacing, 0)
+		end
+		rune.status = CreateFrame("StatusBar", "cmRunesRuneStatus"..i, rune)
+		rune.status:SetStatusBarTexture(C.media.normTex)
+		rune.status:SetStatusBarColor(unpack(colors[math.ceil(runemap[i]/2)]))
+		rune.status:SetFrameLevel(6)
+		rune.status:SetMinMaxValues(0, 10)
+		rune.status:Point("TOPLEFT", rune, "TOPLEFT", 2, -2)
+		rune.status:Point("BOTTOMRIGHT", rune, "BOTTOMRIGHT", -2, 2)
+		rune.status:SetOrientation(orientation)
 
-local runes = {}
-
--- Create the frame
-cmRunes = CreateFrame("Frame", "cmRunes", UIParent)
-
--- Create the runes
-for i = 1, 6 do
-	local rune = CreateFrame("Frame", "cmRunesRune"..i, UIParent)
-	rune:CreatePanel(nil, O.width, O.height, "CENTER", UIParent, "CENTER", 0, 0)
-	rune.sStatus = CreateFrame("StatusBar", "cmRunesRuneStatus"..i, rune)
-	rune.sStatus:SetStatusBarTexture(C.media.normTex)
-	rune.sStatus:SetStatusBarColor(unpack(O.colors[math.ceil(O.runemap[i]/2)]))
-	rune.sStatus:SetFrameLevel(6)
-	rune.sStatus:SetMinMaxValues(0, 10)
-	rune.sStatus:Point("TOPLEFT", rune, "TOPLEFT", 2, -2)
-	rune.sStatus:Point("BOTTOMRIGHT", rune, "BOTTOMRIGHT", -2, 2)
-
-	rune.sStatus:SetOrientation(O.orientation)
-
-	if i == 1 then
-		rune:Point(unpack(O.anchor))
-	else
-		rune:Point("LEFT", runes[i-1], "RIGHT", O.spacing, 0)
+		tinsert(runes, rune)
 	end
 
-	tinsert(runes, rune)
-end
+	-- Function to update runes
+	local function UpdateRune(id, start, duration, finished)
+		local rune = runes[id]
 
--- Function to update runes
-local function UpdateRune(id, start, duration, finished)
-	local rune = runes[id]
+		rune.status:SetStatusBarColor(unpack(colors[GetRuneType(runemap[id])]))
+		rune.status:SetMinMaxValues(0, duration)
 
-	rune.sStatus:SetStatusBarColor(unpack(O.colors[GetRuneType(O.runemap[id])]))
-	rune.sStatus:SetMinMaxValues(0, duration)
-
-	if finished then
-		rune.sStatus:SetValue(duration)
-	else
-		rune.sStatus:SetValue(GetTime() - start)
+		if finished then
+			rune.status:SetValue(duration)
+		else
+			rune.status:SetValue(GetTime() - start)
+		end
 	end
-end
 
-local OnUpdate = CreateFrame("Frame")
-OnUpdate.TimeSinceLastUpdate = 0
-local updateFunc = function(self, elapsed)
-	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
+	local OnUpdate = CreateFrame("Frame")
+	OnUpdate.TimeSinceLastUpdate = 0
+	local updateFunc = function(self, elapsed)
+		self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
 
-	if self.TimeSinceLastUpdate > O.updatethreshold then
-		for i = 1, 6 do
-			UpdateRune(i, GetRuneCooldown(O.runemap[i]))
+		if self.TimeSinceLastUpdate > updatethreshold then
+			for i = 1, 6 do
+				UpdateRune(i, GetRuneCooldown(runemap[i]))
+			end
+			self.TimeSinceLastUpdate = 0
 		end
-		self.TimeSinceLastUpdate = 0
 	end
-end
-OnUpdate:SetScript("OnUpdate", updateFunc)
+	OnUpdate:SetScript("OnUpdate", updateFunc)
 
-cmRunes:RegisterEvent("PLAYER_REGEN_DISABLED")
-cmRunes:RegisterEvent("PLAYER_REGEN_ENABLED")
-cmRunes:RegisterEvent("PLAYER_ENTERING_WORLD")
-cmRunes:SetScript("OnEvent", function(self, event)
-	if event == "PLAYER_REGEN_DISABLED" then
-		if O.autohide then
-			UIFrameFadeIn(self, (0.3 * (1-self:GetAlpha())), self:GetAlpha(), 1)
-		end
-		OnUpdate:SetScript("OnUpdate", updateFunc)
-	elseif event == "PLAYER_REGEN_ENABLED" then
-		if O.autohide then
-			UIFrameFadeOut(self, (0.3 * (0+self:GetAlpha())), self:GetAlpha(), 0)
-		end
-		OnUpdate:SetScript("OnUpdate", nil)
-	elseif event == "PLAYER_ENTERING_WORLD" then
-		RuneFrame:ClearAllPoints()
-		if not InCombatLockdown() then
-			if O.autohide then
-				cmRunes:SetAlpha(0)
-			else
-				cmRunes:SetAlpha(1)
+	cmRunes:RegisterEvent("PLAYER_REGEN_DISABLED")
+	cmRunes:RegisterEvent("PLAYER_REGEN_ENABLED")
+	cmRunes:RegisterEvent("PLAYER_ENTERING_WORLD")
+	cmRunes:SetScript("OnEvent", function(self, event)
+		if event == "PLAYER_REGEN_DISABLED" then
+			if autohide then
+				UIFrameFadeIn(self, (0.3 * (1-self:GetAlpha())), self:GetAlpha(), 1)
+			end
+			OnUpdate:SetScript("OnUpdate", updateFunc)
+		elseif event == "PLAYER_REGEN_ENABLED" then
+			if autohide then
+				UIFrameFadeOut(self, (0.3 * (0+self:GetAlpha())), self:GetAlpha(), 0)
+			end
+			OnUpdate:SetScript("OnUpdate", nil)
+		elseif event == "PLAYER_ENTERING_WORLD" then
+			RuneFrame:ClearAllPoints()
+			if not InCombatLockdown() then
+				if autohide then
+					cmRunes:SetAlpha(0)
+				else
+					cmRunes:SetAlpha(1)
+				end
 			end
 		end
-	end
-end)
+	end)
 
--- Hide blizzard runeframe
-RuneFrame:Hide()
-RuneFrame:SetScript("OnShow", function(self)
-	self:Hide()
-end)
-
+	-- Hide blizzard runeframe
+	RuneFrame:Hide()
+	RuneFrame:SetScript("OnShow", function(self)
+		self:Hide()
+	end)
+	
+	return runes[1]
+end
 -- one bar with 6 status bar
 -- -- Runes plugin (based on fRunes by Krevlorne [https://github.com/Krevlorne])
 -- local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales

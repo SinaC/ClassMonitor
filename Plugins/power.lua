@@ -1,95 +1,46 @@
--- Power Plugin
+-- Power plugin
 local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
 
--- TODO: add a visibility function (we dont want to see this bar while in travel/flying form)
--- TODO: add %
-
-local O = CMOptions["power"]
-if O.enable ~= true then return end
-local color = RAID_CLASS_COLORS[T.myclass] -- default color
-
-local cmPower = CreateFrame("Frame", "cmPower", UIParent)
-cmPower:CreatePanel(nil, O.width , O.height, unpack(O.anchor))
-
-cmPower.sStatus = CreateFrame("StatusBar", "cmPowerStatus", cmPower)
-cmPower.sStatus:SetStatusBarTexture(C.media.normTex)
-cmPower.sStatus:SetFrameLevel(6)
-cmPower.sStatus:SetStatusBarColor(color.r, color.g, color.b)
-cmPower.sStatus:Point("TOPLEFT", cmPower, "TOPLEFT", 2, -2)
-cmPower.sStatus:Point("BOTTOMRIGHT", cmPower, "BOTTOMRIGHT", -2, 2)
-cmPower.sStatus:SetMinMaxValues(0, UnitPowerMax("player"))
-
-if O.text == true then
-	cmPower.text = cmPower.sStatus:CreateFontString(nil, "OVERLAY")
-	cmPower.text:SetFont(C.media.uffont, 12)
-	cmPower.text:Point("CENTER", cmPower.sStatus)
-	cmPower.text:SetShadowColor(0, 0, 0)
-	cmPower.text:SetShadowOffset(1.25, -1.25)
-end
-
-local function OnUpdate()
-	local value = UnitPower("player")
-    cmPower.sStatus:SetValue(value)
-	if O.text == true then
-		local p = UnitPowerType("player")
-		if p == SPELL_POWER_MANA then
-			local valueMax = UnitPowerMax("player", p)
-			if value == valueMax then
-				cmPower.text:SetText(value)
-			else
-				local percentage = ( value * 100 ) / valueMax
-				cmPower.text:SetFormattedText("%2d%% - %u", percentage, value )
-			end
+-- Generic method to create POWER monitor
+function CreatePowerMonitor(name, powerType, count, anchor, width, height, spacing, colors, filled)
+	local cmPMs = {}
+	for i = 1, count do
+		local cmPM
+		if i == 1 then
+			cmPM = CreateFrame("Frame", name, UIParent) -- name is used for 1st power point
+			cmPM:CreatePanel("Default", width, height, unpack(anchor))
 		else
-			cmPower.text:SetText(value)
+			cmPM = CreateFrame("Frame", name.."_"..i, UIParent)
+			cmPM:CreatePanel("Default", width, height, "LEFT", cmPMs[i-1], "RIGHT", spacing, 0)
 		end
-	end
-end
-
-local OnShow = function(self)
-	self:SetScript("OnUpdate", OnUpdate)
-end
-
-local OnHide = function(self)
-	self:SetScript("OnUpdate", nil)
-end
-
-cmPower:RegisterEvent("PLAYER_ENTERING_WORLD")
-cmPower:RegisterEvent("UNIT_DISPLAYPOWER")
-cmPower:RegisterEvent("PLAYER_REGEN_DISABLED")
-cmPower:RegisterEvent("PLAYER_REGEN_ENABLED")
-cmPower:RegisterEvent("UNIT_POWER")
-cmPower:SetScript("OnEvent", function(self, event)
-	local p, pname = UnitPowerType("player")
-	local valueMax = UnitPowerMax("player", p)
-	local color = O["color"][pname]
-	if color then
-		cmPower.sStatus:SetStatusBarColor(unpack(color))
-	end
-	self.sStatus:SetMinMaxValues(0, valueMax)
-	if O.autohide == true then
-		if event == "PLAYER_REGEN_DISABLED" then
-			cmPower:Show()
-		elseif event == "UNIT_POWER" then
-			if InCombatLockdown() then
-				cmPower:Show()
-			end
+		if ( filled ) then
+			cmPM.status = CreateFrame("StatusBar", name.."_status_"..i, cmPM)
+			cmPM.status:SetStatusBarTexture(C.media.normTex)
+			cmPM.status:SetFrameLevel(6)
+			cmPM.status:Point("TOPLEFT", cmPM, "TOPLEFT", 2, -2)
+			cmPM.status:Point("BOTTOMRIGHT", cmPM, "BOTTOMRIGHT", -2, 2)
+			cmPM.status:SetStatusBarColor(unpack(colors[i]))
 		else
-			cmPower:Hide()
+			cmPM:CreateShadow("Default")
+			cmPM:SetBackdropBorderColor(unpack(colors[i]))
 		end
-	end
-end)
+		cmPM:Hide()
 
-cmPower:SetScript("OnShow", OnShow) -- This is what stops constant OnUpdate
-cmPower:SetScript("OnHide", OnHide)
-
--- If autohide is not set, show frame
-if O.autohide ~= true then
-	if cmPower:IsShown() then
-		cmPower:SetScript("OnUpdate", OnUpdate)
-	else
-		cmPower:Show()
+		tinsert(cmPMs, cmPM)
 	end
+
+	cmPMs[1]:RegisterEvent("PLAYER_ENTERING_WORLD")
+	cmPMs[1]:RegisterEvent("UNIT_POWER")
+	cmPMs[1]:SetScript("OnEvent", function(self, event)
+		if event ~= "UNIT_POWER" and event ~= "PLAYER_ENTERING_WORLD" then return end
+
+		local value = UnitPower("player", powerType)
+		if value and value > 0 then
+			for i = 1, value do cmPMs[i]:Show() end
+			for i = value+1, count do cmPMs[i]:Hide() end
+		else
+			for i = 1, count do cmPMs[i]:Hide() end
+		end
+	end)
+	return cmPMs[1]
 end
-
-SetMultipleAnchorHandler( cmPower, O )

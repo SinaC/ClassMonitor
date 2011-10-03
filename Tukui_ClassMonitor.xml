@@ -1,14 +1,10 @@
 ﻿<Ui xmlns="http://www.blizzard.com/wow/ui/">
-	<Script file="config.lua"/>
-	<Script file="profiles.lua"/>
-	<Script file="helpers.lua"/>
+	<Script file="settings.lua"/>
+	<Script file="Plugins\aura.lua"/>
 	<Script file="Plugins\power.lua"/>
 	<Script file="Plugins\combo.lua"/>
-	<Script file="Plugins\soulshards.lua"/>
-	<Script file="Plugins\holypower.lua"/>
-	<Script file="Plugins\shadoworbs.lua"/>
+	<Script file="Plugins\resource.lua"/>
 	<Script file="Plugins\runes.lua"/>
-	<Script file="Plugins\arcaneblast.lua"/>
-	<Script file="Plugins\rsa.lua"/>
 	<Script file="Plugins\eclipse.lua"/>
+	<Script file="core.lua"/>
 </Ui>
