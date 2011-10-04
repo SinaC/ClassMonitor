@@ -1,7 +1,7 @@
 ## Interface: 40200
 ## Author: SinaC
 ## Credits: Smelly, Hydra, Krevlorne, Ildyria
-## Version: 2.0
+## Version: 2.1
 ## Title: |cffC495DDTukui|r Class Monitor
 ## Notes: Class monitor for Tukui
 ## RequiredDeps: Tukui

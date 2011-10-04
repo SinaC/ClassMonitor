@@ -14,7 +14,7 @@ function CreateAuraMonitor(name, spellID, filter, count, anchor, width, height, 
 			cmAM = CreateFrame("Frame", name.."_"..i, UIParent)
 			cmAM:CreatePanel("Default", width, height, "LEFT", cmAMs[i-1], "RIGHT", spacing, 0)
 		end
-		if ( filled ) then
+		if filled then
 			cmAM.status = CreateFrame("StatusBar", name.."_status_"..i, cmAM)
 			cmAM.status:SetStatusBarTexture(C.media.normTex)
 			cmAM.status:SetFrameLevel(6)
@@ -38,15 +38,15 @@ function CreateAuraMonitor(name, spellID, filter, count, anchor, width, height, 
 		local found = false
 		for i = 1, 40, 1 do
 			local name, _, _, stack, _, _, _, unitCaster = UnitAura("player", i, filter )
-			if ( not name ) then break end
-			if ( name == aura and unitCaster == "player" and stack > 0 ) then
+			if not name then break end
+			if name == aura and unitCaster == "player" and stack > 0 then
 				for i = 1, stack do cmAMs[i]:Show() end
 				for i = stack+1, count do cmAMs[i]:Hide() end
 				found = true
 				break
 			end
 		end
-		if ( found == false ) then
+		if found == false then
 			for i = 1, count do cmAMs[i]:Hide() end
 		end
 	end)

@@ -102,11 +102,11 @@ end
 
 -- -- Create the frame
 -- cmRunes = CreateFrame("Frame", "cmRunes", UIParent)
--- cmRunes:SetPoint(unpack(O.anchor))
--- if ( orientation == "VERTICAL" ) then
-	-- cmRunes:SetSize(O.width * 6 + 9, O.height)
+-- cmRunes:Point(unpack(O.anchor))
+-- if orientation == "VERTICAL" then
+	-- cmRunes:Size(O.width * 6 + 9, O.height)
 -- else
-	-- cmRunes:SetSize(O.width, O.height * 6 + O.spacing * 5)
+	-- cmRunes:Size(O.width, O.height * 6 + O.spacing * 5)
 -- end
 
 -- -- Styling
@@ -120,7 +120,7 @@ end
 	-- rune:SetStatusBarColor(unpack(O.colors[math.ceil(O.runemap[i]/2)]))
 	-- rune:SetMinMaxValues(0, 10)
 
-	-- if ( orientation == "VERTICAL" ) then
+	-- if orientation == "VERTICAL" then
 		-- rune:SetOrientation(fillorientation)
 		-- rune:SetWidth(O.width)
 	-- else
@@ -129,19 +129,19 @@ end
 	-- end
 	
 	-- if i == 1 then
-		-- rune:SetPoint("TOPLEFT", cmRunes, "TOPLEFT", 2, -2)
-		-- if ( orientation == "VERTICAL" ) then
-			-- rune:SetPoint("BOTTOMLEFT", cmRunes, "BOTTOMLEFT", 2, 2)
+		-- rune:Point("TOPLEFT", cmRunes, "TOPLEFT", 2, -2)
+		-- if orientation == "VERTICAL" then
+			-- rune:Point("BOTTOMLEFT", cmRunes, "BOTTOMLEFT", 2, 2)
 		-- else
-			-- rune:SetPoint("TOPRIGHT", cmRunes, "TOPRIGHT", -2, -2)
+			-- rune:Point("TOPRIGHT", cmRunes, "TOPRIGHT", -2, -2)
 		-- end
 	-- else
-		-- if ( orientation == "VERTICAL" ) then
+		-- if orientation == "VERTICAL" then
 			-- rune:SetHeight(runes[1]:GetHeight())
-			-- rune:SetPoint("LEFT", runes[i-1], "RIGHT", 1, 0)
+			-- rune:Point("LEFT", runes[i-1], "RIGHT", 1, 0)
 		-- else
 			-- rune:SetWidth(runes[1]:GetWidth())
-			-- rune:SetPoint("TOP", runes[i-1], "BOTTOM", 0, -1)
+			-- rune:Point("TOP", runes[i-1], "BOTTOM", 0, -1)
 		-- end
 	-- end
 	

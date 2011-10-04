@@ -12,7 +12,7 @@ function CreateComboMonitor(name, anchor, width, height, spacing, colors, filled
 			cmCombo = CreateFrame("Frame", name.."_"..i, UIParent)
 			cmCombo:CreatePanel("Default", width, height, "LEFT", cmCombos[i-1], "RIGHT", spacing, 0)
 		end
-		if ( filled ) then
+		if filled then
 			cmCombo.status = CreateFrame("StatusBar", name.."_status_"..i, cmCombo)
 			cmCombo.status:SetStatusBarTexture(C.media.normTex)
 			cmCombo.status:SetFrameLevel(6)

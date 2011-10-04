@@ -13,7 +13,7 @@ function CreatePowerMonitor(name, powerType, count, anchor, width, height, spaci
 			cmPM = CreateFrame("Frame", name.."_"..i, UIParent)
 			cmPM:CreatePanel("Default", width, height, "LEFT", cmPMs[i-1], "RIGHT", spacing, 0)
 		end
-		if ( filled ) then
+		if filled then
 			cmPM.status = CreateFrame("StatusBar", name.."_status_"..i, cmPM)
 			cmPM.status:SetStatusBarTexture(C.media.normTex)
 			cmPM.status:SetFrameLevel(6)

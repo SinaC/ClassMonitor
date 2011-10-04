@@ -1,72 +1,77 @@
 CMSettings = {
-	-- name = frame name (can be used in anchor)
-	-- kind = POWER | AURA | RESOURCE(mana/runic/energy/focus/rage) | ECLIPSE | COMBO | RUNES
+--[[
+	name = frame name (can be used in anchor)
+	kind = POWER | AURA | RESOURCE(mana/runic/energy/focus/rage) | ECLIPSE | COMBO | RUNES
 
-	-- RESOURCE (mana/runic power/energy/focus/rage):
-	-- text = true|false												-- display resource value (% for mana) [default: true]
-	-- autohide = true|false											-- hide or not while out of combat [default: false]
-	-- anchor|anchors =													-- see note below
-	-- width = number													-- width of resource bar [default: 85]
-	-- height = number													-- height of resource bar [default: 15]
-	-- color = {r, g, b, a}												-- color of resource bar
+	RESOURCE (mana/runic power/energy/focus/rage):
+	text = true|false												display resource value (% for mana) [default: true]
+	autohide = true|false											hide or not while out of combat [default: false]
+	anchor|anchors =												see note below
+	width = number													width of resource bar [default: 85]
+	height = number													height of resource bar [default: 15]
+	color|colors =													see note below [default: tukui power color]
 
-	-- COMBO:
-	-- anchor|anchors =													-- see note below
-	-- width = number													-- width of combo point [default: 85]
-	-- height = number													-- height of combo point [default: 15]
-	-- spacing = number													-- space between combo points [default: 3]
-	-- color|colors =													-- see note below
-	-- filled = true|false												-- is combo point filled or not [default: false]
+	COMBO:
+	anchor|anchors =												see note below
+	width = number													width of combo point [default: 85]
+	height = number													height of combo point [default: 15]
+	spacing = number												space between combo points [default: 3]
+	color|colors =													see note below [default: class color]
+	filled = true|false												is combo point filled or not [default: false]
 
-	-- POWER (holy power/soul shard):
-	-- powerType = SPELL_POWER_HOLY_POWER | SPELL_POWER_SOUL_SHARDS		-- power to monitor (can be any power type (http://www.wowwiki.com/PowerType)
-	-- count = number													-- max number of points to display
-	-- anchor|anchors =													-- see note below
-	-- width = number													-- width of power point [default: 85]
-	-- height = number													-- height of power point [default: 15]
-	-- spacing = number													-- space between power points [default: 3]
-	-- color|colors =													-- see note below
-	-- filled = true|false												-- is power point filled or not [default: false]
+	POWER (holy power/soul shard):
+	powerType = SPELL_POWER_HOLY_POWER | SPELL_POWER_SOUL_SHARDS	power to monitor (can be any power type (http://www.wowwiki.com/PowerType)
+	count = number													max number of points to display
+	anchor|anchors =												see note below
+	width = number													width of power point [default: 85]
+	height = number													height of power point [default: 15]
+	spacing = number												space between power points [default: 3]
+	color|colors =													see note below [default: class color]
+	filled = true|false												is power point filled or not [default: false]
 
-	-- AURA (buff/debuff):
-	-- spellID = number													-- spell id of buff/debuff to monitor
-	-- filter = "HELPFUL" | "HARMFUL"									-- BUFF or DEBUFF
-	-- count = number													-- max number of stack to display
-	-- anchor|anchors =													-- see note below
-	-- width = number													-- width of buff stack [default: 85]
-	-- height = number													-- height of buff stack [default: 15]
-	-- spacing = number													-- space between buff stack [default: 3]
-	-- color|colors =													-- see note below
-	-- filled = true|false												-- is buff stack filled or not [default: false]
+	AURA (buff/debuff):
+	spellID = number												spell id of buff/debuff to monitor
+	filter = "HELPFUL" | "HARMFUL"									BUFF or DEBUFF
+	count = number													max number of stack to display
+	anchor|anchors =												see note below
+	width = number													width of buff stack [default: 85]
+	height = number													height of buff stack [default: 15]
+	spacing = number												space between buff stack [default: 3]
+	color|colors =													see note below [default: class color]
+	filled = true|false												is buff stack filled or not [default: false]
 
-	-- RUNES
-	-- updatethreshold = number											-- interval between runes display update [default: 0.1]
-	-- autohide = true|false											-- hide or not while out of combat [default: false]
-	-- orientation = "HORIZONTAL" | "VERTICAL"							-- direction of rune filling display [default: HORIZONTAL]
-	-- anchor|anchors =													-- see note below
-	-- width = number													-- width of rune [default: 85]
-	-- height = number													-- height of rune [default: 15]
-	-- spacing = number													-- space between runes [default: 3]
-	-- colors = { blood, unholy, frost, death }							-- color of runes
-	-- runemap = { 1, 2, 3, 4, 5, 6 }									-- see instruction in DEATHKNIGHT section
+	RUNES
+	updatethreshold = number										interval between runes display update [default: 0.1]
+	autohide = true|false											hide or not while out of combat [default: false]
+	orientation = "HORIZONTAL" | "VERTICAL"							direction of rune filling display [default: HORIZONTAL]
+	anchor|anchors =												see note below
+	width = number													width of rune [default: 85]
+	height = number													height of rune [default: 15]
+	spacing = number												space between runes [default: 3]
+	colors = { blood, unholy, frost, death }						color of runes
+	runemap = { 1, 2, 3, 4, 5, 6 }									see instruction in DEATHKNIGHT section
 
-	-- ECLIPSE:
-	-- anchor|anchors=													-- see note below
-	-- width = number													-- half-width of eclipse bar (width of lunar and solar bar)
-	-- height = number													-- height of eclipse bar
-	-- colors = { lunar, solar }										-- color of lunar and solar bar
+	ECLIPSE:
+	anchor|anchors=													see note below
+	width = number													half-width of eclipse bar (width of lunar and solar bar)
+	height = number													height of eclipse bar
+	colors = { lunar, solar }										color of lunar and solar bar
 
-	-- Notes about anchor and color
-	-- anchor = { "POSITION", parent, "POSITION", offsetX, offsetY }
-	--	-> one anchor whatever spec is used
-	-- anchors = { { "POSITION", parent, "POSITION", offsetX, offsetY }, { "POSITION", parent, "POSITION", offsetX, offsetY }, ... { "POSITION", parent, "POSITION", offsetX, offsetY } }
-	--	-> one anchor by spec
+	Notes about anchor
+	anchor = { "POSITION", parent, "POSITION", offsetX, offsetY }
+		-> one anchor whatever spec is used
+	anchors = { { "POSITION", parent, "POSITION", offsetX, offsetY }, { "POSITION", parent, "POSITION", offsetX, offsetY }, ... { "POSITION", parent, "POSITION", offsetX, offsetY } }
+		-> one anchor by spec
 
-	-- color = {r, g, b, a}
-	--	-> same color for every point (if no color is specified, raid class color will be used)
-	-- colors = { { {r, g, b, a}, {r, g, b, a}, {r, g, b, a}, ...{r, g, b, a} }
-	--	-> one different color by point
-
+	Notes about color
+	color = {r, g, b, a}
+		-> same color for every point (if no color is specified, raid class color will be used)
+	colors = { { {r, g, b, a}, {r, g, b, a}, {r, g, b, a}, ...{r, g, b, a} }
+		-> one different color by point (for kind COMBO/AURA/POWER)
+	colors = { [RESOURCE_TYPE] = {r, g, b, a}, [RESOURCE_TYPE] = {r, g, b, a}, ...[RESOURCE_TYPE] = {r, g, b, a}}
+		-> one different color by resource type (only for kind RESOURCE) (if no color is specified, default resource color will be used)
+--]]
+		
 	["DRUID"] = {
 		{
 			name = "CM_RESOURCE",
@@ -74,25 +79,21 @@ CMSettings = {
 			text = true,
 			autohide = false,
 			anchors = { 
-				{"CENTER", UIParent, "CENTER", 0, -123}, -- Balance
-				{"CENTER", UIParent, "CENTER", 0, -123}, -- Feral
-				{"CENTER", UIParent, "CENTER", -500, 290} -- Restoration
+				{ "CENTER", UIParent, "CENTER", 0, -120 }, -- Balance
+				{ "CENTER", UIParent, "CENTER", 0, -120 }, -- Feral
+				{ "CENTER", UIParent, "CENTER", -500, 290 } -- Restoration
 			},
 			width = 262,
 			height = 10,
-			color = {1, 0.96, 0.41, 1}, -- TODO: a color by resource
-			--colors = { ["MANA"] = {0, 0.44, 0.87, 1},
-			-- ["RAGE"] = {0.77, 0.13, 0.23, 1},
-			-- ["ENERGY"] = {1, 0.96, 0.41, 1} }
 		},
 		{
 			name = "CM_COMBO",
 			kind = "COMBO",
-			anchor = {"TOPLEFT", "CM_RESOURCE", "BOTTOMLEFT", -0, 3},
+			anchor = {"BOTTOMLEFT", "CM_RESOURCE", "TOPLEFT", 0, 3},
 			width = 50,
 			height = 15,
 			spacing = 3,
-			colors = { 
+			colors = {
 				{0.69, 0.31, 0.31, 1}, -- 1
 				{0.65, 0.42, 0.31, 1}, -- 2
 				{0.65, 0.63, 0.35, 1}, -- 3
@@ -104,7 +105,7 @@ CMSettings = {
 		{ -- DOES NOT WORK
 			name = "CM_ECLIPSE",
 			kind = "ECLIPSE",
-			anchor = { "TOPLEFT", "CM_RESOURCE", "BOTTOMLEFT", 0, -3},
+			anchor = { "BOTTOMLEFT", "CM_RESOURCE", "TOPLEFT", 0, 3},
 			width = 262,
 			height = 10,
 			colors = {
@@ -115,61 +116,68 @@ CMSettings = {
 	},
 	["PALADIN"] = {
 		{
+			name = "CM_MANA",
+			kind = "RESOURCE",
+			text = true,
+			autohide = false,
+			anchors = { 
+				{"CENTER", UIParent, "CENTER", -543, 290}, -- Holy
+				{"CENTER", UIParent, "CENTER", -0, -100}, -- Protection
+				{"CENTER", UIParent, "CENTER", -0, -100} -- Retribution
+			},
+			width = 261,
+			height = 10,
+		},
+		{
 			name = "CM_HOLYPOWER",
 			kind = "POWER",
 			powerType = SPELL_POWER_HOLY_POWER,
 			count = 3,
-			anchors = { 
-				{"CENTER", UIParent, "CENTER", -630, 290}, -- Holy
-				{"CENTER", UIParent, "CENTER", -87, -100}, -- Protection
-				{"CENTER", UIParent, "CENTER", -87, -100} -- Retribution
-			},
+			anchor = {"BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3},
 			width = 85,
 			height = 15,
 			spacing = 3,
 			color = {228/255, 225/255, 16/255, 1},
 			filled = true,
 		},
+	},
+	["WARLOCK"] = {
 		{
 			name = "CM_MANA",
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchor = { "TOPLEFT", "CM_HOLYPOWER", "BOTTOMLEFT", 0, -3 },
+			anchor = { "CENTER", UIParent, "CENTER", 0, -100 },
 			width = 261,
 			height = 10,
-			color = {0, 0.44, 0.87, 1},
-		}
-	},
-	["WARLOCK"] = {
+		},
 		{
 			name = "CM_SOUL_SHARD",
 			kind = "POWER",
 			powerType = SPELL_POWER_SOUL_SHARDS,
 			count = 3,
-			anchor = {"CENTER", UIParent, "CENTER", -87, -100},
+			anchor = {"BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3},
 			width = 85,
 			height = 15,
 			spacing = 3,
 			color = {255/255, 101/255, 101/255, 1},
 			filled = false,
 		},
+	},
+	["ROGUE"] = {
 		{
 			name = "CM_MANA",
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchor = { "TOPLEFT", "CM_SOUL_SHARD", "BOTTOMLEFT", 0, -3 },
-			width = 261,
+			anchor = { "CENTER", UIParent, "CENTER", 0, -100 },
+			width = 262,
 			height = 10,
-			color = {0, 0.44, 0.87, 1},
-		}
-	},
-	["ROGUE"] = {
+		},
 		{
 			name = "CM_COMBO",
 			kind = "COMBO",
-			anchor = {"CENTER", UIParent, "CENTER", -107, -100},
+			anchor = {"BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3},
 			width = 50,
 			height = 15,
 			spacing = 3,
@@ -182,75 +190,71 @@ CMSettings = {
 			},
 			filled = false,
 		},
+	},
+	["PRIEST"] = {
 		{
 			name = "CM_MANA",
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchor = { "TOPLEFT", "CM_COMBO", "BOTTOMLEFT", 0, -3 },
-			width = 262,
+			anchor = { "CENTER", UIParent, "CENTER", 0, -100 },
+			width = 261,
 			height = 10,
-			color = {1, 0.96, 0.41, 1},
-		}
-	},
-	["PRIEST"] = {
+		},
 		{
 			name = "CM_SHADOW_ORB",
 			kind = "AURA",
 			spellID = 77487,
 			filter = "HELPFUL",
 			count = 3,
-			anchor = {"CENTER", UIParent, "CENTER", -87, -100},
+			anchor = {"BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3},
 			width = 85,
 			height = 15,
 			spacing = 3,
 			color = {0.5, 0, 0.7, 1},
 			filled = false,
 		},
+	},
+	["MAGE"] = {
 		{
 			name = "CM_MANA",
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchor = { "TOPLEFT", "CM_SHADOW_ORB", "BOTTOMLEFT", 0, -3 },
+			anchor = { "CENTER", UIParent, "CENTER", 0, -100},
 			width = 261,
 			height = 10,
-			color = {0, 0.44, 0.87, 1},
-		}
-	},
-	["MAGE"] = {
+		},
 		{
 			name = "CM_ARCANE_BLAST",
 			kind = "AURA",
 			spellID = 36032,
 			filter = "HARMFUL",
 			count = 4,
-			anchor = {"CENTER", UIParent, "CENTER", -87, -100},
-			width = 85,
+			anchor = {"BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3},
+			width = 63,
 			height = 15,
 			spacing = 3,
-			color = {0.5, 0, 0.7, 1},
 			filled = false,
 		},
+	},
+	["DEATHKNIGHT"] = {
 		{
-			name = "CM_MANA",
+			name = "CM_RUNIC_POWER",
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchor = { "TOPLEFT", "CM_ARCANE_BLAST", "BOTTOMLEFT", 0, -3 },
+			anchor = { "CENTER", UIParent, "CENTER", 0, -100 },
 			width = 261,
 			height = 10,
-			color = {0, 0.44, 0.87, 1},
-		}
-	},
-	["DEATHKNIGHT"] = {
+		},
 		{
 			name = "CM_RUNES",
 			kind = "RUNES",
 			updatethreshold = 0.1,
 			autohide = false,
 			orientation = "HORIZONTAL",
-			anchor = {"CENTER", UIParent, "CENTER", -110, -100},
+			anchor = { "BOTTOMLEFT", "CM_RUNIC_POWER", "TOPLEFT", 0, 3 },
 			width = 41,
 			height = 15,
 			spacing = 3,
@@ -270,16 +274,6 @@ CMSettings = {
 			]]
 			runemap = { 1, 2, 3, 4, 5, 6 },
 		},
-		{
-			name = "CM_RUNIC_POWER",
-			kind = "RESOURCE",
-			text = true,
-			autohide = false,
-			anchor = {"TOPLEFT", "CM_RUNES", "BOTTOMLEFT", 0, -3},
-			width = 261,
-			height = 10,
-			color = {0, 0.82, 1, 1},
-		}
 	},
 	["HUNTER"] = {
 		{
@@ -288,9 +282,21 @@ CMSettings = {
 			text = true,
 			autohide = false,
 			anchor = {"CENTER", UIParent, "CENTER", 0, -123},
-			width = 261,
+			width = 262,
 			height = 10,
-			color = {0.77, 0.13, 0.23, 1},
+		},
+		{
+			name = "CM_RSA",
+			kind = "AURA",
+			spellID = 82925,
+			filter = "HELPFUL",
+			count = 5,
+			anchor = {"BOTTOMLEFT", "CM_FOCUS", "TOPLEFT", 0, 3},
+			width = 50,
+			height = 15,
+			spacing = 3,
+			color = {0.5, 0, 0.7, 1},
+			filled = false,
 		},
 	},
 	["WARRIOR"] = {
@@ -302,7 +308,6 @@ CMSettings = {
 			anchor = {"CENTER", UIParent, "CENTER", 0, -123},
 			width = 261,
 			height = 10,
-			color = {0.77, 0.13, 0.23, 1},
 		}
 	},
 	["SHAMAN"] = {
@@ -314,7 +319,6 @@ CMSettings = {
 			anchor = { "CENTER", UIParent, "CENTER", 0, -123 },
 			width = 261,
 			height = 10,
-			color = {0, 0.44, 0.87, 1},
 		}
 	},
 }

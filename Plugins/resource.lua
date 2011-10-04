@@ -1,16 +1,14 @@
 -- Resource Plugin
 local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
 
--- TODO: color may be an array with a color by resource
-
-function CreateResourceMonitor(name, text, autohide, anchor, width, height, color)
+function CreateResourceMonitor(name, text, autohide, anchor, width, height, colors)
 	local cmResource = CreateFrame("Frame", name, UIParent)
 	cmResource:CreatePanel("Default", width , height, unpack(anchor))
 
 	cmResource.status = CreateFrame("StatusBar", "cmResourceStatus", cmResource)
 	cmResource.status:SetStatusBarTexture(C.media.normTex)
 	cmResource.status:SetFrameLevel(6)
-	cmResource.status:SetStatusBarColor(unpack(color))
+	--cmResource.status:SetStatusBarColor(unpack(color)) color will be set later
 	cmResource.status:Point("TOPLEFT", cmResource, "TOPLEFT", 2, -2)
 	cmResource.status:Point("BOTTOMRIGHT", cmResource, "BOTTOMRIGHT", -2, 2)
 	cmResource.status:SetMinMaxValues(0, UnitPowerMax("player"))
@@ -31,23 +29,23 @@ function CreateResourceMonitor(name, text, autohide, anchor, width, height, colo
 			if p == SPELL_POWER_MANA then
 				local valueMax = UnitPowerMax("player", p)
 				if value == valueMax then
-					cmResource.text:SetText(value)
+					if value > 10000 then
+						cmResource.text:SetFormattedText("%.1fk", value/1000)
+					else
+						cmResource.text:SetText(value)
+					end
 				else
-					local percentage = ( value * 100 ) / valueMax
-					cmResource.text:SetFormattedText("%2d%% - %u", percentage, value )
+					local percentage = (value * 100) / valueMax
+					if value > 10000 then
+						cmResource.text:SetFormattedText("%2d%% - %.1fk", percentage, value/1000 )
+					else
+						cmResource.text:SetFormattedText("%2d%% - %u", percentage, value )
+					end
 				end
 			else
 				cmResource.text:SetText(value)
 			end
 		end
-	end
-
-	local OnShow = function(self)
-		self:SetScript("OnUpdate", OnUpdate)
-	end
-
-	local OnHide = function(self)
-		self:SetScript("OnUpdate", nil)
 	end
 
 	cmResource:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -56,18 +54,17 @@ function CreateResourceMonitor(name, text, autohide, anchor, width, height, colo
 	cmResource:RegisterEvent("PLAYER_REGEN_ENABLED")
 	cmResource:RegisterEvent("UNIT_POWER")
 	cmResource:SetScript("OnEvent", function(self, event)
-		if event ~= "PLAYER_ENTERING_WORLD" and event ~= "UNIT_DISPLAYPOWER" and event ~= "PLAYER_REGEN_DISABLED" and event ~= "PLAYER_REGEN_ENABLED" and event ~= "UNIT_POWER" then return end
-
-		-- local color = O["color"][pname]
-		-- if color then
-			-- cmPower.sStatus:SetStatusBarColor(unpack(color))
-		-- end
+		if event ~= "PLAYER_ENTERING_WORLD" and event ~= "UNIT_DISPLAYPOWER" and event ~= "PLAYER_REGEN_DISABLED" and event ~= "PLAYER_REGEN_ENABLED" --[[and event ~= "UNIT_POWER"--]] then return end
 
 		--print("Resource: event:"..event)
-		local p, pname = UnitPowerType("player")
-		local valueMax = UnitPowerMax("player", p)
-		cmResource.status:SetStatusBarColor(unpack(color))
-		cmResource.status:SetMinMaxValues(0, valueMax)
+		if event == "PLAYER_ENTERING_WORLD" or event == "UNIT_DISPLAYPOWER" then
+			local resource, resourceName = UnitPowerType("player")
+			local valueMax = UnitPowerMax("player", resource)
+			-- use colors[resourceName] if defined, else use default resource color or class color
+			local color = (colors and (colors[resourceName] or colors[1])) or T.oUF_colors.power[resourceName] or T.oUF_colors.class[T.myclass]
+			cmResource.status:SetStatusBarColor(unpack(color))
+			cmResource.status:SetMinMaxValues(0, valueMax)
+		end
 		if autohide == true then
 			if event == "PLAYER_REGEN_DISABLED" then
 				cmResource:Show()
@@ -81,8 +78,13 @@ function CreateResourceMonitor(name, text, autohide, anchor, width, height, colo
 		end
 	end)
 
-	cmResource:SetScript("OnShow", OnShow) -- This is what stops constant OnUpdate
-	cmResource:SetScript("OnHide", OnHide)
+	-- This is what stops constant OnUpdate
+	cmResource:SetScript("OnShow", function(self)
+		self:SetScript("OnUpdate", OnUpdate)
+	end)
+	cmResource:SetScript("OnHide", function (self)
+		self:SetScript("OnUpdate", nil)
+	end)
 
 	-- If autohide is not set, show frame
 	if autohide ~= true then

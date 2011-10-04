@@ -1,24 +1,22 @@
 -- Eclipse plugin
 local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
 
-local function UnitPower(self, event, unit, powerType)
-	if event == "UNIT_POWER" and powerType ~= "ECLIPSE" then return end
-
+local function UnitPower(cmEclipse)
 	local power = UnitPower("player", SPELL_POWER_ECLIPSE)
 	local maxPower = UnitPowerMax("player", SPELL_POWER_ECLIPSE)
 
-	if cmLunar then
-		cmLunar:SetMinMaxValues(-maxPower, maxPower)
-		cmLunar:SetValue(power)
+	if cmEclipse.cmLunar then
+		cmEclipse.cmLunar:SetMinMaxValues(-maxPower, maxPower)
+		cmEclipse.cmLunar:SetValue(power)
 	end
 
-	if cmSolar then
-		cmSolar:SetMinMaxValues(-maxPower, maxPower)
-		cmSolar:SetValue(power * -1)
+	if cmEclipse.cmSolar then
+		cmEclipse.cmSolar:SetMinMaxValues(-maxPower, maxPower)
+		cmEclipse.cmSolar:SetValue(power * -1)
 	end
 end
 
-local function UpdateVisibility(self, event)
+local function UpdateVisibility(cmEclipse)
 	-- check form/mastery
 	local showBar = false
 	local form = GetShapeshiftFormID()
@@ -38,12 +36,12 @@ local function UpdateVisibility(self, event)
 	end
 end
 
-local function UnitAura(self, event, unit)
+local function UnitAura(cmEclipse)
 	local hasSolarEclipse = false
 	local hasLunarEclipse = false
 
 	for i = 1, 40, 1 do
-		local _, _, _, _, _, _, _, _, _, _, spellID = UnitAura(unit, i, 'HELPFUL')
+		local _, _, _, _, _, _, _, _, _, _, spellID = UnitAura("player", i, 'HELPFUL')
 		if not spellID then break end
 
 		if spellID == ECLIPSE_BAR_SOLAR_BUFF_ID then
@@ -52,13 +50,13 @@ local function UnitAura(self, event, unit)
 			hasLunarEclipse = true
 		end
 	end
-	
+
 	-- TODO: change border while in eclipse
 
 	-- if hasLunarEclipse then
         -- self.glow:ClearAllPoints();
         -- local glowInfo = ECLIPSE_ICONS["moon"].big;
-        -- self.glow:SetPoint("CENTER", self.moon, "CENTER", 0, 0);
+        -- self.glow:Point("CENTER", self.moon, "CENTER", 0, 0);
         -- self.glow:SetWidth(glowInfo.x);
         -- self.glow:SetHeight(glowInfo.y);
         -- self.glow:SetTexCoord(glowInfo.left, glowInfo.right, glowInfo.top, glowInfo.bottom);
@@ -71,7 +69,7 @@ local function UnitAura(self, event, unit)
     -- elseif hasSolarEclipse then
         -- self.glow:ClearAllPoints();
         -- local glowInfo = ECLIPSE_ICONS["sun"].big;
-        -- self.glow:SetPoint("CENTER", self.sun, "CENTER", 0, 0);
+        -- self.glow:Point("CENTER", self.sun, "CENTER", 0, 0);
         -- self.glow:SetWidth(glowInfo.x);
         -- self.glow:SetHeight(glowInfo.y);
         -- self.glow:SetTexCoord(glowInfo.left, glowInfo.right, glowInfo.top, glowInfo.bottom);
@@ -92,11 +90,15 @@ local function UnitAura(self, event, unit)
 	cmEclipse.hasSolarEclipse = hasSolarEclipse
 	cmEclipse.hasLunarEclipse = hasLunarEclipse
 end
-	
+
+-- local function EclipseDirectionChange(isLunar, cmEclipse)
+	-- cmEclipse.directionIsLunar = isLunar
+-- end
+
 function CreateEclipseMonitor(name, anchor, width, height, colors)
 	local cmEclipse = CreateFrame("Frame", name, self)
 	cmEclipse:Point(unpack(anchor))
-	cmEclipse:Size(width, height)
+	cmEclipse:Size(width*2, height)
 	cmEclipse:SetFrameStrata("MEDIUM")
 	cmEclipse:SetFrameLevel(8)
 	cmEclipse:SetTemplate("Default")
@@ -105,30 +107,36 @@ function CreateEclipseMonitor(name, anchor, width, height, colors)
 	--cmEclipse:SetScript("OnHide", function() T.DruidBarDisplay(self, false) end)
 
 	local cmLunar = CreateFrame("StatusBar", name.."_lunar", cmEclipse)
-	cmLunar:SetPoint("LEFT", cmEclipse, "LEFT", 0, 0)
-	cmLunar:SetSize(cmEclipse:GetWidth(), cmEclipse:GetHeight())
+	--cmSolar:Point("LEFT", cmLunar:GetStatusBarTexture(), "RIGHT", 0, 0)
+	cmLunar:Point("TOPLEFT", cmEclipse, "TOPLEFT", 2, -2)
+	cmLunar:Point("BOTTOMLEFT", cmEclipse, "BOTTOMLEFT", 2, 2)
+	cmLunar:Size(width, height)
 	cmLunar:SetStatusBarTexture(C.media.normTex)
 	cmLunar:SetStatusBarColor(unpack(colors[1]))
 	cmEclipse.cmLunar = cmLunar
 
 	local cmSolar = CreateFrame("StatusBar", name.."_solar", cmEclipse)
-	cmSolar:SetPoint("LEFT", cmLunar:GetStatusBarTexture(), 'RIGHT', 0, 0)
-	cmSolar:SetSize(cmEclipse:GetWidth(), cmEclipse:GetHeight())
+	--cmSolar:Point("LEFT", cmLunar:GetStatusBarTexture(), "RIGHT", 0, 0)
+	cmSolar:Point("TOPRIGHT", cmEclipse, "TOPRIGHT", -2, -2)
+	cmSolar:Point("BOTTOMRIGHT", cmEclipse, "BOTTOMRIGHT", -2, 2)
+	cmSolar:Size(width, height)
 	cmSolar:SetStatusBarTexture(C.media.normTex)
 	cmSolar:SetStatusBarColor(unpack(colors[2]))
 	cmEclipse.cmSolar = cmSolar
 
--- local function EclipseDirectionChange(self, event, isLunar)
-	-- cmEclipse.directionIsLunar = isLunar
--- end
+	cmEclipse:RegisterEvent("UNIT_POWER")
+	cmEclipse:RegisterEvent("UPDATE_VISIBILITY")
+	cmEclipse:RegisterEvent("PLAYER_TALENT_UPDATE")
+	cmEclipse:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
+	cmEclipse:RegisterEvent("UNIT_AURA")
+	-- cmEclipse:RegisterEvent("ECLIPSE_DIRECTION_CHANGE", EclipseDirectionChange)
+	cmEclipse:SetScript("OnEvent", function(self, event, arg1, arg2)
+		if event == "UNIT_POWER" and arg2 == "ECLIPSE" then UnitPower(cmEclipse)
+		elseif event == "UPDATE_VISIBILITY" or event == "PLAYER_TALENT_UPDATE" or event == "UPDATE_SHAPESHIFT_FORM" then UpdateVisibility(cmEclipse)
+		elseif event == "UNIT_AURA" then UnitAura(cmEclipse) end
+		--elseif event == "ECLIPSE_DIRECTION_CHANGE" then EclipseDirectionChange(arg1, cmEclipse)
+	end)
 
-	cmEclipse:SetScript("UNIT_POWER", UnitPower)
-	cmEclipse:SetScript("UPDATE_VISIBILITY", UpdateVisibility)
-	cmEclipse:SetScript("PLAYER_TALENT_UPDATE", UpdateVisibility)
-	cmEclipse:SetScript("UPDATE_SHAPESHIFT_FORM", UpdateVisibility)
-	cmEclipse:SetScript("UNIT_AURA", UnitAura)
-	-- cmEclipse:SetScript("ECLIPSE_DIRECTION_CHANGE", EclipseDirectionChange)
-	
 	return cmEclipse
 end
 
@@ -142,65 +150,65 @@ end
 --http://www.wowinterface.com/forums/showthread.php?t=36129
 
 -- if playerClass == "DRUID" then
-	-- self.Name:SetPoint("TOPLEFT", self.Health, "TOPLEFT", 18, 40)
-	-- self.Debuffs:SetPoint(cfg.PlayerDebufAnchor1, self.Health, cfg.PlayerDebufAnchor2, cfg.PlayerDebufOffset_X, cfg.PlayerDebufOffset_Y+20)
+	-- self.Name:Point("TOPLEFT", self.Health, "TOPLEFT", 18, 40)
+	-- self.Debuffs:Point(cfg.PlayerDebufAnchor1, self.Health, cfg.PlayerDebufAnchor2, cfg.PlayerDebufOffset_X, cfg.PlayerDebufOffset_Y+20)
 	-- local eclipseBar = CreateFrame('Frame', nil, self)
-	-- eclipseBar:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', 23, 56)
+	-- eclipseBar:Point('TOPLEFT', self, 'BOTTOMLEFT', 23, 56)
 	-- eclipseBar:SetSize(cfg.widthP-45, 12)
 	-- eclipseBar:SetBackdrop{edgeFile = cfg.glowtex2, edgeSize = 5, insets = {left = 3, right = 3, top = 3, bottom = 3}}
 	-- eclipseBar:SetBackdropColor(0, 0, 0, 0)
 	-- eclipseBar:SetBackdropBorderColor(0, 0, 0, 0.8)	
 	
 	-- local lunarBar = CreateFrame('StatusBar', nil, eclipseBar)
-	-- lunarBar:SetPoint('LEFT', eclipseBar, 'LEFT', 0, 0)
+	-- lunarBar:Point('LEFT', eclipseBar, 'LEFT', 0, 0)
 	-- lunarBar:SetSize(cfg.widthP-42, 12)
 	-- lunarBar:SetStatusBarTexture(cfg.PPtex)
 	-- lunarBar:SetStatusBarColor(1, 3/5, 0)
 	-- eclipseBar.LunarBar = lunarBar
 	
 	-- local solarBar = CreateFrame('StatusBar', nil, eclipseBar)
-	-- solarBar:SetPoint('LEFT', lunarBar:GetStatusBarTexture(), 'RIGHT', 0, 0)
+	-- solarBar:Point('LEFT', lunarBar:GetStatusBarTexture(), 'RIGHT', 0, 0)
 	-- solarBar:SetSize(cfg.widthP-42, 12)
 	-- solarBar:SetStatusBarTexture(cfg.PPtex)
 	-- solarBar:SetStatusBarColor(0, 0, 1)
 	-- eclipseBar.SolarBar = solarBar
 
 	-- local eclipseBarText = solarBar:CreateFontString(nil, 'OVERLAY')
-	-- eclipseBarText:SetPoint('CENTER', eclipseBar, 'CENTER', 0, 0)
+	-- eclipseBarText:Point('CENTER', eclipseBar, 'CENTER', 0, 0)
 	-- eclipseBarText:SetFont(cfg.NumbFont, cfg.NumbFS, "THINOUTLINE")
 	-- self:Tag(eclipseBarText, '[eecc]')
 
 	-- self.Glow.eclipseBar = CreateFrame("Frame", nil, eclipseBar)
-	-- self.Glow.eclipseBar:SetPoint("TOPLEFT", eclipseBar, "TOPLEFT", -5, 5)
-	-- self.Glow.eclipseBar:SetPoint("BOTTOMRIGHT", eclipseBar, "BOTTOMRIGHT", 5, -5)
+	-- self.Glow.eclipseBar:Point("TOPLEFT", eclipseBar, "TOPLEFT", -5, 5)
+	-- self.Glow.eclipseBar:Point("BOTTOMRIGHT", eclipseBar, "BOTTOMRIGHT", 5, -5)
 	-- self.Glow.eclipseBar:SetBackdrop{edgeFile = cfg.glowtex2, edgeSize = 5, insets = {left = 3, right = 3, top = 3, bottom = 3}}
 	-- self.Glow.eclipseBar:SetBackdropColor(0, 0, 0, 0)
 	-- self.Glow.eclipseBar:SetBackdropBorderColor(0, 0, 0, 0.8)
 			
 	-- self.iconS = eclipseBar:CreateTexture(nil, 'OVERLAY')
-	-- self.iconS:SetPoint("LEFT", eclipseBar, "RIGHT", 4, 2)
+	-- self.iconS:Point("LEFT", eclipseBar, "RIGHT", 4, 2)
 	-- self.iconS:SetHeight(20)
 	-- self.iconS:SetWidth(20)
 	-- self.iconS:SetTexture(select(3,GetSpellInfo(48517)))
 	-- self.iconS:SetVertexColor(unpack(cfg.trdcolor))
 
 	-- self.iconL = eclipseBar:CreateTexture(nil, 'OVERLAY')
-	-- self.iconL:SetPoint("RIGHT", eclipseBar, "LEFT", -4, 2)
+	-- self.iconL:Point("RIGHT", eclipseBar, "LEFT", -4, 2)
 	-- self.iconL:SetHeight(20)
 	-- self.iconL:SetWidth(20)
 	-- self.iconL:SetTexture(select(3,GetSpellInfo(48518)))
 	-- self.iconL:SetVertexColor(unpack(cfg.trdcolor))
 			
 	-- local bgl = CreateFrame("Frame", nil, eclipseBar)
-	-- bgl:SetPoint("TOPLEFT", self.iconL, "TOPLEFT", -10, 10)
-	-- bgl:SetPoint("BOTTOMRIGHT", self.iconL, "BOTTOMRIGHT", 10, -10)
+	-- bgl:Point("TOPLEFT", self.iconL, "TOPLEFT", -10, 10)
+	-- bgl:Point("BOTTOMRIGHT", self.iconL, "BOTTOMRIGHT", 10, -10)
 	-- bgl:SetBackdrop{edgeFile = cfg.glowtex, edgeSize = 10, insets = {left = 3, right = 3, top = 3, bottom = 3}}
 	-- bgl:SetBackdropColor(0,0,0,0)
 	-- bgl:SetBackdropBorderColor(1,1,1,0)
 			
 	-- local bgs = CreateFrame("Frame", nil, eclipseBar)
-	-- bgs:SetPoint("TOPLEFT", self.iconS, "TOPLEFT", -10, 10)
-	-- bgs:SetPoint("BOTTOMRIGHT", self.iconS, "BOTTOMRIGHT", 10, -10)
+	-- bgs:Point("TOPLEFT", self.iconS, "TOPLEFT", -10, 10)
+	-- bgs:Point("BOTTOMRIGHT", self.iconS, "BOTTOMRIGHT", 10, -10)
 	-- bgs:SetBackdrop{edgeFile = cfg.glowtex, edgeSize = 10, insets = {left = 3, right = 3, top = 3, bottom = 3}}
 	-- bgs:SetBackdropColor(0,0,0,0)
 	-- bgs:SetBackdropBorderColor(1,1,1,0)
@@ -218,10 +226,10 @@ end
 			-- self.bgl:SetBackdropBorderColor(1,1,1,0)
 		-- end
 		-- if(self.directionIsLunar) then
-		-- eclipseBarSpark:SetPoint('CENTER', eclipseBar, 'LEFT', 18, -1)
+		-- eclipseBarSpark:Point('CENTER', eclipseBar, 'LEFT', 18, -1)
 		-- eclipseBarSpark:SetText(">>>")
 		-- else
-		-- eclipseBarSpark:SetPoint('CENTER', eclipseBar, 'RIGHT', -12, -1)
+		-- eclipseBarSpark:Point('CENTER', eclipseBar, 'RIGHT', -12, -1)
 		-- eclipseBarSpark:SetText("<<<")
 		-- end
 	-- end
@@ -419,9 +427,9 @@ end
 		-- shadow:Point("TOPLEFT", -4, 12)
 		-- bg:SetAlpha(1)
 		-- if T.lowversion then
-			-- if buffs then buffs:SetPoint("TOPLEFT", self, "TOPLEFT", 0, 34) end
+			-- if buffs then buffs:Point("TOPLEFT", self, "TOPLEFT", 0, 34) end
 		-- else
-			-- if buffs then buffs:SetPoint("TOPLEFT", self, "TOPLEFT", 0, 38) end
+			-- if buffs then buffs:Point("TOPLEFT", self, "TOPLEFT", 0, 38) end
 		-- end				
 	-- else
 		-- txt:Hide()
@@ -429,9 +437,9 @@ end
 		-- shadow:Point("TOPLEFT", -4, 4)
 		-- bg:SetAlpha(0)
 		-- if T.lowversion then
-			-- if buffs then buffs:SetPoint("TOPLEFT", self, "TOPLEFT", 0, 26) end
+			-- if buffs then buffs:Point("TOPLEFT", self, "TOPLEFT", 0, 26) end
 		-- else
-			-- if buffs then buffs:SetPoint("TOPLEFT", self, "TOPLEFT", 0, 30) end
+			-- if buffs then buffs:Point("TOPLEFT", self, "TOPLEFT", 0, 30) end
 		-- end
 	-- end
 -- end
