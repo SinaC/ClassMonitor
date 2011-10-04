@@ -1,6 +1,8 @@
 -- Resource Plugin
 local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
 
+-- TODO: color may be an array with a color by resource
+
 function CreateResourceMonitor(name, text, autohide, anchor, width, height, color)
 	local cmResource = CreateFrame("Frame", name, UIParent)
 	cmResource:CreatePanel("Default", width , height, unpack(anchor))
@@ -48,7 +50,7 @@ function CreateResourceMonitor(name, text, autohide, anchor, width, height, colo
 		self:SetScript("OnUpdate", nil)
 	end
 
-	--cmResource:RegisterEvent("PLAYER_ENTERING_WORLD")
+	cmResource:RegisterEvent("PLAYER_ENTERING_WORLD")
 	cmResource:RegisterEvent("UNIT_DISPLAYPOWER")
 	cmResource:RegisterEvent("PLAYER_REGEN_DISABLED")
 	cmResource:RegisterEvent("PLAYER_REGEN_ENABLED")
@@ -56,6 +58,12 @@ function CreateResourceMonitor(name, text, autohide, anchor, width, height, colo
 	cmResource:SetScript("OnEvent", function(self, event)
 		if event ~= "PLAYER_ENTERING_WORLD" and event ~= "UNIT_DISPLAYPOWER" and event ~= "PLAYER_REGEN_DISABLED" and event ~= "PLAYER_REGEN_ENABLED" and event ~= "UNIT_POWER" then return end
 
+		-- local color = O["color"][pname]
+		-- if color then
+			-- cmPower.sStatus:SetStatusBarColor(unpack(color))
+		-- end
+
+		--print("Resource: event:"..event)
 		local p, pname = UnitPowerType("player")
 		local valueMax = UnitPowerMax("player", p)
 		cmResource.status:SetStatusBarColor(unpack(color))

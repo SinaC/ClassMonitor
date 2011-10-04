@@ -80,7 +80,10 @@ CMSettings = {
 			},
 			width = 262,
 			height = 10,
-			color = {1, 0.96, 0.41, 1},
+			color = {1, 0.96, 0.41, 1}, -- TODO: a color by resource
+			--colors = { ["MANA"] = {0, 0.44, 0.87, 1},
+			-- ["RAGE"] = {0.77, 0.13, 0.23, 1},
+			-- ["ENERGY"] = {1, 0.96, 0.41, 1} }
 		},
 		{
 			name = "CM_COMBO",

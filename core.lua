@@ -34,7 +34,7 @@ local function SetMultipleAnchorHandler(frame, anchors)
 		if event ~= "PLAYER_TALENT_UPDATE" and event ~= "PLAYER_ENTERING_WORLD" then return end
 		local anchor = GetAnchor( anchors )
 		if not anchor then return end
-		print("Anchor:"..event.." "..frame:GetName())
+		--print("Anchor:"..event.." "..frame:GetName())
 		frame:Point(unpack(anchor))
 	end
 	frame:RegisterEvent("PLAYER_TALENT_UPDATE")
@@ -67,7 +67,7 @@ for i, section in ipairs(settings) do
 	local width = section.width or 85
 	local height = section.height or 15
 
-	Info("section:"..name)
+	--Info("section:"..name)
 	if name and kind and anchor then
 		-- for AURA, POWER and COMBO, if colors doesn't exist create it using color for each entry
 		-- if color doesn't exist, use RAID_CLASS_COLORS[T.myclass] -> convert in a list { r, g, b, 1 }
@@ -77,7 +77,7 @@ for i, section in ipairs(settings) do
 			local autohide = section.autohide or false
 			local color = section.color or GetRaidClassColor()
 
-			frame = CreateResourceMonitor(name, text, autohide, anchor, width, height, color)
+			frame = CreateResourceMonitor(name, text, autohide, anchor, width, height, color) -- OPTIONAL  -- TODO: a color by resource
 		elseif ( kind == "COMBO" ) then
 			local spacing = section.spacing or 3
 			local color = section.color or GetRaidClassColor()
