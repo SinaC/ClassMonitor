@@ -21,30 +21,35 @@ function CreateResourceMonitor(name, text, autohide, anchor, width, height, colo
 		cmResource.text:SetShadowOffset(1.25, -1.25)
 	end
 
-	local function OnUpdate()
-		local value = UnitPower("player")
-		cmResource.status:SetValue(value)
-		if text == true then
-			local p = UnitPowerType("player")
-			if p == SPELL_POWER_MANA then
-				local valueMax = UnitPowerMax("player", p)
-				if value == valueMax then
-					if value > 10000 then
-						cmResource.text:SetFormattedText("%.1fk", value/1000)
+	cmResource.timeSinceLastUpdate = GetTime()
+	local function OnUpdate(self, elapsed)
+		cmResource.timeSinceLastUpdate = cmResource.timeSinceLastUpdate + elapsed
+		if cmResource.timeSinceLastUpdate > 0.2 then
+			local value = UnitPower("player")
+			cmResource.status:SetValue(value)
+			if text == true then
+				local p = UnitPowerType("player")
+				if p == SPELL_POWER_MANA then
+					local valueMax = UnitPowerMax("player", p)
+					if value == valueMax then
+						if value > 10000 then
+							cmResource.text:SetFormattedText("%.1fk", value/1000)
+						else
+							cmResource.text:SetText(value)
+						end
 					else
-						cmResource.text:SetText(value)
+						local percentage = (value * 100) / valueMax
+						if value > 10000 then
+							cmResource.text:SetFormattedText("%2d%% - %.1fk", percentage, value/1000 )
+						else
+							cmResource.text:SetFormattedText("%2d%% - %u", percentage, value )
+						end
 					end
 				else
-					local percentage = (value * 100) / valueMax
-					if value > 10000 then
-						cmResource.text:SetFormattedText("%2d%% - %.1fk", percentage, value/1000 )
-					else
-						cmResource.text:SetFormattedText("%2d%% - %u", percentage, value )
-					end
+					cmResource.text:SetText(value)
 				end
-			else
-				cmResource.text:SetText(value)
 			end
+			cmResource.timeSinceLastUpdate = 0
 		end
 	end
 
@@ -53,11 +58,12 @@ function CreateResourceMonitor(name, text, autohide, anchor, width, height, colo
 	cmResource:RegisterEvent("PLAYER_REGEN_DISABLED")
 	cmResource:RegisterEvent("PLAYER_REGEN_ENABLED")
 	cmResource:RegisterEvent("UNIT_POWER")
-	cmResource:SetScript("OnEvent", function(self, event)
-		if event ~= "PLAYER_ENTERING_WORLD" and event ~= "UNIT_DISPLAYPOWER" and event ~= "PLAYER_REGEN_DISABLED" and event ~= "PLAYER_REGEN_ENABLED" --[[and event ~= "UNIT_POWER"--]] then return end
+	cmResource:RegisterEvent("UNIT_MAXPOWER")
+	cmResource:SetScript("OnEvent", function(self, event, arg1)
+		if event ~= "PLAYER_ENTERING_WORLD" and event ~= "UNIT_DISPLAYPOWER" and event ~= "PLAYER_REGEN_DISABLED" and event ~= "PLAYER_REGEN_ENABLED" and event ~= "UNIT_MAXPOWER" and event ~= "UNIT_POWER" then return end
 
 		--print("Resource: event:"..event)
-		if event == "PLAYER_ENTERING_WORLD" or event == "UNIT_DISPLAYPOWER" then
+		if event == "PLAYER_ENTERING_WORLD" or ((event == "UNIT_DISPLAYPOWER" or event == "UNIT_MAXPOWER") and arg1 == "player") then
 			local resource, resourceName = UnitPowerType("player")
 			local valueMax = UnitPowerMax("player", resource)
 			-- use colors[resourceName] if defined, else use default resource color or class color

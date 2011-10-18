@@ -131,10 +131,15 @@ function CreateEclipseMonitor(name, anchor, width, height, colors)
 	cmEclipse:RegisterEvent("UNIT_AURA")
 	-- cmEclipse:RegisterEvent("ECLIPSE_DIRECTION_CHANGE", EclipseDirectionChange)
 	cmEclipse:SetScript("OnEvent", function(self, event, arg1, arg2)
-		if event == "UNIT_POWER" and arg2 == "ECLIPSE" then UnitPower(cmEclipse)
-		elseif event == "UPDATE_VISIBILITY" or event == "PLAYER_TALENT_UPDATE" or event == "UPDATE_SHAPESHIFT_FORM" then UpdateVisibility(cmEclipse)
-		elseif event == "UNIT_AURA" then UnitAura(cmEclipse) end
-		--elseif event == "ECLIPSE_DIRECTION_CHANGE" then EclipseDirectionChange(arg1, cmEclipse)
+		if event == "UNIT_POWER" and arg1 == "player" and arg2 == "ECLIPSE" then
+			UnitPower(cmEclipse)
+		elseif event == "UPDATE_VISIBILITY" or event == "PLAYER_TALENT_UPDATE" or event == "UPDATE_SHAPESHIFT_FORM" then
+			UpdateVisibility(cmEclipse)
+		elseif event == "UNIT_AURA" and arg1 == "player" then 
+			UnitAura(cmEclipse) 
+		--elseif event == "ECLIPSE_DIRECTION_CHANGE" then
+		--	EclipseDirectionChange(arg1, cmEclipse)
+		end
 	end)
 
 	return cmEclipse

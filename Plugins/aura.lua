@@ -32,8 +32,9 @@ function CreateAuraMonitor(name, spellID, filter, count, anchor, width, height, 
 
 	cmAMs[1]:RegisterEvent("PLAYER_ENTERING_WORLD")
 	cmAMs[1]:RegisterEvent("UNIT_AURA")
-	cmAMs[1]:SetScript("OnEvent", function(self, event)
+	cmAMs[1]:SetScript("OnEvent", function(self, event, arg1)
 		if event ~= "PLAYER_ENTERING_WORLD" and event ~= "UNIT_AURA" then return end
+		if event == "UNIT_AURA" and arg1 ~= "player" then return end
 
 		local found = false
 		for i = 1, 40, 1 do

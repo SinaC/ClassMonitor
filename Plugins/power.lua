@@ -31,8 +31,9 @@ function CreatePowerMonitor(name, powerType, count, anchor, width, height, spaci
 
 	cmPMs[1]:RegisterEvent("PLAYER_ENTERING_WORLD")
 	cmPMs[1]:RegisterEvent("UNIT_POWER")
-	cmPMs[1]:SetScript("OnEvent", function(self, event)
+	cmPMs[1]:SetScript("OnEvent", function(self, event, arg1)
 		if event ~= "UNIT_POWER" and event ~= "PLAYER_ENTERING_WORLD" then return end
+		if event == "UNIT_POWER" and arg1 ~= "player" then return end
 
 		local value = UnitPower("player", powerType)
 		if value and value > 0 then
