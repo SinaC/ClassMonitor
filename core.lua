@@ -1,9 +1,16 @@
--- TODO
---	instead of adding MultipleAnchorHandler to each frame, create core frame, store a list of frames created by plugin and add event to core frame
---	add a visibility function (we dont want to see resource bar while in travel/flying form) [same system as MultipleAnchorHandler]
---	each plugin frame should be children of core frame
+-- TO TEST:
+-- ========
+-- deletion of non-class specific settings
+
+-- TODO:
+-- =====
+-- add a visibility function (we dont want to see resource bar while in travel/flying form)
+-- each plugin frame should be children of core frame
+-- plugin should be load-on-demand
 
 local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
+
+local CMDebug = false
 
 local settings = CMSettings[T.myclass]
 if not settings then return end
@@ -47,6 +54,16 @@ local function CreateColorArray(color, count)
 		tinsert(colors, color)
 	end
 	return colors
+end
+
+---------------------------------------
+-- Main
+
+-- Remove non-class specific spell-list
+for class in pairs(CMSettings) do
+	if class ~= T.myclass then
+		CMSettings[class] = nil
+	end
 end
 
 -- Create monitor frames
