@@ -7,13 +7,12 @@ function CreateRunesMonitor(name, updatethreshold, autohide, orientation, anchor
 	-- Create the runes
 	local runes = {}
 	for i = 1, 6 do
-		local rune
+		local rune = CreateFrame("Frame", name, UIParent)
+		rune:CreatePanel("Default", width, height, unpack(anchor))
 		if i == 1 then
-			rune = CreateFrame("Frame", name, UIParent)
-			rune:CreatePanel("Default", width, height, unpack(anchor))
+			rune:Point(unpack(anchor))
 		else
-			rune = CreateFrame("Frame", name.."_"..i, UIParent)
-			rune:CreatePanel("Default", width, height, "LEFT", runes[i-1], "RIGHT", spacing, 0)
+			rune:Point("LEFT", runes[i-1], "RIGHT", spacing, 0)
 		end
 		rune.status = CreateFrame("StatusBar", "cmRunesRuneStatus"..i, rune)
 		rune.status:SetStatusBarTexture(C.media.normTex)

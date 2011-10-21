@@ -5,13 +5,12 @@ local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C 
 function CreatePowerMonitor(name, powerType, count, anchor, width, height, spacing, colors, filled)
 	local cmPMs = {}
 	for i = 1, count do
-		local cmPM
+		local cmPM = CreateFrame("Frame", name, UIParent) -- name is used for 1st power point
+		cmPM:CreatePanel("Default", width, height, unpack(anchor))
 		if i == 1 then
-			cmPM = CreateFrame("Frame", name, UIParent) -- name is used for 1st power point
-			cmPM:CreatePanel("Default", width, height, unpack(anchor))
+			cmPM:Point(unpack(anchor))
 		else
-			cmPM = CreateFrame("Frame", name.."_"..i, UIParent)
-			cmPM:CreatePanel("Default", width, height, "LEFT", cmPMs[i-1], "RIGHT", spacing, 0)
+			cmPM:Point("LEFT", cmPMs[i-1], "RIGHT", spacing, 0)
 		end
 		if filled then
 			cmPM.status = CreateFrame("StatusBar", name.."_status_"..i, cmPM)

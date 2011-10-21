@@ -6,13 +6,12 @@ function CreateAuraMonitor(name, spellID, filter, count, anchor, width, height, 
 	local aura = GetSpellInfo(spellID)
 	local cmAMs = {}
 	for i = 1, count do
-		local cmAM
+		local cmAM = CreateFrame("Frame", name, UIParent) -- name is used for 1st power point
+		cmAM:CreatePanel("Default", width, height, unpack(anchor))
 		if i == 1 then
-			cmAM = CreateFrame("Frame", name, UIParent) -- name is used for 1st power point
-			cmAM:CreatePanel("Default", width, height, unpack(anchor))
+			cmAM:Point(unpack(anchor))
 		else
-			cmAM = CreateFrame("Frame", name.."_"..i, UIParent)
-			cmAM:CreatePanel("Default", width, height, "LEFT", cmAMs[i-1], "RIGHT", spacing, 0)
+			cmAM:Point("LEFT", cmAMs[i-1], "RIGHT", spacing, 0)
 		end
 		if filled then
 			cmAM.status = CreateFrame("StatusBar", name.."_status_"..i, cmAM)
