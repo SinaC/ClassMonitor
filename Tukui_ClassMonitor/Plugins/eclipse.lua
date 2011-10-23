@@ -1,10 +1,12 @@
 -- Eclipse plugin
 local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
 
-local function UnitPower(cmEclipse)
+local function UnitPowerHandler(cmEclipse)
+	print("UnitPower:"..tostring(cmEclipse))
 	local power = UnitPower("player", SPELL_POWER_ECLIPSE)
 	local maxPower = UnitPowerMax("player", SPELL_POWER_ECLIPSE)
 
+	print("Power:"..tostring(power).." / "..tostring(maxPower))
 	if cmEclipse.cmLunar then
 		cmEclipse.cmLunar:SetMinMaxValues(-maxPower, maxPower)
 		cmEclipse.cmLunar:SetValue(power)
@@ -16,8 +18,9 @@ local function UnitPower(cmEclipse)
 	end
 end
 
-local function UpdateVisibility(cmEclipse)
-	-- check form/mastery
+local function UpdateVisibilityHandler(cmEclipse)
+	print("UpdateVisibility:"..tostring(cmEclipse))
+	-- -- check form/mastery
 	local showBar = false
 	local form = GetShapeshiftFormID()
 	if not form then
@@ -29,6 +32,7 @@ local function UpdateVisibility(cmEclipse)
 		showBar = true
 	end
 
+	print("showBar:"..tostring(showBar))
 	if showBar then
 		cmEclipse:Show()
 	else
@@ -36,22 +40,32 @@ local function UpdateVisibility(cmEclipse)
 	end
 end
 
-local function UnitAura(cmEclipse)
+local function UnitAuraHandler(cmEclipse, colors)
+	print("UnitAura:"..tostring(cmEclipse))
 	local hasSolarEclipse = false
 	local hasLunarEclipse = false
 
 	for i = 1, 40, 1 do
-		local _, _, _, _, _, _, _, _, _, _, spellID = UnitAura("player", i, 'HELPFUL')
-		if not spellID then break end
+		local name, _, _, _, _, _, _, _, _, _, spellID = UnitAura("player", i, "HELPFUL|PLAYER")
+		if not name then break end
 
 		if spellID == ECLIPSE_BAR_SOLAR_BUFF_ID then
+			print("ECLIPSE_BAR_SOLAR_BUFF_ID")
 			hasSolarEclipse = true
 		elseif spellID == ECLIPSE_BAR_LUNAR_BUFF_ID then
+			print("ECLIPSE_BAR_LUNAR_BUFF_ID")
 			hasLunarEclipse = true
 		end
 	end
 
 	-- TODO: change border while in eclipse
+	if hasSolarEclipse then
+		cmEclipse:SetBackdropBorderColor(unpack(colors[1]))
+	elseif hasLunarEclipse then
+		cmEclipse:SetBackdropBorderColor(unpack(colors[2]))
+	else
+		cmEclipse:SetBackdropBorderColor(unpack(C.general.bordercolor))
+	end
 
 	-- if hasLunarEclipse then
         -- self.glow:ClearAllPoints();
@@ -87,8 +101,8 @@ local function UnitAura(cmEclipse)
         -- self.glow:SetAlpha(0);
     -- end
 
-	cmEclipse.hasSolarEclipse = hasSolarEclipse
-	cmEclipse.hasLunarEclipse = hasLunarEclipse
+	-- cmEclipse.hasSolarEclipse = hasSolarEclipse
+	-- cmEclipse.hasLunarEclipse = hasLunarEclipse
 end
 
 -- local function EclipseDirectionChange(isLunar, cmEclipse)
@@ -96,33 +110,31 @@ end
 -- end
 
 function CreateEclipseMonitor(name, anchor, width, height, colors)
-	local cmEclipse = CreateFrame("Frame", name, self)
-	cmEclipse:Point(unpack(anchor))
-	cmEclipse:Size(width*2, height)
-	cmEclipse:SetFrameStrata("MEDIUM")
-	cmEclipse:SetFrameLevel(8)
+	print("CreateEclipseMonitor:"..tostring(width).."  "..tostring(height))
+	local cmEclipse = CreateFrame("Frame", name, UIParent)
+	cmEclipse:CreatePanel("Default", width, height, unpack(anchor))
+	--cmEclipse:SetFrameStrata("MEDIUM")
+	--cmEclipse:SetFrameLevel(8)
 	cmEclipse:SetTemplate("Default")
-	cmEclipse:SetBackdropBorderColor(0,0,0,0)
+	--cmEclipse:SetBackdropBorderColor(0,0,0,0)
 	--cmEclipse:SetScript("OnShow", function() T.DruidBarDisplay(self, false) end)
 	--cmEclipse:SetScript("OnHide", function() T.DruidBarDisplay(self, false) end)
 
 	local cmLunar = CreateFrame("StatusBar", name.."_lunar", cmEclipse)
-	--cmSolar:Point("LEFT", cmLunar:GetStatusBarTexture(), "RIGHT", 0, 0)
-	cmLunar:Point("TOPLEFT", cmEclipse, "TOPLEFT", 2, -2)
-	cmLunar:Point("BOTTOMLEFT", cmEclipse, "BOTTOMLEFT", 2, 2)
-	cmLunar:Size(width, height)
+	cmLunar:Point('TOPLEFT', cmEclipse, 'TOPLEFT', 2, -2)
+	cmLunar:Size(cmEclipse:GetWidth()-4, cmEclipse:GetHeight()-4)
 	cmLunar:SetStatusBarTexture(C.media.normTex)
 	cmLunar:SetStatusBarColor(unpack(colors[1]))
 	cmEclipse.cmLunar = cmLunar
 
 	local cmSolar = CreateFrame("StatusBar", name.."_solar", cmEclipse)
-	--cmSolar:Point("LEFT", cmLunar:GetStatusBarTexture(), "RIGHT", 0, 0)
-	cmSolar:Point("TOPRIGHT", cmEclipse, "TOPRIGHT", -2, -2)
-	cmSolar:Point("BOTTOMRIGHT", cmEclipse, "BOTTOMRIGHT", -2, 2)
-	cmSolar:Size(width, height)
+	cmSolar:Point('LEFT', cmLunar:GetStatusBarTexture(), 'RIGHT', 0, 0)
+	cmSolar:Size(cmEclipse:GetWidth()-4, cmEclipse:GetHeight()-4)
 	cmSolar:SetStatusBarTexture(C.media.normTex)
 	cmSolar:SetStatusBarColor(unpack(colors[2]))
 	cmEclipse.cmSolar = cmSolar
+
+	UnitPowerHandler(cmEclipse)
 
 	cmEclipse:RegisterEvent("UNIT_POWER")
 	cmEclipse:RegisterEvent("UPDATE_VISIBILITY")
@@ -131,14 +143,15 @@ function CreateEclipseMonitor(name, anchor, width, height, colors)
 	cmEclipse:RegisterEvent("UNIT_AURA")
 	-- cmEclipse:RegisterEvent("ECLIPSE_DIRECTION_CHANGE", EclipseDirectionChange)
 	cmEclipse:SetScript("OnEvent", function(self, event, arg1, arg2)
+		--print("OnEvent:"..event.." "..tostring(arg1).."  "..tostring(arg2))
 		if event == "UNIT_POWER" and arg1 == "player" and arg2 == "ECLIPSE" then
-			UnitPower(cmEclipse)
+			UnitPowerHandler(self)
 		elseif event == "UPDATE_VISIBILITY" or event == "PLAYER_TALENT_UPDATE" or event == "UPDATE_SHAPESHIFT_FORM" then
-			UpdateVisibility(cmEclipse)
+			UpdateVisibilityHandler(self)
 		elseif event == "UNIT_AURA" and arg1 == "player" then 
-			UnitAura(cmEclipse) 
+			UnitAuraHandler(self, colors) 
 		--elseif event == "ECLIPSE_DIRECTION_CHANGE" then
-		--	EclipseDirectionChange(arg1, cmEclipse)
+		--	EclipseDirectionChange(arg1, self)
 		end
 	end)
 

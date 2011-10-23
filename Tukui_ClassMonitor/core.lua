@@ -134,14 +134,14 @@ for i, section in ipairs(settings) do
 			end
 		elseif kind == "ECLIPSE" then
 			-- TODO
-			WARNING("section:"..name..": Eclipse not yet implemented")
-			-- local colors = section.colors
+			--WARNING("section:"..name..": Eclipse not yet implemented")
+			local colors = section.colors
 
-			-- if colors then
-				-- frame = CreateEclipseMonitor(name, anchor, width, height, colors)
-			-- else
-				-- WARNING("section:"..name..": missing colors")
-			-- end
+			if colors then
+				frame = CreateEclipseMonitor(name, anchor, width, height, colors)
+			else
+				WARNING("section:"..name..": missing colors")
+			end
 		else
 			WARNING("section:"..name..": invalid kind:"..kind)
 		end
