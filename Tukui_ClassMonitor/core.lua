@@ -12,7 +12,7 @@ local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C 
 
 local CMDebug = false
 
-local settings = CMSettings[T.myclass]
+local settings = C["classmonitor"][T.myclass]
 if not settings then return end
 
 local function WARNING(line)
@@ -60,9 +60,9 @@ end
 -- Main
 
 -- Remove non-class specific spell-list
-for class in pairs(CMSettings) do
+for class in pairs(C["classmonitor"]) do
 	if class ~= T.myclass then
-		CMSettings[class] = nil
+		C["classmonitor"][class] = nil
 	end
 end
 

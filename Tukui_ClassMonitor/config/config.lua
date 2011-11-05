@@ -1,4 +1,6 @@
-CMSettings = {
+local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
+
+C["classmonitor"] = {
 --[[
 	name = frame name (can be used in anchor)
 	kind = POWER | AURA | RESOURCE(mana/runic/energy/focus/rage) | ECLIPSE | COMBO | RUNES
@@ -78,11 +80,7 @@ CMSettings = {
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchors = { 
-				{ "CENTER", UIParent, "CENTER", 0, -120 }, -- Balance
-				{ "CENTER", UIParent, "CENTER", 0, -120 }, -- Feral
-				{ "CENTER", UIParent, "CENTER", -500, 290 } -- Restoration
-			},
+			anchor = { "CENTER", UIParent, "CENTER", 0, -120 },
 			width = 262,
 			height = 10,
 		},
@@ -120,11 +118,7 @@ CMSettings = {
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchors = { 
-				{"CENTER", UIParent, "CENTER", -543, 290}, -- Holy
-				{"CENTER", UIParent, "CENTER", -0, -100}, -- Protection
-				{"CENTER", UIParent, "CENTER", -0, -100} -- Retribution
-			},
+			anchor = {"CENTER", UIParent, "CENTER", -0, -100},
 			width = 261,
 			height = 10,
 		},
