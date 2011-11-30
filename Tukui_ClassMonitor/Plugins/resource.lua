@@ -67,7 +67,7 @@ function CreateResourceMonitor(name, text, autohide, anchor, width, height, colo
 			local resource, resourceName = UnitPowerType("player")
 			local valueMax = UnitPowerMax("player", resource)
 			-- use colors[resourceName] if defined, else use default resource color or class color
-			local color = (colors and (colors[resourceName] or colors[1])) or T.oUF_colors.power[resourceName] or T.oUF_colors.class[T.myclass]
+			local color = (colors and (colors[resourceName] or colors[1])) or T.UnitColor.power[resourceName] or T.UnitColor.class[T.myclass]
 			cmResource.status:SetStatusBarColor(unpack(color))
 			cmResource.status:SetMinMaxValues(0, valueMax)
 		end

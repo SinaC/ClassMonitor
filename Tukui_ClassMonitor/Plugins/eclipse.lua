@@ -2,11 +2,11 @@
 local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
 
 local function UnitPowerHandler(cmEclipse)
-	print("UnitPower:"..tostring(cmEclipse))
+	--print("UnitPower:"..tostring(cmEclipse))
 	local power = UnitPower("player", SPELL_POWER_ECLIPSE)
 	local maxPower = UnitPowerMax("player", SPELL_POWER_ECLIPSE)
 
-	print("Power:"..tostring(power).." / "..tostring(maxPower))
+	--print("Power:"..tostring(power).." / "..tostring(maxPower))
 	if cmEclipse.cmLunar then
 		cmEclipse.cmLunar:SetMinMaxValues(-maxPower, maxPower)
 		cmEclipse.cmLunar:SetValue(power)
@@ -19,7 +19,7 @@ local function UnitPowerHandler(cmEclipse)
 end
 
 local function UpdateVisibilityHandler(cmEclipse)
-	print("UpdateVisibility:"..tostring(cmEclipse))
+	--print("UpdateVisibility:"..tostring(cmEclipse))
 	-- -- check form/mastery
 	local showBar = false
 	local form = GetShapeshiftFormID()
@@ -32,7 +32,7 @@ local function UpdateVisibilityHandler(cmEclipse)
 		showBar = true
 	end
 
-	print("showBar:"..tostring(showBar))
+	--print("showBar:"..tostring(showBar))
 	if showBar then
 		cmEclipse:Show()
 	else
@@ -41,7 +41,7 @@ local function UpdateVisibilityHandler(cmEclipse)
 end
 
 local function UnitAuraHandler(cmEclipse, colors)
-	print("UnitAura:"..tostring(cmEclipse))
+	--print("UnitAura:"..tostring(cmEclipse))
 	local hasSolarEclipse = false
 	local hasLunarEclipse = false
 
@@ -50,10 +50,10 @@ local function UnitAuraHandler(cmEclipse, colors)
 		if not name then break end
 
 		if spellID == ECLIPSE_BAR_SOLAR_BUFF_ID then
-			print("ECLIPSE_BAR_SOLAR_BUFF_ID")
+			--print("ECLIPSE_BAR_SOLAR_BUFF_ID")
 			hasSolarEclipse = true
 		elseif spellID == ECLIPSE_BAR_LUNAR_BUFF_ID then
-			print("ECLIPSE_BAR_LUNAR_BUFF_ID")
+			--print("ECLIPSE_BAR_LUNAR_BUFF_ID")
 			hasLunarEclipse = true
 		end
 	end
@@ -110,7 +110,7 @@ end
 -- end
 
 function CreateEclipseMonitor(name, anchor, width, height, colors)
-	print("CreateEclipseMonitor:"..tostring(width).."  "..tostring(height))
+	--print("CreateEclipseMonitor:"..tostring(width).."  "..tostring(height))
 	local cmEclipse = CreateFrame("Frame", name, UIParent)
 	cmEclipse:CreatePanel("Default", width, height, unpack(anchor))
 	--cmEclipse:SetFrameStrata("MEDIUM")

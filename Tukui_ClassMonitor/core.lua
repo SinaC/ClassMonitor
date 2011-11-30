@@ -78,7 +78,7 @@ for i, section in ipairs(settings) do
 	DEBUG("section:"..name)
 	if name and kind and anchor then
 		-- for AURA, POWER and COMBO, if colors doesn't exist create it using color for each entry
-		-- if color doesn't exist, use T.oUF_colors.class[T.myclass]
+		-- if color doesn't exist, use T.UnitColor.class[T.myclass]
 		local frame
 		if kind == "RESOURCE" then
 			local text = section.text or true
@@ -88,7 +88,7 @@ for i, section in ipairs(settings) do
 			frame = CreateResourceMonitor(name, text, autohide, anchor, width, height, colors)
 		elseif kind == "COMBO" then
 			local spacing = section.spacing or 3
-			local color = section.color or T.oUF_colors.class[T.myclass]
+			local color = section.color or T.UnitColor.class[T.myclass]
 			local colors = section.colors or CreateColorArray(color, 5)
 
 			frame = CreateComboMonitor(name, anchor, width, height, spacing, colors, filled)
@@ -96,7 +96,7 @@ for i, section in ipairs(settings) do
 			local powerType = section.powerType
 			local count = section.count
 			local spacing = section.spacing or 3
-			local color = section.color or T.oUF_colors.class[T.myclass]
+			local color = section.color or T.UnitColor.class[T.myclass]
 			local colors = section.colors or CreateColorArray(color, count)
 			local filled = section.filled or false
 
@@ -110,7 +110,7 @@ for i, section in ipairs(settings) do
 			local filter = section.filter
 			local count = section.count
 			local spacing = section.spacing
-			local color = section.color or T.oUF_colors.class[T.myclass]
+			local color = section.color or T.UnitColor.class[T.myclass]
 			local colors = section.colors or CreateColorArray(color, count)
 			local filled = section.filled or false
 
