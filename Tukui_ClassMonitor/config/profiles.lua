@@ -8,11 +8,16 @@ if T.myname == "Meuhhnon" then
 		--{ "CENTER", UIParent, "CENTER", -500, 290 } -- Restoration
 		{ "CENTER", UIParent, "CENTER", 0, -140 } -- Restoration
 	}
-elseif T.myname == "Enimouchet" then
+end
+if T.myname == "Enimouchet" then
 	C["classmonitor"]["PALADIN"][1].anchor = nil -- RESOURCE
 	C["classmonitor"]["PALADIN"][1].anchors = {
-		{"CENTER", UIParent, "CENTER", -543, 290}, -- Holy
+		--{"CENTER", UIParent, "CENTER", -543, 290}, -- Holy
+		{ "CENTER", UIParent, "CENTER", 0, -140 }, -- Holy
 		{"CENTER", UIParent, "CENTER", -0, -100}, -- Protection
 		{"CENTER", UIParent, "CENTER", -0, -100} -- Retribution
 	}
+end
+if T.myname == "Nyara" then
+	C["classmonitor"]["ROGUE"][1].anchor = { "CENTER", UIParent, "CENTER", 0, -150 } -- RESOURCE
 end
