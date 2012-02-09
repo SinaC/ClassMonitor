@@ -46,8 +46,14 @@ function CreateRunesMonitor(name, updatethreshold, autohide, orientation, anchor
 		self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
 
 		if self.TimeSinceLastUpdate > updatethreshold then
+			local runesReady = 0
 			for i = 1, 6 do
-				UpdateRune(i, GetRuneCooldown(runemap[i]))
+				local start, duration, finished = GetRuneCooldown(runemap[i])
+				UpdateRune(i, start, duration, finished)
+				if finished then runesReady = runesReady + 1 end
+			end
+			if runesReady == 6 and not InCombatLockdown() then
+				OnUpdate:SetScript("OnUpdate", nil)
 			end
 			self.TimeSinceLastUpdate = 0
 		end
@@ -67,7 +73,7 @@ function CreateRunesMonitor(name, updatethreshold, autohide, orientation, anchor
 			if autohide then
 				UIFrameFadeOut(self, (0.3 * (0+self:GetAlpha())), self:GetAlpha(), 0)
 			end
-			OnUpdate:SetScript("OnUpdate", nil)
+			--OnUpdate:SetScript("OnUpdate", nil)
 		elseif event == "PLAYER_ENTERING_WORLD" then
 			RuneFrame:ClearAllPoints()
 			if not InCombatLockdown() then

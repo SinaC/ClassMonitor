@@ -160,7 +160,7 @@ C["classmonitor"] = {
 	},
 	["ROGUE"] = {
 		{
-			name = "CM_MANA",
+			name = "CM_ENERGY",
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
@@ -171,7 +171,7 @@ C["classmonitor"] = {
 		{
 			name = "CM_COMBO",
 			kind = "COMBO",
-			anchor = {"BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3},
+			anchor = {"BOTTOMLEFT", "CM_ENERGY", "TOPLEFT", 0, 3},
 			width = 50,
 			height = 15,
 			spacing = 3,
