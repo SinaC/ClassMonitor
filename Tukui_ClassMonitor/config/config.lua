@@ -324,6 +324,7 @@ C["classmonitor"] = {
 		{
 			name = "CM_FULMINATION",
 			kind = "AURA",
+			spec = 1,  -- elem shaman
 			spellID = 324,
 			filter = "HELPFUL",
 			count = 9,
@@ -337,6 +338,7 @@ C["classmonitor"] = {
 		{
 			name = "CM_MAELSTROMM",
 			kind = "AURA",
+			spec = 2,  -- enhancement shaman
 			spellID = 53817,
 			filter = "HELPFUL",
 			count = 5,

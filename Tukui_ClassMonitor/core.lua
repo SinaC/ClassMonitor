@@ -74,6 +74,7 @@ for i, section in ipairs(settings) do
 	local anchor = section.anchor or GetAnchor(anchors)
 	local width = section.width or 85
 	local height = section.height or 10
+	local spec = section.spec or "all"
 
 	DEBUG("section:"..name)
 	if name and kind and anchor then
@@ -97,7 +98,7 @@ for i, section in ipairs(settings) do
 			local color = section.color or T.UnitColor.class[T.myclass]
 			local colors = section.colors or CreateColorArray(color, 5)
 
-			frame = CreateComboMonitor(name, anchor, width, height, spacing, colors, filled)
+			frame = CreateComboMonitor(name, anchor, width, height, spacing, colors, filled, spec)
 		elseif kind == "POWER" then
 			local powerType = section.powerType
 			local count = section.count
@@ -107,7 +108,7 @@ for i, section in ipairs(settings) do
 			local filled = section.filled or false
 
 			if powerType and count then
-				frame = CreatePowerMonitor(name, powerType, count, anchor, width, height, spacing, colors, filled )
+				frame = CreatePowerMonitor(name, powerType, count, anchor, width, height, spacing, colors, filled)
 			else
 				WARNING("section:"..name..":"..(powerType and "" or " missing powerType")..(count and "" or " missing count"))
 			end
@@ -121,7 +122,7 @@ for i, section in ipairs(settings) do
 			local filled = section.filled or false
 
 			if spellID and filter and count then
-				frame = CreateAuraMonitor(name, spellID, filter, count, anchor, width, height, spacing, colors, filled)
+				frame = CreateAuraMonitor(name, spellID, filter, count, anchor, width, height, spacing, colors, filled, spec)
 			else
 				WARNING("section:"..name..":"..(spellID and "" or " missing spellID")..(filter and "" or " missing filter")..(count and "" or " missing count"))
 			end
