@@ -73,7 +73,7 @@ for i, section in ipairs(settings) do
 	local anchors = section.anchors
 	local anchor = section.anchor or GetAnchor(anchors)
 	local width = section.width or 85
-	local height = section.height or 15
+	local height = section.height or 10
 
 	DEBUG("section:"..name)
 	if name and kind and anchor then
@@ -86,6 +86,12 @@ for i, section in ipairs(settings) do
 			local colors = section.colors or (section.color and {section.color})
 
 			frame = CreateResourceMonitor(name, text, autohide, anchor, width, height, colors)
+		elseif kind == "HEALTH" then
+			local text = section.text or true
+			local autohide = section.autohide or false
+			local colors = section.colors or (section.color and {section.color})
+
+			frame = CreateHealthMonitor(name, text, autohide, anchor, width, height, colors)
 		elseif kind == "COMBO" then
 			local spacing = section.spacing or 3
 			local color = section.color or T.UnitColor.class[T.myclass]
