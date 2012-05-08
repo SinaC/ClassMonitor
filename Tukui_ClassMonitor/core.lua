@@ -98,7 +98,7 @@ for i, section in ipairs(settings) do
 			local color = section.color or T.UnitColor.class[T.myclass]
 			local colors = section.colors or CreateColorArray(color, 5)
 
-			frame = CreateComboMonitor(name, anchor, width, height, spacing, colors, filled, spec)
+			frame = CreateComboMonitor(name, anchor, width, height, spacing, colors, filled)
 		elseif kind == "POWER" then
 			local powerType = section.powerType
 			local count = section.count
