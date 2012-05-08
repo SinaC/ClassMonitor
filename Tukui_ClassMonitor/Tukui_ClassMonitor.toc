@@ -1,5 +1,5 @@
 ## Interface: 40300
-## Version: 2.42
+## Version: 2.43
 ## Author: SinaC
 ## Title: |cffC495DDTukui|r Class Monitor
 ## Credits: Smelly, Hydra, Krevlorne, Ildyria

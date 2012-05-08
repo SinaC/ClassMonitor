@@ -10,7 +10,7 @@
 
 local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
 
-local CMDebug = false
+local CMDebug = true
 
 local settings = C["classmonitor"][T.myclass]
 if not settings then return end
@@ -145,6 +145,16 @@ for i, section in ipairs(settings) do
 
 			if colors then
 				frame = CreateEclipseMonitor(name, anchor, width, height, colors)
+			else
+				WARNING("section:"..name..": missing colors")
+			end
+		elseif kind == "TOTEM" then
+			local count = section.count
+			local spacing = section.spacing
+			local colors = section.colors or CreateColorArray(color, count)
+
+			if colors then
+				frame = CreateTotemMonitor(name, count, anchor, width, height, spacing, colors)
 			else
 				WARNING("section:"..name..": missing colors")
 			end

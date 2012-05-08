@@ -355,5 +355,21 @@ C["classmonitor"] = {
 		-- => x = 12 + 5k and y = 9k + 24
 		-- using k = 3 we have x = 27 and y = 51
 		-- and z = 9 x 27 + 24 = 5 x 51 + 12 = 267
+		{
+			name = "CM_TOTEMS",
+			kind = "TOTEM",
+			count = 4,
+			anchor = {"TOPLEFT", "CM_MANA", "BOTTOMLEFT", 0, -3},
+			width = 66,
+			height = 10,
+			spacing = 1,
+			colors = {
+			-- In the order, fire, earth, water, air
+				[1] = {.58,.23,.10},
+				[2] = {.23,.45,.13},
+				[3] = {.19,.48,.60},
+				[4] = {.42,.18,.74},
+			},
+		},
 	},
 }
