@@ -10,7 +10,7 @@
 
 local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
 
-local CMDebug = false
+local CMDebug = true
 
 local settings = C["classmonitor"][T.myclass]
 if not settings then return end
@@ -73,7 +73,8 @@ for i, section in ipairs(settings) do
 	local anchors = section.anchors
 	local anchor = section.anchor or GetAnchor(anchors)
 	local width = section.width or 85
-	local height = section.height or 15
+	local height = section.height or 10
+	local spec = section.spec or "all"
 
 	DEBUG("section:"..name)
 	if name and kind and anchor then
@@ -86,6 +87,12 @@ for i, section in ipairs(settings) do
 			local colors = section.colors or (section.color and {section.color})
 
 			frame = CreateResourceMonitor(name, text, autohide, anchor, width, height, colors)
+		elseif kind == "HEALTH" then
+			local text = section.text or true
+			local autohide = section.autohide or false
+			local colors = section.colors or (section.color and {section.color})
+
+			frame = CreateHealthMonitor(name, text, autohide, anchor, width, height, colors)
 		elseif kind == "COMBO" then
 			local spacing = section.spacing or 3
 			local color = section.color or T.UnitColor.class[T.myclass]
@@ -101,7 +108,7 @@ for i, section in ipairs(settings) do
 			local filled = section.filled or false
 
 			if powerType and count then
-				frame = CreatePowerMonitor(name, powerType, count, anchor, width, height, spacing, colors, filled )
+				frame = CreatePowerMonitor(name, powerType, count, anchor, width, height, spacing, colors, filled)
 			else
 				WARNING("section:"..name..":"..(powerType and "" or " missing powerType")..(count and "" or " missing count"))
 			end
@@ -115,7 +122,7 @@ for i, section in ipairs(settings) do
 			local filled = section.filled or false
 
 			if spellID and filter and count then
-				frame = CreateAuraMonitor(name, spellID, filter, count, anchor, width, height, spacing, colors, filled)
+				frame = CreateAuraMonitor(name, spellID, filter, count, anchor, width, height, spacing, colors, filled, spec)
 			else
 				WARNING("section:"..name..":"..(spellID and "" or " missing spellID")..(filter and "" or " missing filter")..(count and "" or " missing count"))
 			end
@@ -139,6 +146,16 @@ for i, section in ipairs(settings) do
 
 			if colors then
 				frame = CreateEclipseMonitor(name, anchor, width, height, colors)
+			else
+				WARNING("section:"..name..": missing colors")
+			end
+		elseif kind == "TOTEM" then
+			local count = section.count
+			local spacing = section.spacing
+			local colors = section.colors or CreateColorArray(color, count)
+
+			if colors then
+				frame = CreateTotemMonitor(name, count, anchor, width, height, spacing, colors)
 			else
 				WARNING("section:"..name..": missing colors")
 			end
