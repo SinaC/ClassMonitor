@@ -10,13 +10,13 @@ C["classmonitor"] = {
 	autohide = true|false											hide or not while out of combat [default: false]
 	anchor|anchors =												see note below
 	width = number													width of resource bar [default: 85]
-	height = number													height of resource bar [default: 15]
+	height = number													height of resource bar [default: 10]
 	color|colors =													see note below [default: tukui power color]
 
 	COMBO:
 	anchor|anchors =												see note below
 	width = number													width of combo point [default: 85]
-	height = number													height of combo point [default: 15]
+	height = number													height of combo point [default: 10]
 	spacing = number												space between combo points [default: 3]
 	color|colors =													see note below [default: class color]
 	filled = true|false												is combo point filled or not [default: false]
@@ -26,7 +26,7 @@ C["classmonitor"] = {
 	count = number													max number of points to display
 	anchor|anchors =												see note below
 	width = number													width of power point [default: 85]
-	height = number													height of power point [default: 15]
+	height = number													height of power point [default: 10]
 	spacing = number												space between power points [default: 3]
 	color|colors =													see note below [default: class color]
 	filled = true|false												is power point filled or not [default: false]
@@ -37,7 +37,7 @@ C["classmonitor"] = {
 	count = number													max number of stack to display
 	anchor|anchors =												see note below
 	width = number													width of buff stack [default: 85]
-	height = number													height of buff stack [default: 15]
+	height = number													height of buff stack [default: 10]
 	spacing = number												space between buff stack [default: 3]
 	color|colors =													see note below [default: class color]
 	filled = true|false												is buff stack filled or not [default: false]
@@ -48,7 +48,7 @@ C["classmonitor"] = {
 	orientation = "HORIZONTAL" | "VERTICAL"							direction of rune filling display [default: HORIZONTAL]
 	anchor|anchors =												see note below
 	width = number													width of rune [default: 85]
-	height = number													height of rune [default: 15]
+	height = number													height of rune [default: 10]
 	spacing = number												space between runes [default: 3]
 	colors = { blood, unholy, frost, death }						color of runes
 	runemap = { 1, 2, 3, 4, 5, 6 }									see instruction in DEATHKNIGHT section
@@ -80,7 +80,7 @@ C["classmonitor"] = {
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchor = { "CENTER", UIParent, "CENTER", 0, -120 },
+			anchor = {"TOP", "movingframe", "BOTTOM", 0, -20},
 			width = 262,
 			height = 10,
 		},
@@ -89,7 +89,7 @@ C["classmonitor"] = {
 			kind = "COMBO",
 			anchor = {"BOTTOMLEFT", "CM_RESOURCE", "TOPLEFT", 0, 3},
 			width = 50,
-			height = 15,
+			height = 10,
 			spacing = 3,
 			colors = {
 				{0.69, 0.31, 0.31, 1}, -- 1
@@ -114,11 +114,20 @@ C["classmonitor"] = {
 	},
 	["PALADIN"] = {
 		{
+			name = "CM_HEALTH",
+			kind = "HEALTH",
+			text = true,
+			autohide = false,
+			anchor = {"TOP", "movingframe", "BOTTOM", 0, -20},
+			width = 261,
+			height = 10,
+		},
+		{
 			name = "CM_MANA",
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchor = {"CENTER", UIParent, "CENTER", -0, -100},
+			anchor = {"TOPLEFT", "CM_HEALTH", "BOTTOMLEFT", 0, -3},
 			width = 261,
 			height = 10,
 		},
@@ -127,9 +136,9 @@ C["classmonitor"] = {
 			kind = "POWER",
 			powerType = SPELL_POWER_HOLY_POWER,
 			count = 3,
-			anchor = {"BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3},
+			anchor = {"BOTTOMLEFT", "CM_HEALTH", "TOPLEFT", 0, 3},
 			width = 85,
-			height = 15,
+			height = 10,
 			spacing = 3,
 			color = {228/255, 225/255, 16/255, 1},
 			filled = true,
@@ -141,7 +150,7 @@ C["classmonitor"] = {
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchor = { "CENTER", UIParent, "CENTER", 0, -100 },
+			anchor = {"TOP", "movingframe", "BOTTOM", 0, -20},
 			width = 261,
 			height = 10,
 		},
@@ -152,7 +161,7 @@ C["classmonitor"] = {
 			count = 3,
 			anchor = {"BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3},
 			width = 85,
-			height = 15,
+			height = 10,
 			spacing = 3,
 			color = {255/255, 101/255, 101/255, 1},
 			filled = false,
@@ -164,7 +173,7 @@ C["classmonitor"] = {
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchor = { "CENTER", UIParent, "CENTER", 0, -100 },
+			anchor = {"TOP", "movingframe", "BOTTOM", 0, -20},
 			width = 262,
 			height = 10,
 		},
@@ -173,7 +182,7 @@ C["classmonitor"] = {
 			kind = "COMBO",
 			anchor = {"BOTTOMLEFT", "CM_ENERGY", "TOPLEFT", 0, 3},
 			width = 50,
-			height = 15,
+			height = 10,
 			spacing = 3,
 			colors = { 
 				{0.69, 0.31, 0.31, 1}, -- 1
@@ -191,7 +200,7 @@ C["classmonitor"] = {
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchor = { "CENTER", UIParent, "CENTER", 0, -100 },
+			anchor = {"TOP", "movingframe", "BOTTOM", 0, -20},
 			width = 261,
 			height = 10,
 		},
@@ -203,7 +212,7 @@ C["classmonitor"] = {
 			count = 3,
 			anchor = {"BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3},
 			width = 85,
-			height = 15,
+			height = 10,
 			spacing = 3,
 			color = {0.5, 0, 0.7, 1},
 			filled = false,
@@ -215,7 +224,7 @@ C["classmonitor"] = {
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchor = { "CENTER", UIParent, "CENTER", 0, -100},
+			anchor = {"TOP", "movingframe", "BOTTOM", 0, -20},
 			width = 261,
 			height = 10,
 		},
@@ -227,7 +236,7 @@ C["classmonitor"] = {
 			count = 4,
 			anchor = {"BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3},
 			width = 63,
-			height = 15,
+			height = 10,
 			spacing = 3,
 			filled = false,
 		},
@@ -238,7 +247,7 @@ C["classmonitor"] = {
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchor = { "CENTER", UIParent, "CENTER", 0, -100 },
+			anchor = {"TOP", "movingframe", "BOTTOM", 0, -20},
 			width = 261,
 			height = 10,
 		},
@@ -250,7 +259,7 @@ C["classmonitor"] = {
 			orientation = "HORIZONTAL",
 			anchor = { "BOTTOMLEFT", "CM_RUNIC_POWER", "TOPLEFT", 0, 3 },
 			width = 41,
-			height = 15,
+			height = 10,
 			spacing = 3,
 			colors = {
 				{ 0.69, 0.31, 0.31, 1}, -- Blood
@@ -258,14 +267,12 @@ C["classmonitor"] = {
 				{ 0.31, 0.45, 0.63, 1}, -- Frost
 				{ 0.84, 0.75, 0.65, 1}, -- Death
 			},
-			--[[
-				runemap instructions.
-				This is the order you want your runes to be displayed in (down to bottom or left to right).
-				1,2 = Blood
-				3,4 = Unholy
-				5,6 = Frost
-				(Note: All numbers must be included or it will break)
-			]]
+				-- runemap instructions.
+				-- This is the order you want your runes to be displayed in (down to bottom or left to right).
+				-- 1,2 = Blood
+				-- 3,4 = Unholy
+				-- 5,6 = Frost
+				-- (Note: All numbers must be included or it will break)
 			runemap = { 1, 2, 3, 4, 5, 6 },
 		},
 	},
@@ -275,7 +282,7 @@ C["classmonitor"] = {
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchor = {"CENTER", UIParent, "CENTER", 0, -123},
+			anchor = {"TOP", "movingframe", "BOTTOM", 0, -20},
 			width = 262,
 			height = 10,
 		},
@@ -287,7 +294,7 @@ C["classmonitor"] = {
 			count = 5,
 			anchor = {"BOTTOMLEFT", "CM_FOCUS", "TOPLEFT", 0, 3},
 			width = 50,
-			height = 15,
+			height = 10,
 			spacing = 3,
 			color = {0.5, 0, 0.7, 1},
 			filled = false,
@@ -299,7 +306,7 @@ C["classmonitor"] = {
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchor = {"CENTER", UIParent, "CENTER", 0, -123},
+			anchor = {"TOP", "movingframe", "BOTTOM", 0, -20},
 			width = 261,
 			height = 10,
 		}
@@ -310,9 +317,61 @@ C["classmonitor"] = {
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchor = { "CENTER", UIParent, "CENTER", 0, -123 },
-			width = 261,
+			anchor = {"TOP", "movingframe", "BOTTOM", 0, -20},
+			width = 267,
 			height = 10,
-		}
+		},
+		{
+			name = "CM_FULMINATION",
+			kind = "AURA",
+			spec = 1,  -- elem shaman
+			spellID = 324,
+			filter = "HELPFUL",
+			count = 9,
+			anchor = {"BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3},
+			width = 27,
+			height = 10,
+			spacing = 3,
+			color = {0.5, 0, 0.7, 1},
+			filled = false,
+		},
+		{
+			name = "CM_MAELSTROMM",
+			kind = "AURA",
+			spec = 2,  -- enhancement shaman
+			spellID = 53817,
+			filter = "HELPFUL",
+			count = 5,
+			anchor = {"BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3},
+			width = 51,
+			height = 10,
+			spacing = 3,
+			color = {0.5, 0, 0.7, 1},
+			filled = false,
+		},
+		-- Nota : Vive les équations de Diophantes
+		-- to make it pixel perfect, we need to solve :
+		-- Z = 9 x + 3 x 8
+		-- Z = 5 y + 3 x 4
+		-- gives us : 9 x - 5 y = - 12 ( 9 and 5 are prime with themselves => Bezout => 9 x - 5 y = 1 have a solution : 9 x (-1) - 5 x (-2) = 1 )
+		-- => x = 12 + 5k and y = 9k + 24
+		-- using k = 3 we have x = 27 and y = 51
+		-- and z = 9 x 27 + 24 = 5 x 51 + 12 = 267
+		{
+			name = "CM_TOTEMS",
+			kind = "TOTEM",
+			count = 4,
+			anchor = {"TOPLEFT", "CM_MANA", "BOTTOMLEFT", 0, -3},
+			width = 66,
+			height = 10,
+			spacing = 1,
+			colors = {
+			-- In the order, fire, earth, water, air
+				[1] = {.58,.23,.10},
+				[2] = {.23,.45,.13},
+				[3] = {.19,.48,.60},
+				[4] = {.42,.18,.74},
+			},
+		},
 	},
 }
