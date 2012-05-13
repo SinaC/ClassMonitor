@@ -10,7 +10,7 @@
 
 local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
 
-local CMDebug = true
+local CMDebug = false
 
 local settings = C["classmonitor"][T.myclass]
 if not settings then return end
@@ -125,6 +125,18 @@ for i, section in ipairs(settings) do
 				frame = CreateAuraMonitor(name, spellID, filter, count, anchor, width, height, spacing, colors, filled, spec)
 			else
 				WARNING("section:"..name..":"..(spellID and "" or " missing spellID")..(filter and "" or " missing filter")..(count and "" or " missing count"))
+			end
+		elseif kind == "DOT" then
+			local spellID = section.spellID
+			local colors = section.colors or (section.color and {section.color})
+			local latency = section.latency or false
+			local threshold = section.threshold or 0
+
+
+			if spellID then
+				frame = CreateDotMonitor(name, spellID, anchor, width, height, colors, threshold, latency)
+			else
+				WARNING("section:"..name..":"..(spellID and "" or " missing spellID"))
 			end
 		elseif kind == "RUNES" then
 			local updatethreshold = section.updatethreshold or 0.1

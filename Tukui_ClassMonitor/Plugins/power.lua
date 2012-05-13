@@ -44,7 +44,7 @@ function CreatePowerMonitor(name, powerType, count, anchor, width, height, spaci
 
 		local value = UnitPower("player", powerType)
 
-		if value and cmPMs[1].value ~= value then
+		if filled and value and cmPMs[1].value ~= value then
 			for i = 1, value do
 				cmPMs[i].timeleft = 10
 				cmPMs[i].status:SetValue(10)
@@ -62,7 +62,7 @@ function CreatePowerMonitor(name, powerType, count, anchor, width, height, spaci
 		end
 	end)
 	
-	if(powerType == SPELL_POWER_HOLY_POWER) then
+	if filled and powerType == SPELL_POWER_HOLY_POWER then
 		local timeSinceLastUpdate = 0
 		local function OnUpdate(self, elapsed)
 			local value = UnitPower("player", powerType)
