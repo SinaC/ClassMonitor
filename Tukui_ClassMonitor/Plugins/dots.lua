@@ -27,7 +27,7 @@ function CreateDotMonitor(name, spelltracked, anchor, width, height, colors, thr
 
 	local function OnUpdate(self, elapsed)
 		cmDot.timeSinceLastUpdate = cmDot.timeSinceLastUpdate + elapsed
-		if cmDot.timeSinceLastUpdate > 0.05 then
+		if cmDot.timeSinceLastUpdate > 0.1 then
 			local _, _, _, count, _, duration, expTime, _, _, _, _ = UnitAura("target", aura, nil, "PLAYER|HARMFUL")
 			local remainTime = expTime - GetTime()
 			local color
