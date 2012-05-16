@@ -3,7 +3,7 @@ local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C 
 C["classmonitor"] = {
 --[[
 	name = frame name (can be used in anchor)
-	kind = POWER | AURA | RESOURCE(mana/runic/energy/focus/rage) | ECLIPSE | COMBO | RUNES
+	kind = POWER | AURA | RESOURCE(mana/runic/energy/focus/rage) | HEALTH | ECLIPSE | COMBO | RUNES
 
 	RESOURCE (mana/runic power/energy/focus/rage):
 	text = true|false												display resource value (% for mana) [default: true]
@@ -12,6 +12,13 @@ C["classmonitor"] = {
 	width = number													width of resource bar [default: 85]
 	height = number													height of resource bar [default: 10]
 	color|colors =													see note below [default: tukui power color]
+
+	HEALTH
+	text = true|false,												display health value [default: true]
+	autohide = true|false,											hide or not while out of combat [default: false]
+	anchor = 														see note below
+	width = number													width of health bar [default: 85]
+	height = number													height of health bar [default: 10]
 
 	COMBO:
 	anchor|anchors =												see note below
@@ -239,6 +246,31 @@ C["classmonitor"] = {
 			height = 10,
 			spacing = 3,
 			filled = false,
+		},
+		{
+			name = "CM_IGNITE",
+			kind = "DOT",
+			spellID = 12654, -- ignite spellID
+			anchor = {"BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3},
+			width = 261,
+			height = 10,
+			colors = { 
+				{255/255, 165/255, 0, 1}, -- bad -- orange
+				{255/255, 255/255, 0, 1}, -- 0,75% -- yellow
+				{127/255, 255/255, 0, 1}, -- > 100% GO -- green
+				},
+			latency = true,
+			threshold = 20000,
+		},
+		{
+			name = "CM_COMBU",
+			kind = "DOT",
+			spellID = 83853, -- Combustion spellID
+			anchor = {"TOPLEFT", "CM_MANA", "BOTTOMLEFT", 0, -3},
+			width = 261,
+			height = 10,
+			color = {228/255, 225/255, 16/255, 1},
+			latency = false,
 		},
 	},
 	["DEATHKNIGHT"] = {
