@@ -3,7 +3,7 @@ local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C 
 C["classmonitor"] = {
 --[[
 	name = frame name (can be used in anchor)
-	kind = POWER | AURA | RESOURCE(mana/runic/energy/focus/rage) | HEALTH | ECLIPSE | COMBO | RUNES
+	kind = POWER | AURA | RESOURCE(mana/runic/energy/focus/rage) | HEALTH | DOT | ECLIPSE | COMBO | RUNES
 
 	RESOURCE (mana/runic power/energy/focus/rage):
 	text = true|false												display resource value (% for mana) [default: true]
@@ -15,11 +15,26 @@ C["classmonitor"] = {
 
 	HEALTH
 	text = true|false,												display health value [default: true]
-	autohide = true|false,											hide or not while out of combat [default: false]
+	autohide = true|false											hide or not while out of combat [default: false]
 	anchor = 														see note below
 	width = number													width of health bar [default: 85]
 	height = number													height of health bar [default: 10]
 
+	DOT
+	anchor = 														see note below
+	width = number													width of health bar [default: 85]
+	height = number													height of health bar [default: 10]
+	spellID = number												spell id of dot to monitor
+	latency = true|false											indicate latency on buff (usefull for ignite)
+	threshold = number or 0											threshold to work with colors [default: 0]
+	colors = array of array : 
+				{
+					{255/255, 165/255, 0, 1},						Bad color : under 75% of threshold -- here orange -- [default: class color]
+					{255/255, 255/255, 0, 1},						Intermediate color : 0,75% of threshold -- here yellow -- [default: class color]
+					{127/255, 255/255, 0, 1},						Good color : over threshold -- here green -- [default: class color]
+				},
+	color = {r,g,b,a}												if treshold is set to 0	[default: class color]
+	
 	COMBO:
 	anchor|anchors =												see note below
 	width = number													width of combo point [default: 85]
