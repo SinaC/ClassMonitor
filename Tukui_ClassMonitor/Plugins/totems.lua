@@ -1,5 +1,9 @@
 local T, C, L = unpack(Tukui)
 
+if T.myclass ~= "SHAMAN" then
+	return
+end
+
 -- Generic method to create Totem monitor
 function CreateTotemMonitor(name, count, anchor, width, height, spacing, colors)
 

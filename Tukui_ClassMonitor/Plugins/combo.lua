@@ -1,6 +1,10 @@
 -- Combo Points plugin
 local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
 
+if T.myclass ~= "DRUID" and T.myclass ~= "ROGUE" then
+	return
+end
+
 function CreateComboMonitor(name, anchor, width, height, spacing, colors, filled)
 	local cmCombos = {}
 	for i = 1, 5 do

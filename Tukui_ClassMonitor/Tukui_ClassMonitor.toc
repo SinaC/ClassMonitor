@@ -1,7 +1,7 @@
 ## Interface: 40300
-## Version: 2.45
+## Version: 2.46
 ## Author: SinaC
-## Title: |cffC495DDTukui|r Class Monitor
+## Title: |cffC495DDTukui|r |cffffffffClass Monitor|r
 ## Credits: Smelly, Hydra, Krevlorne, Ildyria
 ## Editors: Ildyria
 ## Notes: Class monitor for Tukui
