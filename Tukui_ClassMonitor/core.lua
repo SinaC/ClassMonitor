@@ -85,8 +85,20 @@ for i, section in ipairs(settings) do
 			local text = section.text or true
 			local autohide = section.autohide or false
 			local colors = section.colors or (section.color and {section.color})
+			local overflow = section.overflow or false
+			local bars = section.bars or {}
+			frame = CreateResourceMonitor(name, text, autohide, anchor, width, height, colors, overflow, bars)
+		elseif kind == "REGEN" then
+			local spellID = section.spellID
+			local color = section.color
+			local duration = section.duration or 5
+			local filling = section.filling or false
 
-			frame = CreateResourceMonitor(name, text, autohide, anchor, width, height, colors)
+			if spellID then
+				frame = CreateRegenMonitor(name, spellID, anchor, width, height, color, duration, filling)
+			else
+				WARNING("section:"..name..":"..(spellID and "" or " missing spellID"))
+			end
 		elseif kind == "HEALTH" then
 			local text = section.text or true
 			local autohide = section.autohide or false
