@@ -1,6 +1,10 @@
 -- Runes plugin (based on fRunes by Krevlorne [https://github.com/Krevlorne])
 local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
 
+if T.myclass ~= "DEATHKNIGHT" then
+	return
+end
+
 function CreateRunesMonitor(name, updatethreshold, autohide, orientation, anchor, width, height, spacing, colors, runemap)
 	-- Create the frame
 	local cmRunes = CreateFrame("Frame", "Frame_"..name, UIParent)

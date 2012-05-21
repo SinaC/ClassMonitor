@@ -3,7 +3,7 @@ local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C 
 C["classmonitor"] = {
 --[[
 	name = frame name (can be used in anchor)
-	kind = POWER | AURA | RESOURCE(mana/runic/energy/focus/rage) | HEALTH | DOT | ECLIPSE | COMBO | RUNES
+	kind = POWER | AURA | RESOURCE(mana/runic/energy/focus/rage)  | REGEN | HEALTH | DOT | ECLIPSE | COMBO | RUNES
 
 	RESOURCE (mana/runic power/energy/focus/rage):
 	text = true|false												display resource value (% for mana) [default: true]
@@ -12,6 +12,27 @@ C["classmonitor"] = {
 	width = number													width of resource bar [default: 85]
 	height = number													height of resource bar [default: 10]
 	color|colors =													see note below [default: tukui power color]
+	overflow = true[false											show overflow mana
+	bars = {														array of bars for limits like 32% mana => evoc or 65 energy => backstab & cie...
+				{
+					value = 32,										value of the limit
+					percent = true,									percent or fixed (32% or 32 energy) ?
+					color = {0,0,0}									color of the bar
+				},
+				{
+				...
+				}
+				...
+			}
+
+	REGEN
+	anchor = 														see note below
+	width = number													width of health bar [default: 85]
+	height = number													height of health bar [default: 10]
+	spellID = number												spell id of dot to monitor (6117 : mage armor, 47755 : rapture, ...)
+	color =															see note below [default: class color]
+	filling = true|false											fill the bar or empty it ! [default : false]
+	duration = number												timer before next tic [default: 5]
 
 	HEALTH
 	text = true|false,												display health value [default: true]
@@ -239,6 +260,16 @@ C["classmonitor"] = {
 			color = {0.5, 0, 0.7, 1},
 			filled = false,
 		},
+		{
+			name = "CM_RAPTURE",
+			kind = "REGEN",
+			anchor = {"TOPLEFT", "CM_MANA", "BOTTOMLEFT", 0, -2},
+			width = 261,
+			height = 3,
+			spellID = 47755,
+			filling = false,
+			duration = 12,
+		},
 	},
 	["MAGE"] = {
 		{
@@ -249,6 +280,21 @@ C["classmonitor"] = {
 			anchor = {"TOP", "movingframe", "BOTTOM", 0, -20},
 			width = 261,
 			height = 10,
+			overflow = true,
+			bars = {
+				{value = 32, percent = true, color = {0,0,0}},
+				{value = 80, percent = true, color = {0,0,0}},
+			}
+		},
+		{
+			name = "CM_MAGE_ARMOR",
+			kind = "REGEN",
+			anchor = {"TOPLEFT", "CM_MANA", "BOTTOMLEFT", 0, -2},
+			width = 261,
+			height = 3,
+			spellID = 6117,
+			filling = true,
+			duration = 5,
 		},
 		{
 			name = "CM_ARCANE_BLAST",
