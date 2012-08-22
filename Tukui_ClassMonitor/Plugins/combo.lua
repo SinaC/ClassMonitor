@@ -5,7 +5,9 @@ function CreateComboMonitor(name, anchor, width, height, spacing, colors, filled
 	local cmCombos = {}
 	for i = 1, 5 do
 		local cmCombo = CreateFrame("Frame", name, UIParent) -- name is used for 1st power point
-		cmCombo:CreatePanel("Default", width, height, unpack(anchor))
+		--cmCombo:CreatePanel("Default", width, height, unpack(anchor))
+		cmCombo:SetTemplate()
+		cmCombo:Size(width, height)
 		if i == 1 then
 			cmCombo:Point(unpack(anchor))
 		else

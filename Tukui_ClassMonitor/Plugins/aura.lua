@@ -7,7 +7,9 @@ function CreateAuraMonitor(name, spellID, filter, count, anchor, width, height, 
 	local cmAMs = {}
 	for i = 1, count do
 		local cmAM = CreateFrame("Frame", name, UIParent) -- name is used for 1st power point
-		cmAM:CreatePanel("Default", width, height, unpack(anchor))
+		--cmAM:CreatePanel("Default", width, height, unpack(anchor))
+		cmAM:SetTemplate()
+		cmAM:Size(width, height)
 		if i == 1 then
 			cmAM:Point(unpack(anchor))
 		else
@@ -34,9 +36,9 @@ function CreateAuraMonitor(name, spellID, filter, count, anchor, width, height, 
 	cmAMs[1]:SetScript("OnEvent", function(self, event, arg1)
 		if event ~= "PLAYER_ENTERING_WORLD" and event ~= "UNIT_AURA" then return end
 		if event == "UNIT_AURA" and arg1 ~= "player" then return end
-
 		local found = false
-		if spec == "all" or spec == GetPrimaryTalentTree() then
+		--if spec == "all" or spec == GetPrimaryTalentTree() then
+		if spec == "all" or spec == GetSpecialization() then -- MoP
 			for i = 1, 40, 1 do
 				local name, _, _, stack, _, _, _, unitCaster = UnitAura("player", i, filter )
 				if not name then break end
@@ -51,6 +53,7 @@ function CreateAuraMonitor(name, spellID, filter, count, anchor, width, height, 
 		if found == false then
 			for i = 1, count do cmAMs[i]:Hide() end
 		end
+		--for i = 1, count do cmAMs[i]:Show() end
 	end)
 
 	return cmAMs[1]

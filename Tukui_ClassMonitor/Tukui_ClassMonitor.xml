@@ -9,6 +9,5 @@
 	<Script file="plugins\runes.lua"/>
 	<Script file="plugins\eclipse.lua"/>
 	<Script file="plugins\totems.lua"/>
-	<Script file="plugins\mover.lua"/>
 	<Script file="core.lua"/>
 </Ui>

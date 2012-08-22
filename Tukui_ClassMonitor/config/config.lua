@@ -5,28 +5,28 @@ C["classmonitor"] = {
 	name = frame name (can be used in anchor)
 	kind = POWER | AURA | RESOURCE(mana/runic/energy/focus/rage) | ECLIPSE | COMBO | RUNES
 
-	RESOURCE (mana/runic power/energy/focus/rage):
+	RESOURCE (mana/runic power/energy/focus/rage/chi):
 	text = true|false												display resource value (% for mana) [default: true]
 	autohide = true|false											hide or not while out of combat [default: false]
 	anchor|anchors =												see note below
 	width = number													width of resource bar [default: 85]
-	height = number													height of resource bar [default: 10]
+	height = number													height of resource bar [default: 15]
 	color|colors =													see note below [default: tukui power color]
 
 	COMBO:
 	anchor|anchors =												see note below
 	width = number													width of combo point [default: 85]
-	height = number													height of combo point [default: 10]
+	height = number													height of combo point [default: 15]
 	spacing = number												space between combo points [default: 3]
 	color|colors =													see note below [default: class color]
 	filled = true|false												is combo point filled or not [default: false]
 
 	POWER (holy power/soul shard):
-	powerType = SPELL_POWER_HOLY_POWER | SPELL_POWER_SOUL_SHARDS	power to monitor (can be any power type (http://www.wowwiki.com/PowerType)
+	powerType = SPELL_POWER_HOLY_POWER | SPELL_POWER_SOUL_SHARDS | SPELL_POWER_LIGHT_FORCE	power to monitor (can be any power type (http://www.wowwiki.com/PowerType)
 	count = number													max number of points to display
 	anchor|anchors =												see note below
 	width = number													width of power point [default: 85]
-	height = number													height of power point [default: 10]
+	height = number													height of power point [default: 15]
 	spacing = number												space between power points [default: 3]
 	color|colors =													see note below [default: class color]
 	filled = true|false												is power point filled or not [default: false]
@@ -37,7 +37,7 @@ C["classmonitor"] = {
 	count = number													max number of stack to display
 	anchor|anchors =												see note below
 	width = number													width of buff stack [default: 85]
-	height = number													height of buff stack [default: 10]
+	height = number													height of buff stack [default: 15]
 	spacing = number												space between buff stack [default: 3]
 	color|colors =													see note below [default: class color]
 	filled = true|false												is buff stack filled or not [default: false]
@@ -48,7 +48,7 @@ C["classmonitor"] = {
 	orientation = "HORIZONTAL" | "VERTICAL"							direction of rune filling display [default: HORIZONTAL]
 	anchor|anchors =												see note below
 	width = number													width of rune [default: 85]
-	height = number													height of rune [default: 10]
+	height = number													height of rune [default: 15]
 	spacing = number												space between runes [default: 3]
 	colors = { blood, unholy, frost, death }						color of runes
 	runemap = { 1, 2, 3, 4, 5, 6 }									see instruction in DEATHKNIGHT section
@@ -73,23 +73,22 @@ C["classmonitor"] = {
 	colors = { [RESOURCE_TYPE] = {r, g, b, a}, [RESOURCE_TYPE] = {r, g, b, a}, ...[RESOURCE_TYPE] = {r, g, b, a}}
 		-> one different color by resource type (only for kind RESOURCE) (if no color is specified, default resource color will be used)
 --]]
-		
 	["DRUID"] = {
 		{
 			name = "CM_RESOURCE",
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchor = {"TOP", "movingframe", "BOTTOM", 0, -20},
+			anchor = { "CENTER", UIParent, "CENTER", 0, -120 },
 			width = 262,
 			height = 10,
 		},
 		{
 			name = "CM_COMBO",
 			kind = "COMBO",
-			anchor = {"BOTTOMLEFT", "CM_RESOURCE", "TOPLEFT", 0, 3},
+			anchor = { "BOTTOMLEFT", "CM_RESOURCE", "TOPLEFT", 0, 3 },
 			width = 50,
-			height = 10,
+			height = 15,
 			spacing = 3,
 			colors = {
 				{0.69, 0.31, 0.31, 1}, -- 1
@@ -103,7 +102,7 @@ C["classmonitor"] = {
 		{ -- DOES NOT WORK
 			name = "CM_ECLIPSE",
 			kind = "ECLIPSE",
-			anchor = { "BOTTOMLEFT", "CM_RESOURCE", "TOPLEFT", 0, 3},
+			anchor = { "BOTTOMLEFT", "CM_RESOURCE", "TOPLEFT", 0, 3 },
 			width = 262,
 			height = 10,
 			colors = {
@@ -113,32 +112,36 @@ C["classmonitor"] = {
 		}
 	},
 	["PALADIN"] = {
-		{
-			name = "CM_HEALTH",
-			kind = "HEALTH",
-			text = true,
-			autohide = false,
-			anchor = {"TOP", "movingframe", "BOTTOM", 0, -20},
-			width = 261,
-			height = 10,
-		},
+		--{
+		--	name = "CM_HEALTH",
+		--	kind = "HEALTH",
+		--	text = true,
+		--	autohide = false,
+		--	anchor = {"TOP", "movingframe", "BOTTOM", 0, -20},
+		--	width = 261,
+		--	height = 10,
+		--},
 		{
 			name = "CM_MANA",
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchor = {"TOPLEFT", "CM_HEALTH", "BOTTOMLEFT", 0, -3},
-			width = 261,
+			anchor = {"CENTER", UIParent, "CENTER", -0, -100},
+			width = 262, -- 50 + 3 + 50 + 3 + 50 + 3 + 50 + 3 + 50
 			height = 10,
 		},
 		{
 			name = "CM_HOLYPOWER",
 			kind = "POWER",
 			powerType = SPELL_POWER_HOLY_POWER,
-			count = 3,
-			anchor = {"BOTTOMLEFT", "CM_HEALTH", "TOPLEFT", 0, 3},
-			width = 85,
-			height = 10,
+			count = 5,
+			--anchor = {"BOTTOMLEFT", "CM_HEALTH", "TOPLEFT", 0, 3},
+			anchor = {"BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3},
+			-- width = 85,
+			-- height = 15,
+			-- spacing = 3,
+			width = 50,
+			height = 15,
 			spacing = 3,
 			color = {228/255, 225/255, 16/255, 1},
 			filled = true,
@@ -150,7 +153,7 @@ C["classmonitor"] = {
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchor = {"TOP", "movingframe", "BOTTOM", 0, -20},
+			anchor = { "CENTER", UIParent, "CENTER", 0, -100 },
 			width = 261,
 			height = 10,
 		},
@@ -161,7 +164,7 @@ C["classmonitor"] = {
 			count = 3,
 			anchor = {"BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3},
 			width = 85,
-			height = 10,
+			height = 15,
 			spacing = 3,
 			color = {255/255, 101/255, 101/255, 1},
 			filled = false,
@@ -173,7 +176,7 @@ C["classmonitor"] = {
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchor = {"TOP", "movingframe", "BOTTOM", 0, -20},
+			anchor = { "CENTER", UIParent, "CENTER", 0, -100 },
 			width = 262,
 			height = 10,
 		},
@@ -182,7 +185,7 @@ C["classmonitor"] = {
 			kind = "COMBO",
 			anchor = {"BOTTOMLEFT", "CM_ENERGY", "TOPLEFT", 0, 3},
 			width = 50,
-			height = 10,
+			height = 15,
 			spacing = 3,
 			colors = { 
 				{0.69, 0.31, 0.31, 1}, -- 1
@@ -200,7 +203,7 @@ C["classmonitor"] = {
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchor = {"TOP", "movingframe", "BOTTOM", 0, -20},
+			anchor = { "CENTER", UIParent, "CENTER", 0, -100 },
 			width = 261,
 			height = 10,
 		},
@@ -212,7 +215,7 @@ C["classmonitor"] = {
 			count = 3,
 			anchor = {"BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3},
 			width = 85,
-			height = 10,
+			height = 15,
 			spacing = 3,
 			color = {0.5, 0, 0.7, 1},
 			filled = false,
@@ -224,7 +227,7 @@ C["classmonitor"] = {
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchor = {"TOP", "movingframe", "BOTTOM", 0, -20},
+			anchor = { "CENTER", UIParent, "CENTER", 0, -100},
 			width = 261,
 			height = 10,
 		},
@@ -236,7 +239,7 @@ C["classmonitor"] = {
 			count = 4,
 			anchor = {"BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3},
 			width = 63,
-			height = 10,
+			height = 15,
 			spacing = 3,
 			filled = false,
 		},
@@ -247,7 +250,7 @@ C["classmonitor"] = {
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchor = {"TOP", "movingframe", "BOTTOM", 0, -20},
+			anchor = { "CENTER", UIParent, "CENTER", 0, -100 },
 			width = 261,
 			height = 10,
 		},
@@ -259,7 +262,7 @@ C["classmonitor"] = {
 			orientation = "HORIZONTAL",
 			anchor = { "BOTTOMLEFT", "CM_RUNIC_POWER", "TOPLEFT", 0, 3 },
 			width = 41,
-			height = 10,
+			height = 15,
 			spacing = 3,
 			colors = {
 				{ 0.69, 0.31, 0.31, 1}, -- Blood
@@ -282,7 +285,7 @@ C["classmonitor"] = {
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchor = {"TOP", "movingframe", "BOTTOM", 0, -20},
+			anchor = {"CENTER", UIParent, "CENTER", 0, -123},
 			width = 262,
 			height = 10,
 		},
@@ -294,7 +297,7 @@ C["classmonitor"] = {
 			count = 5,
 			anchor = {"BOTTOMLEFT", "CM_FOCUS", "TOPLEFT", 0, 3},
 			width = 50,
-			height = 10,
+			height = 15,
 			spacing = 3,
 			color = {0.5, 0, 0.7, 1},
 			filled = false,
@@ -306,7 +309,7 @@ C["classmonitor"] = {
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchor = {"TOP", "movingframe", "BOTTOM", 0, -20},
+			anchor = {"CENTER", UIParent, "CENTER", 0, -123},
 			width = 261,
 			height = 10,
 		}
@@ -317,7 +320,7 @@ C["classmonitor"] = {
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchor = {"TOP", "movingframe", "BOTTOM", 0, -20},
+			anchor = { "CENTER", UIParent, "CENTER", 0, -123 },
 			width = 267,
 			height = 10,
 		},
@@ -373,5 +376,49 @@ C["classmonitor"] = {
 				[4] = {.42,.18,.74},
 			},
 		},
+	},
+	["MONK"] = {
+		{
+			name = "CM_RESOURCE",
+			kind = "RESOURCE",
+			text = true,
+			autohide = false,
+			anchor = { "CENTER", UIParent, "CENTER", 0, -120 },
+			width = 262,
+			height = 10,
+		},
+		{
+			name = "CM_CHI",
+			kind = "POWER",
+			powerType = SPELL_POWER_LIGHT_FORCE,
+			count = 5,
+			anchor = { "BOTTOMLEFT", "CM_RESOURCE", "TOPLEFT", 0, 3 },
+			width = 50,
+			height = 15,
+			spacing = 3,
+			colors = {
+				[1] = {.69, .31, .31, 1},
+				[2] = {.65, .42, .31, 1},
+				[3] = {.65, .63, .35, 1},
+				[4] = {.46, .63, .35, 1},
+				[5] = {.33, .63, .33, 1},
+			},
+			filled = true,
+		},
+		-- {
+			-- name = "CM_MANATEA",
+			-- kind = "AURA",
+			-- spec = 2,  -- Mistweaver
+			-- spellID = 115867,
+			-- filter = "HELPFUL",
+			-- count = 20,
+			-- --anchor = {"BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3},
+			-- anchor = {"CENTER", UIParent, "CENTER", -62*2-1+31-2*11-2*2, -118},
+			-- width = 11,
+			-- height = 15,
+			-- spacing = 2,
+			-- color = {0.5, 0.9, 0.7, 1},
+			-- filled = true,
+		-- },
 	},
 }

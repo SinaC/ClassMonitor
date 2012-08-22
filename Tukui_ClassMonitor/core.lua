@@ -7,10 +7,37 @@
 -- add a visibility function (we dont want to see resource bar while in travel/flying form)
 -- each plugin frame should be children of core frame
 -- plugin should be load-on-demand
+-- remove power count, use UnitPowerMax and compute width dynamically
+--[[ example with monk
+	local spacing = select(4, hb[4]:GetPoint())
+	local w = hb:GetWidth()
+	local s = 0
+	local light = UnitPower("player", SPELL_POWER_LIGHT_FORCE)
+	local maxChi = UnitPowerMax("player", SPELL_POWER_LIGHT_FORCE)
+	
+	if hb.maxChi ~= maxChi then
+		if maxChi == 4 then
+			hb[5]:Hide()			
+		else
+			hb[5]:Show()
+		end
+		
+		for i = 1, maxChi do
+			if i ~= maxChi then
+				hb[i]:SetWidth(w / maxChi - spacing)
+				s = s + (w / maxChi)
+			else
+				hb[i]:SetWidth(w - s)
+			end
+		end
+		
+		hb.maxChi = maxChi
+	end
+--]]
 
 local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
 
-local CMDebug = true
+local CMDebug = false
 
 local settings = C["classmonitor"][T.myclass]
 if not settings then return end
@@ -27,9 +54,12 @@ end
 -- Return anchor corresponding to current spec
 local function GetAnchor(anchors)
 	if not anchors then return end
-	local ptt = GetPrimaryTalentTree()
-	if not ptt or ptt == 0 then ptt = 1 end
-	return anchors[ptt]
+	--local ptt = GetPrimaryTalentTree()
+	--if not ptt or ptt == 0 then ptt = 1 end
+	--return anchors[ptt]
+	local spec = GetSpecialization() -- MoP
+	if not spec or spec == 0 then spec = 1 end
+	return anchors[spec]
 end
 
 -- When multiple anchors are specified, anchor depends on current spec
@@ -73,8 +103,7 @@ for i, section in ipairs(settings) do
 	local anchors = section.anchors
 	local anchor = section.anchor or GetAnchor(anchors)
 	local width = section.width or 85
-	local height = section.height or 10
-	local spec = section.spec or "all"
+	local height = section.height or 15
 
 	DEBUG("section:"..name)
 	if name and kind and anchor then
@@ -120,6 +149,7 @@ for i, section in ipairs(settings) do
 			local color = section.color or T.UnitColor.class[T.myclass]
 			local colors = section.colors or CreateColorArray(color, count)
 			local filled = section.filled or false
+			local spec = section.spec or "all"
 
 			if spellID and filter and count then
 				frame = CreateAuraMonitor(name, spellID, filter, count, anchor, width, height, spacing, colors, filled, spec)

@@ -3,7 +3,10 @@ local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C 
 
 function CreateResourceMonitor(name, text, autohide, anchor, width, height, colors)
 	local cmResource = CreateFrame("Frame", name, UIParent)
-	cmResource:CreatePanel("Default", width , height, unpack(anchor))
+	--cmResource:CreatePanel("Default", width , height, unpack(anchor))
+	cmResource:SetTemplate()
+	cmResource:Size(width, height)
+	cmResource:Point(unpack(anchor))
 
 	cmResource.status = CreateFrame("StatusBar", "cmResourceStatus", cmResource)
 	cmResource.status:SetStatusBarTexture(C.media.normTex)
@@ -26,6 +29,7 @@ function CreateResourceMonitor(name, text, autohide, anchor, width, height, colo
 		cmResource.timeSinceLastUpdate = cmResource.timeSinceLastUpdate + elapsed
 		if cmResource.timeSinceLastUpdate > 0.2 then
 			local value = UnitPower("player")
+--print("Value:"..value)
 			cmResource.status:SetValue(value)
 			if text == true then
 				local p = UnitPowerType("player")
@@ -61,15 +65,16 @@ function CreateResourceMonitor(name, text, autohide, anchor, width, height, colo
 	cmResource:RegisterEvent("UNIT_MAXPOWER")
 	cmResource:SetScript("OnEvent", function(self, event, arg1)
 		if event ~= "PLAYER_ENTERING_WORLD" and event ~= "UNIT_DISPLAYPOWER" and event ~= "PLAYER_REGEN_DISABLED" and event ~= "PLAYER_REGEN_ENABLED" and event ~= "UNIT_MAXPOWER" and event ~= "UNIT_POWER" then return end
-
-		--print("Resource: event:"..event)
+--print("Resource: event:"..event)
 		if event == "PLAYER_ENTERING_WORLD" or ((event == "UNIT_DISPLAYPOWER" or event == "UNIT_MAXPOWER") and arg1 == "player") then
 			local resource, resourceName = UnitPowerType("player")
 			local valueMax = UnitPowerMax("player", resource)
+--print("Resource: "..resource.."  "..resourceName.."  "..valueMax)
 			-- use colors[resourceName] if defined, else use default resource color or class color
 			local color = (colors and (colors[resourceName] or colors[1])) or T.UnitColor.power[resourceName] or T.UnitColor.class[T.myclass]
 			cmResource.status:SetStatusBarColor(unpack(color))
 			cmResource.status:SetMinMaxValues(0, valueMax)
+			cmResource:Show()
 		end
 		if autohide == true then
 			if event == "PLAYER_REGEN_DISABLED" then

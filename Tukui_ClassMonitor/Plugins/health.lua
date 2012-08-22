@@ -3,7 +3,9 @@ local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C 
 
 function CreateHealthMonitor(name, text, autohide, anchor, width, height, colors)
 	local cmHealth = CreateFrame("Frame", name, UIParent)
-	cmHealth:CreatePanel("Default", width , height, unpack(anchor))
+	--cmHealth:CreatePanel("Default", width , height, unpack(anchor))
+	cmHealth:SetTemplate()
+	cmHealth:Size(width, height)
 
 	cmHealth.status = CreateFrame("StatusBar", "cmHealthStatus", cmHealth)
 	cmHealth.status:SetStatusBarTexture(C.media.normTex)

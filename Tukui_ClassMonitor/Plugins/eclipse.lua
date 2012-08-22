@@ -24,8 +24,12 @@ local function UpdateVisibilityHandler(cmEclipse)
 	local showBar = false
 	local form = GetShapeshiftFormID()
 	if not form then
-		local ptt = GetPrimaryTalentTree()
-		if ptt and ptt == 1 then -- player has balance spec
+		--local ptt = GetPrimaryTalentTree()
+		--if ptt and ptt == 1 then -- player has balance spec
+			-- showBar = true
+		-- end
+		local spec = T.toc < 50000 and GetPrimaryTalentTree() or GetSpecialization() -- MoP
+		if spec and spec == 1 then -- player has balance spec
 			showBar = true
 		end
 	elseif form == MOONKIN_FORM then
@@ -112,10 +116,13 @@ end
 function CreateEclipseMonitor(name, anchor, width, height, colors)
 	--print("CreateEclipseMonitor:"..tostring(width).."  "..tostring(height))
 	local cmEclipse = CreateFrame("Frame", name, UIParent)
-	cmEclipse:CreatePanel("Default", width, height, unpack(anchor))
+	--cmEclipse:CreatePanel("Default", width, height, unpack(anchor))
+	cmEclipse:SetTemplate()
+	cmEclipse:Size(width, height)
+
 	--cmEclipse:SetFrameStrata("MEDIUM")
 	--cmEclipse:SetFrameLevel(8)
-	cmEclipse:SetTemplate("Default")
+	--cmEclipse:SetTemplate("Default")
 	--cmEclipse:SetBackdropBorderColor(0,0,0,0)
 	--cmEclipse:SetScript("OnShow", function() T.DruidBarDisplay(self, false) end)
 	--cmEclipse:SetScript("OnHide", function() T.DruidBarDisplay(self, false) end)

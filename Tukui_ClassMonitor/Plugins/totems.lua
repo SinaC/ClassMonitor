@@ -13,7 +13,9 @@ function CreateTotemMonitor(name, count, anchor, width, height, spacing, colors)
 
 	for i=1,4 do
 		totems[i] = CreateFrame("Frame", name..i, UIParent)
-		totems[i]:CreatePanel("Default", width , height, unpack(anchor))
+		--totems[i]:CreatePanel("Default", width , height, unpack(anchor))
+		totems[i]:SetTemplate()
+		totems[i]:Size(width, height)
 		totems[i].status = CreateFrame("StatusBar", name..i.."status", totems[i])
 		totems[i].status:SetStatusBarTexture(C.media.normTex)
 		totems[i].status:SetFrameLevel(6)

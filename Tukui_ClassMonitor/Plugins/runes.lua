@@ -8,7 +8,9 @@ function CreateRunesMonitor(name, updatethreshold, autohide, orientation, anchor
 	local runes = {}
 	for i = 1, 6 do
 		local rune = CreateFrame("Frame", name, UIParent)
-		rune:CreatePanel("Default", width, height, unpack(anchor))
+		--rune:CreatePanel("Default", width, height, unpack(anchor))
+		rune:SetTemplate()
+		rune:Size(width, height)
 		if i == 1 then
 			rune:Point(unpack(anchor))
 		else
