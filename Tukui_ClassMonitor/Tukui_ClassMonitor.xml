@@ -1,0 +1,13 @@
+﻿<Ui xmlns="http://www.blizzard.com/wow/ui/">
+	<Script file="config\config.lua"/>
+	<Script file="config\profiles.lua"/>
+	<Script file="plugins\aura.lua"/>
+	<Script file="plugins\power.lua"/>
+	<Script file="plugins\combo.lua"/>
+	<Script file="plugins\resource.lua"/>
+	<Script file="plugins\health.lua"/>
+	<Script file="plugins\runes.lua"/>
+	<Script file="plugins\eclipse.lua"/>
+	<Script file="plugins\totems.lua"/>
+	<Script file="core.lua"/>
+</Ui>
