@@ -7,7 +7,7 @@ function CreateRunesMonitor(name, updatethreshold, autohide, orientation, anchor
 	-- Create the runes
 	local runes = {}
 	for i = 1, 6 do
-		local rune = CreateFrame("Frame", name, UIParent)
+		local rune = CreateFrame("Frame", name, TukuiPetBattleHider)
 		--rune:CreatePanel("Default", width, height, unpack(anchor))
 		rune:SetTemplate()
 		rune:Size(width, height)

@@ -1,8 +1,8 @@
 -- Resource Plugin
 local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
 
-function CreateHealthMonitor(name, text, autohide, anchor, width, height, colors)
-	local cmHealth = CreateFrame("Frame", name, UIParent)
+function CreateHealthMonitor(name, text, autohide, anchor, width, height, colors, spec)
+	local cmHealth = CreateFrame("Frame", name, TukuiPetBattleHider)
 	--cmHealth:CreatePanel("Default", width , height, unpack(anchor))
 	cmHealth:SetTemplate()
 	cmHealth:Size(width, height)
@@ -55,15 +55,19 @@ function CreateHealthMonitor(name, text, autohide, anchor, width, height, colors
 	cmHealth:RegisterEvent("PLAYER_REGEN_ENABLED")
 	cmHealth:RegisterEvent("UNIT_HEALTH")
 	cmHealth:RegisterEvent("UNIT_MAXHEALTH")
+	cmHealth:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 	cmHealth:SetScript("OnEvent", function(self, event, arg1)
-		if event ~= "PLAYER_ENTERING_WORLD" and event ~= "PLAYER_REGEN_DISABLED" and event ~= "PLAYER_REGEN_ENABLED" and event ~= "UNIT_MAXHEALTH" and event ~= "UNIT_HEALTH" then return end
+		if spec ~= "any" and spec ~= GetSpecialization() then
+			cmHealth:Hide()
+			return
+		end
 
-		--print("Resource: event:"..event)
-		if event == "PLAYER_ENTERING_WORLD" or ((event == "UNIT_MAXHEALTH") and arg1 == "player") then
+		if event == "PLAYER_ENTERING_WORLD" or ((event == "UNIT_MAXHEALTH" or event == "PLAYER_SPECIALIZATION_CHANGED") and arg1 == "player") then
 			local valueMax = UnitHealthMax("player")
 			local color = (colors and (colors[resourceName] or colors[1])) or T.UnitColor.power[resourceName] or T.UnitColor.class[T.myclass]
 			cmHealth.status:SetStatusBarColor(unpack(color))
 			cmHealth.status:SetMinMaxValues(0, valueMax)
+			cmHealth:Show()
 		end
 		if autohide == true then
 			if event == "PLAYER_REGEN_DISABLED" then

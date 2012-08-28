@@ -28,7 +28,7 @@ local function UpdateVisibilityHandler(cmEclipse)
 		--if ptt and ptt == 1 then -- player has balance spec
 			-- showBar = true
 		-- end
-		local spec = T.toc < 50000 and GetPrimaryTalentTree() or GetSpecialization() -- MoP
+		local spec = GetSpecialization()
 		if spec and spec == 1 then -- player has balance spec
 			showBar = true
 		end
@@ -115,7 +115,7 @@ end
 
 function CreateEclipseMonitor(name, anchor, width, height, colors)
 	--print("CreateEclipseMonitor:"..tostring(width).."  "..tostring(height))
-	local cmEclipse = CreateFrame("Frame", name, UIParent)
+	local cmEclipse = CreateFrame("Frame", name, TukuiPetBattleHider)
 	--cmEclipse:CreatePanel("Default", width, height, unpack(anchor))
 	cmEclipse:SetTemplate()
 	cmEclipse:Size(width, height)
@@ -145,7 +145,7 @@ function CreateEclipseMonitor(name, anchor, width, height, colors)
 
 	cmEclipse:RegisterEvent("UNIT_POWER")
 	cmEclipse:RegisterEvent("UPDATE_VISIBILITY")
-	cmEclipse:RegisterEvent("PLAYER_TALENT_UPDATE")
+	cmEclipse:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 	cmEclipse:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
 	cmEclipse:RegisterEvent("UNIT_AURA")
 	-- cmEclipse:RegisterEvent("ECLIPSE_DIRECTION_CHANGE", EclipseDirectionChange)
@@ -153,7 +153,7 @@ function CreateEclipseMonitor(name, anchor, width, height, colors)
 		--print("OnEvent:"..event.." "..tostring(arg1).."  "..tostring(arg2))
 		if event == "UNIT_POWER" and arg1 == "player" and arg2 == "ECLIPSE" then
 			UnitPowerHandler(self)
-		elseif event == "UPDATE_VISIBILITY" or event == "PLAYER_TALENT_UPDATE" or event == "UPDATE_SHAPESHIFT_FORM" then
+		elseif event == "UPDATE_VISIBILITY" or event == "PLAYER_SPECIALIZATION_CHANGED" or event == "UPDATE_SHAPESHIFT_FORM" then
 			UpdateVisibilityHandler(self)
 		elseif event == "UNIT_AURA" and arg1 == "player" then 
 			UnitAuraHandler(self, colors) 

@@ -6,7 +6,7 @@ function CreateAuraMonitor(name, spellID, filter, count, anchor, width, height, 
 	local aura = GetSpellInfo(spellID)
 	local cmAMs = {}
 	for i = 1, count do
-		local cmAM = CreateFrame("Frame", name, UIParent) -- name is used for 1st power point
+		local cmAM = CreateFrame("Frame", name, TukuiPetBattleHider) -- name is used for 1st power point
 		--cmAM:CreatePanel("Default", width, height, unpack(anchor))
 		cmAM:SetTemplate()
 		cmAM:Size(width, height)
@@ -33,12 +33,11 @@ function CreateAuraMonitor(name, spellID, filter, count, anchor, width, height, 
 
 	cmAMs[1]:RegisterEvent("PLAYER_ENTERING_WORLD")
 	cmAMs[1]:RegisterEvent("UNIT_AURA")
+	cmAMs[1]:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 	cmAMs[1]:SetScript("OnEvent", function(self, event, arg1)
-		if event ~= "PLAYER_ENTERING_WORLD" and event ~= "UNIT_AURA" then return end
-		if event == "UNIT_AURA" and arg1 ~= "player" then return end
+		if (event == "UNIT_AURA" or event == "PLAYER_SPECIALIZATION_CHANGED") and arg1 ~= "player" then return end
 		local found = false
-		--if spec == "all" or spec == GetPrimaryTalentTree() then
-		if spec == "all" or spec == GetSpecialization() then -- MoP
+		if spec == "any" or spec == GetSpecialization() then
 			for i = 1, 40, 1 do
 				local name, _, _, stack, _, _, _, unitCaster = UnitAura("player", i, filter )
 				if not name then break end

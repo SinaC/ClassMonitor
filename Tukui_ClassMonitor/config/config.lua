@@ -21,7 +21,7 @@ C["classmonitor"] = {
 	color|colors =													see note below [default: class color]
 	filled = true|false												is combo point filled or not [default: false]
 
-	POWER (holy power/soul shard):
+	POWER (holy power/soul shard/light force):
 	powerType = SPELL_POWER_HOLY_POWER | SPELL_POWER_SOUL_SHARDS | SPELL_POWER_LIGHT_FORCE	power to monitor (can be any power type (http://www.wowwiki.com/PowerType)
 	count = number													max number of points to display
 	anchor|anchors =												see note below
@@ -158,17 +158,75 @@ C["classmonitor"] = {
 			height = 10,
 		},
 		{
+			-- SPEC_WARLOCK_AFFLICTION
+			spec = SPEC_WARLOCK_AFFLICTION,
 			name = "CM_SOUL_SHARD",
 			kind = "POWER",
 			powerType = SPELL_POWER_SOUL_SHARDS,
-			count = 3,
+			count = 4,
 			anchor = {"BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3},
-			width = 85,
+			width = 63,
 			height = 15,
 			spacing = 3,
 			color = {255/255, 101/255, 101/255, 1},
 			filled = false,
 		},
+		{
+			-- SPEC_WARLOCK_DESTRUCTION
+			name = "CM_BURNING_EMBERS",
+			kind = "POWER",
+			powerType = SPELL_POWER_BURNING_EMBERS,
+			count = 4,
+			anchor = {"BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3},
+			width = 63,
+			height = 15,
+			spacing = 3,
+			color = {222/255, 95/255,  95/255, 1},
+			filled = false,
+		},
+		{
+			-- SPEC_WARLOCK_DEMONOLOGY
+			name = "CM_DEMONIC_FURY",
+			kind = "POWER",
+			powerType = SPELL_POWER_DEMONIC_FURY,
+			count = 1,
+			anchor = {"BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3},
+			width = 261,
+			height = 15,
+			spacing = 3,
+			color = {95/255, 222/255,  95/255, 1},
+			filled = false,
+		},
+--[[
+		if (spec == SPEC_WARLOCK_DESTRUCTION) then -- {222/255, 95/255,  95/255, 1}
+			local maxPower = UnitPowerMax("player", SPELL_POWER_BURNING_EMBERS, true)
+			local power = UnitPower("player", SPELL_POWER_BURNING_EMBERS, true)
+			local numEmbers = power / MAX_POWER_PER_EMBER
+			local numBars = floor(maxPower / MAX_POWER_PER_EMBER)
+			
+			for i = 1, numBars do
+				wsb[i]:SetMinMaxValues((MAX_POWER_PER_EMBER * i) - MAX_POWER_PER_EMBER, MAX_POWER_PER_EMBER * i)
+				wsb[i]:SetValue(power)
+			end
+		elseif ( spec == SPEC_WARLOCK_AFFLICTION ) then -- {255/255, 101/255, 101/255, 1}
+			local numShards = UnitPower("player", SPELL_POWER_SOUL_SHARDS)
+			local maxShards = UnitPowerMax("player", SPELL_POWER_SOUL_SHARDS)
+			
+			for i = 1, maxShards do
+				if i <= numShards then
+					wsb[i]:SetAlpha(1)
+				else
+					wsb[i]:SetAlpha(.2)
+				end
+			end
+		elseif spec == SPEC_WARLOCK_DEMONOLOGY then -- {95/255, 222/255,  95/255, 1}
+			local power = UnitPower("player", SPELL_POWER_DEMONIC_FURY)
+			local maxPower = UnitPowerMax("player", SPELL_POWER_DEMONIC_FURY)
+						
+			wsb[1]:SetMinMaxValues(0, maxPower)
+			wsb[1]:SetValue(power)
+		end
+--]]
 	},
 	["ROGUE"] = {
 		{

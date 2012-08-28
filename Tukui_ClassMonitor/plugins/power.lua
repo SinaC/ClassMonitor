@@ -28,11 +28,11 @@ local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C 
 --			hide
 --			remove OnUpdate
 
-function CreatePowerMonitor(name, powerType, count, anchor, width, height, spacing, colors, filled)
+function CreatePowerMonitor(name, powerType, count, anchor, width, height, spacing, colors, filled, spec)
 	local cmPMs = {}
 
 	for i = 1, count do
-		local cmPM = CreateFrame("Frame", name, UIParent) -- name is used for 1st power point
+		local cmPM = CreateFrame("Frame", name, TukuiPetBattleHider) -- name is used for 1st power point
 		--cmPM:CreatePanel("Default", width, height, unpack(anchor))
 		cmPM:SetTemplate()
 		cmPM:Size(width, height)
@@ -67,13 +67,20 @@ function CreatePowerMonitor(name, powerType, count, anchor, width, height, spaci
 
 	cmPMs[1]:RegisterEvent("PLAYER_ENTERING_WORLD")
 	cmPMs[1]:RegisterEvent("UNIT_POWER")
+	cmPMs[1]:RegisterEvent("UNIT_MAXPOWER")
+	cmPMs[1]:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 	cmPMs[1]:SetScript("OnEvent", function(self, event, arg1)
-		if event ~= "UNIT_POWER" and event ~= "PLAYER_ENTERING_WORLD" then return end
-		if event == "UNIT_POWER" and arg1 ~= "player" then return end
+		if (event == "UNIT_POWER" or event == "UNIT_MAXPOWER" or event == "PLAYER_SPECIALIZATION_CHANGED") and arg1 ~= "player" then return end
+
+		if spec ~= "any" and spec ~= GetSpecialization() then
+			for i = 1, count do cmPMs[i]:Hide() end
+			return
+		end
 
 		local value = UnitPower("player", powerType)
 		local maxValue = UnitPowerMax("player", powerType)
---print("Value:"..tostring(value).."  "..tostring(powerType).."  "..tostring(maxValue).."  "..tostring(cmPMs.maxValue).."  "..tostring(count))
+--print("Value:"..tostring(powerType).."  "..tostring(value).."/"..tostring(maxValue).."  "..tostring(cmPMs.maxValue).."  "..tostring(count))
+
 		if maxValue ~= cmPMs.maxValue and maxValue <= count then
 --print("resize")
 			-- hide points
@@ -88,10 +95,7 @@ function CreatePowerMonitor(name, powerType, count, anchor, width, height, spaci
 			cmPMs.maxValue = maxValue
 		end
 		if value and value > 0 then
-			for i = 1, value do
---print("Show:"..tostring(i))
-				cmPMs[i]:Show()
-			end
+			for i = 1, value do cmPMs[i]:Show() end
 			for i = value+1, count do cmPMs[i]:Hide() end
 		else
 			for i = 1, count do cmPMs[i]:Hide() end

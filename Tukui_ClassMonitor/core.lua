@@ -1,39 +1,8 @@
--- TO TEST:
--- ========
--- deletion of non-class specific settings
-
 -- TODO:
 -- =====
 -- add a visibility function (we dont want to see resource bar while in travel/flying form)
 -- each plugin frame should be children of core frame
 -- plugin should be load-on-demand
--- remove power count, use UnitPowerMax and compute width dynamically
---[[ example with monk
-	local spacing = select(4, hb[4]:GetPoint())
-	local w = hb:GetWidth()
-	local s = 0
-	local light = UnitPower("player", SPELL_POWER_LIGHT_FORCE)
-	local maxChi = UnitPowerMax("player", SPELL_POWER_LIGHT_FORCE)
-	
-	if hb.maxChi ~= maxChi then
-		if maxChi == 4 then
-			hb[5]:Hide()			
-		else
-			hb[5]:Show()
-		end
-		
-		for i = 1, maxChi do
-			if i ~= maxChi then
-				hb[i]:SetWidth(w / maxChi - spacing)
-				s = s + (w / maxChi)
-			else
-				hb[i]:SetWidth(w - s)
-			end
-		end
-		
-		hb.maxChi = maxChi
-	end
---]]
 
 local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
 
@@ -54,10 +23,7 @@ end
 -- Return anchor corresponding to current spec
 local function GetAnchor(anchors)
 	if not anchors then return end
-	--local ptt = GetPrimaryTalentTree()
-	--if not ptt or ptt == 0 then ptt = 1 end
-	--return anchors[ptt]
-	local spec = GetSpecialization() -- MoP
+	local spec = GetSpecialization()
 	if not spec or spec == 0 then spec = 1 end
 	return anchors[spec]
 end
@@ -65,10 +31,10 @@ end
 -- When multiple anchors are specified, anchor depends on current spec
 local function SetMultipleAnchorHandler(frame, anchors)
 	if not anchors then return end
-	frame:RegisterEvent("PLAYER_TALENT_UPDATE")
+	frame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 	frame:RegisterEvent("PLAYER_ENTERING_WORLD")
 	frame:HookScript("OnEvent", function(self, event)
-		if event ~= "PLAYER_TALENT_UPDATE" and event ~= "PLAYER_ENTERING_WORLD" then return end
+		if event ~= "PLAYER_SPECIALIZATION_CHANGED" and event ~= "PLAYER_ENTERING_WORLD" then return end
 		local anchor = GetAnchor(anchors)
 		if not anchor then return end
 		DEBUG("Anchor:"..event.." "..frame:GetName())
@@ -104,6 +70,7 @@ for i, section in ipairs(settings) do
 	local anchor = section.anchor or GetAnchor(anchors)
 	local width = section.width or 85
 	local height = section.height or 15
+	local spec = section.spec or "any"
 
 	DEBUG("section:"..name)
 	if name and kind and anchor then
@@ -115,19 +82,19 @@ for i, section in ipairs(settings) do
 			local autohide = section.autohide or false
 			local colors = section.colors or (section.color and {section.color})
 
-			frame = CreateResourceMonitor(name, text, autohide, anchor, width, height, colors)
+			frame = CreateResourceMonitor(name, text, autohide, anchor, width, height, colors, spec)
 		elseif kind == "HEALTH" then
 			local text = section.text or true
 			local autohide = section.autohide or false
 			local colors = section.colors or (section.color and {section.color})
 
-			frame = CreateHealthMonitor(name, text, autohide, anchor, width, height, colors)
+			frame = CreateHealthMonitor(name, text, autohide, anchor, width, height, colors, spec)
 		elseif kind == "COMBO" then
 			local spacing = section.spacing or 3
 			local color = section.color or T.UnitColor.class[T.myclass]
 			local colors = section.colors or CreateColorArray(color, 5)
 
-			frame = CreateComboMonitor(name, anchor, width, height, spacing, colors, filled)
+			frame = CreateComboMonitor(name, anchor, width, height, spacing, colors, filled, spec)
 		elseif kind == "POWER" then
 			local powerType = section.powerType
 			local count = section.count
@@ -136,8 +103,14 @@ for i, section in ipairs(settings) do
 			local colors = section.colors or CreateColorArray(color, count)
 			local filled = section.filled or false
 
-			if powerType and count then
-				frame = CreatePowerMonitor(name, powerType, count, anchor, width, height, spacing, colors, filled)
+			if powerType == SPELL_POWER_BURNING_EMBERS then
+				frame = CreateBurningEmbersMonitor(name, anchor, width, height, spacing, colors)
+			elseif powerType == SPELL_POWER_DEMONIC_FURY then
+				local text = section.text or true
+				local autohide = section.autohide or false
+				frame = CreateDemonicFuryMonitor(name, text, autohide, anchor, width, height, colors)
+			elseif powerType and count then
+				frame = CreatePowerMonitor(name, powerType, count, anchor, width, height, spacing, colors, filled, spec)
 			else
 				WARNING("section:"..name..":"..(powerType and "" or " missing powerType")..(count and "" or " missing count"))
 			end
@@ -149,7 +122,6 @@ for i, section in ipairs(settings) do
 			local color = section.color or T.UnitColor.class[T.myclass]
 			local colors = section.colors or CreateColorArray(color, count)
 			local filled = section.filled or false
-			local spec = section.spec or "all"
 
 			if spellID and filter and count then
 				frame = CreateAuraMonitor(name, spellID, filter, count, anchor, width, height, spacing, colors, filled, spec)

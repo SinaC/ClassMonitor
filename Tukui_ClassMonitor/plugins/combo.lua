@@ -1,10 +1,10 @@
 -- Combo Points plugin
 local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
 
-function CreateComboMonitor(name, anchor, width, height, spacing, colors, filled)
+function CreateComboMonitor(name, anchor, width, height, spacing, colors, filled, spec)
 	local cmCombos = {}
 	for i = 1, 5 do
-		local cmCombo = CreateFrame("Frame", name, UIParent) -- name is used for 1st power point
+		local cmCombo = CreateFrame("Frame", name, TukuiPetBattleHider) -- name is used for 1st power point
 		--cmCombo:CreatePanel("Default", width, height, unpack(anchor))
 		cmCombo:SetTemplate()
 		cmCombo:Size(width, height)
@@ -32,11 +32,10 @@ function CreateComboMonitor(name, anchor, width, height, spacing, colors, filled
 	cmCombos[1]:RegisterEvent("PLAYER_ENTERING_WORLD")
 	cmCombos[1]:RegisterEvent("UNIT_COMBO_POINTS")
 	cmCombos[1]:RegisterEvent("PLAYER_TARGET_CHANGED")
+	cmCombos[1]:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 	cmCombos[1]:SetScript("OnEvent", function(self, event)
-		if event ~= "PLAYER_ENTERING_WORLD" and event ~= "UNIT_COMBO_POINTS" and event ~= "PLAYER_TARGET_CHANGED" then return end
-
 		local points = GetComboPoints("player", "target")
-		if points and points > 0 then
+		if points and points > 0 and (spec == "any" or spec == GetSpecialization()) then
 			for i = 1, points do cmCombos[i]:Show() end
 			for i = points+1, 5 do cmCombos[i]:Hide() end
 		else

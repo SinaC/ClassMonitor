@@ -1,8 +1,8 @@
 -- Resource Plugin
 local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
 
-function CreateResourceMonitor(name, text, autohide, anchor, width, height, colors)
-	local cmResource = CreateFrame("Frame", name, UIParent)
+function CreateResourceMonitor(name, text, autohide, anchor, width, height, colors, spec)
+	local cmResource = CreateFrame("Frame", name, TukuiPetBattleHider)
 	--cmResource:CreatePanel("Default", width , height, unpack(anchor))
 	cmResource:SetTemplate()
 	cmResource:Size(width, height)
@@ -63,10 +63,16 @@ function CreateResourceMonitor(name, text, autohide, anchor, width, height, colo
 	cmResource:RegisterEvent("PLAYER_REGEN_ENABLED")
 	cmResource:RegisterEvent("UNIT_POWER")
 	cmResource:RegisterEvent("UNIT_MAXPOWER")
+	cmResource:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 	cmResource:SetScript("OnEvent", function(self, event, arg1)
-		if event ~= "PLAYER_ENTERING_WORLD" and event ~= "UNIT_DISPLAYPOWER" and event ~= "PLAYER_REGEN_DISABLED" and event ~= "PLAYER_REGEN_ENABLED" and event ~= "UNIT_MAXPOWER" and event ~= "UNIT_POWER" then return end
 --print("Resource: event:"..event)
-		if event == "PLAYER_ENTERING_WORLD" or ((event == "UNIT_DISPLAYPOWER" or event == "UNIT_MAXPOWER") and arg1 == "player") then
+
+		if spec ~= "any" and spec ~= GetSpecialization() then
+			cmResource:Hide()
+			return
+		end
+
+		if event == "PLAYER_ENTERING_WORLD" or ((event == "UNIT_DISPLAYPOWER" or event == "UNIT_MAXPOWER" or event == "PLAYER_SPECIALIZATION_CHANGED") and arg1 == "player") then
 			local resource, resourceName = UnitPowerType("player")
 			local valueMax = UnitPowerMax("player", resource)
 --print("Resource: "..resource.."  "..resourceName.."  "..valueMax)
