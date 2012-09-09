@@ -11,5 +11,6 @@
 	<Script file="plugins\totems.lua"/>
 	<Script file="plugins\burningembers.lua"/>
 	<Script file="plugins\demonicfury.lua"/>
+	<Script file="plugins\dots.lua"/>
 	<Script file="core.lua"/>
 </Ui>
