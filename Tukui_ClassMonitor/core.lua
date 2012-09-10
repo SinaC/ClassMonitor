@@ -82,6 +82,7 @@ for i, section in ipairs(settings) do
 			local autohide = section.autohide or false
 			local colors = section.colors or (section.color and {section.color})
 
+
 			frame = CreateResourceMonitor(name, text, autohide, anchor, width, height, colors, spec)
 		elseif kind == "HEALTH" then
 			local text = section.text or true
@@ -127,6 +128,18 @@ for i, section in ipairs(settings) do
 				frame = CreateAuraMonitor(name, spellID, filter, count, anchor, width, height, spacing, colors, filled, spec)
 			else
 				WARNING("section:"..name..":"..(spellID and "" or " missing spellID")..(filter and "" or " missing filter")..(count and "" or " missing count"))
+			end
+		elseif kind == "DOT" then
+			local spellID = section.spellID
+			local colors = section.colors or (section.color and {section.color})
+			local latency = section.latency or false
+			local threshold = section.threshold or 0
+
+
+			if spellID then
+				frame = CreateDotMonitor(name, spellID, anchor, width, height, colors, threshold, latency, spec)
+			else
+				WARNING("section:"..name..":"..(spellID and "" or " missing spellID"))
 			end
 		elseif kind == "RUNES" then
 			local updatethreshold = section.updatethreshold or 0.1

@@ -13,6 +13,7 @@ C["classmonitor"] = {
 	height = number													height of resource bar [default: 15]
 	color|colors =													see note below [default: tukui power color]
 
+
 	COMBO:
 	anchor|anchors =												see note below
 	width = number													width of combo point [default: 85]
@@ -294,12 +295,37 @@ C["classmonitor"] = {
 			kind = "AURA",
 			spellID = 36032,
 			filter = "HARMFUL",
-			count = 4,
+			count = 6,
 			anchor = {"BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3},
 			width = 63,
 			height = 15,
 			spacing = 3,
 			filled = false,
+		},
+		{
+			name = "CM_IGNITE",
+			kind = "DOT",
+			spellID = 12654, -- ignite spellID
+			anchor = {"BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3},
+			width = 261,
+			height = 10,
+			colors = { 
+				{255/255, 165/255, 0, 1}, -- bad -- orange
+				{255/255, 255/255, 0, 1}, -- 0,75% -- yellow
+				{127/255, 255/255, 0, 1}, -- > 100% GO -- green
+				},
+			latency = true,
+			threshold = 20000,
+		},
+		{
+			name = "CM_COMBU",
+			kind = "DOT",
+			spellID = 83853, -- Combustion spellID
+			anchor = {"TOPLEFT", "CM_MANA", "BOTTOMLEFT", 0, -3},
+			width = 261,
+			height = 10,
+			color = {228/255, 225/255, 16/255, 1},
+			latency = false,
 		},
 	},
 	["DEATHKNIGHT"] = {
