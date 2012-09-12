@@ -39,29 +39,29 @@ function Engine:CreateResourceMonitor(name, text, autohide, anchor, width, heigh
 	-- cmResource:Point("CENTER", holder, "CENTER", 0, 0)
 	-- --cmResource:SetAllPoints(holder)
 
-	local mover = CreateFrame("Frame", name.."_MOVER", UIParent)
-	mover:SetTemplate()
-	mover:SetMovable(true)
-	mover:Size(30, 30)
-	local point, relativeFrame, relativePoint, ofsx, ofsy = unpack(anchor)
-	mover:Point("LEFT", relativeFrame, relativePoint, ofsx + width/2 + 10, ofsy) -- LEFT of resource anchor  width/2 because relativePoint == CENTER
-	mover:SetBackdropBorderColor(1, 0, 0)
-	mover:SetFrameLevel(2)
-	mover:SetFrameStrata("HIGH")
-	mover.text = T.SetFontString(mover, C.media.uffont, 12)
-	mover.text:SetPoint("CENTER")
-	mover.text:SetText("MOVE RESOURCE BAR")
-	mover:Hide()
-	mover.exec = function(self, enable)
-		if enable then
-			self:Show()
-		else
-			self:Hide()
-		end
-	end
-	tinsert(T.AllowFrameMoving, mover)
-	cmResource:ClearAllPoints()
-	cmResource:Point("BOTTOMRIGHT", mover, "BOTTOMLEFT", -10, 0)
+	-- local mover = CreateFrame("Frame", name.."_MOVER", UIParent)
+	-- mover:SetTemplate()
+	-- mover:SetMovable(true)
+	-- mover:Size(30, 30)
+	-- local point, relativeFrame, relativePoint, ofsx, ofsy = unpack(anchor)
+	-- mover:Point("LEFT", relativeFrame, relativePoint, ofsx + width/2 + 10, ofsy) -- LEFT of resource anchor  width/2 because relativePoint == CENTER
+	-- mover:SetBackdropBorderColor(1, 0, 0)
+	-- mover:SetFrameLevel(2)
+	-- mover:SetFrameStrata("HIGH")
+	-- mover.text = T.SetFontString(mover, C.media.uffont, 12)
+	-- mover.text:SetPoint("CENTER")
+	-- mover.text:SetText("MOVE RESOURCE BAR")
+	-- mover:Hide()
+	-- mover.exec = function(self, enable)
+		-- if enable then
+			-- self:Show()
+		-- else
+			-- self:Hide()
+		-- end
+	-- end
+	-- tinsert(T.AllowFrameMoving, mover)
+	-- cmResource:ClearAllPoints()
+	-- cmResource:Point("BOTTOMRIGHT", mover, "BOTTOMLEFT", -10, 0)
 
 	cmResource.status = CreateFrame("StatusBar", "cmResourceStatus", cmResource)
 	cmResource.status:SetStatusBarTexture(C.media.normTex)
