@@ -1,5 +1,5 @@
 ## Interface: 50001
-## Version: 2.5.2
+## Version: 2.6.1
 ## Author: SinaC
 ## Title: |cffC495DDTukui|r Class Monitor
 ## Credits: Smelly, Hydra, Krevlorne, Ildyria

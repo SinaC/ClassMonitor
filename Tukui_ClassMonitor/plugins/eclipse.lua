@@ -1,4 +1,5 @@
 -- Eclipse plugin
+local ADDON_NAME, Engine = ...
 local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
 
 local function UnitPowerHandler(cmEclipse)
@@ -113,11 +114,12 @@ end
 	-- cmEclipse.directionIsLunar = isLunar
 -- end
 
-function CreateEclipseMonitor(name, anchor, width, height, colors)
+function Engine:CreateEclipseMonitor(name, anchor, width, height, colors)
 	--print("CreateEclipseMonitor:"..tostring(width).."  "..tostring(height))
 	local cmEclipse = CreateFrame("Frame", name, TukuiPetBattleHider)
 	--cmEclipse:CreatePanel("Default", width, height, unpack(anchor))
 	cmEclipse:SetTemplate()
+	cmEclipse:SetFrameStrata("BACKGROUND")
 	cmEclipse:Size(width, height)
 
 	--cmEclipse:SetFrameStrata("MEDIUM")

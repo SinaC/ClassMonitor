@@ -1,13 +1,15 @@
 -- Dot Plugin
+local ADDON_NAME, Engine = ...
 local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
 
-function CreateDotMonitor(name, spelltracked, anchor, width, height, colors, threshold, latency, spec)
+function Engine:CreateDotMonitor(name, spelltracked, anchor, width, height, colors, threshold, latency)
 
 	local aura = GetSpellInfo(spelltracked)
 
 	local cmDot = CreateFrame("Frame", name, TukuiPetBattleHider)
---	cmDot:CreatePanel("Default", width , height, unpack(anchor))
+	--cmDot:CreatePanel("Default", width , height, unpack(anchor))
 	cmDot:SetTemplate()
+	cmDot:SetFrameStrata("BACKGROUND")
 	cmDot:Size(width, height)
 	cmDot:Point(unpack(anchor))
 
@@ -60,7 +62,6 @@ function CreateDotMonitor(name, spelltracked, anchor, width, height, colors, thr
 		local _, _, eventType, _, sourceGUID, _, _, _, destGUID, _, _, _, spellID, _, _, amount, _ = ...
 		local pGUID = UnitGUID("player")
 		local tGUID = UnitGUID("target")
-
 		if sourceGUID == pGUID and destGUID == tGUID then
 			if string.find(eventType, "_DAMAGE") and spellID == spelltracked then
 				cmDot.dmg = amount
@@ -69,10 +70,6 @@ function CreateDotMonitor(name, spelltracked, anchor, width, height, colors, thr
 	end
 
 	local function CombatCheck(self,event)																		-- Combat check function
-		if spec ~= "any" and spec ~= GetSpecialization() then
-			cmDot:Hide()
-			return
-		end
 		if event == "PLAYER_REGEN_DISABLED" then
 			cmDot.combatlogcheck:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 			cmDot.combatlogcheck:SetScript("OnEvent",CombatLogCheck)
@@ -87,14 +84,7 @@ function CreateDotMonitor(name, spelltracked, anchor, width, height, colors, thr
 	cmDot.combatcheck:RegisterEvent("PLAYER_REGEN_ENABLED")
 	cmDot.combatcheck:SetScript("OnEvent", CombatCheck)
 
-
-
-	local function CombatAuraCheck(self,event)	-- Aura check
-		if spec ~= "any" and spec ~= GetSpecialization() then
-			cmDot:Hide()
-			return
-		end
-
+	local function CombatAuraCheck(self,event)																			-- Aura check
 		local _, _, _, count, _, duration, expTime, _, _, _, _ = UnitAura("target", aura, nil, "PLAYER|HARMFUL")
 		if expTime ~= nil then
 			local remainTime = expTime - GetTime()

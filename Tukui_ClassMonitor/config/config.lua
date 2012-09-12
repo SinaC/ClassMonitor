@@ -3,7 +3,7 @@ local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C 
 C["classmonitor"] = {
 --[[
 	name = frame name (can be used in anchor)
-	kind = POWER | AURA | RESOURCE(mana/runic/energy/focus/rage) | ECLIPSE | COMBO | RUNES
+	kind = POWER | AURA | RESOURCE(mana/runic/energy/focus/rage) | ECLIPSE | COMBO | RUNES | DOT | REGEN | WILDMUSHROOMS
 
 	RESOURCE (mana/runic power/energy/focus/rage/chi):
 	text = true|false												display resource value (% for mana) [default: true]
@@ -23,7 +23,7 @@ C["classmonitor"] = {
 	filled = true|false												is combo point filled or not [default: false]
 
 	POWER (holy power/soul shard/light force):
-	powerType = SPELL_POWER_HOLY_POWER | SPELL_POWER_SOUL_SHARDS | SPELL_POWER_LIGHT_FORCE	power to monitor (can be any power type (http://www.wowwiki.com/PowerType)
+	powerType = SPELL_POWER_HOLY_POWER | SPELL_POWER_SOUL_SHARDS | SPELL_POWER_LIGHT_FORCE | SPELL_POWER_BURNING_EMBERS | SPELL_POWER_DEMONIC_FURY	power to monitor (can be any power type (http://www.wowwiki.com/PowerType)
 	count = number													max number of points to display
 	anchor|anchors =												see note below
 	width = number													width of power point [default: 85]
@@ -60,6 +60,37 @@ C["classmonitor"] = {
 	height = number													height of eclipse bar
 	colors = { lunar, solar }										color of lunar and solar bar
 
+	REGEN
+	anchor = 														see note below
+	width = number													width of health bar [default: 85]
+	height = number													height of health bar [default: 10]
+	spellID = number												spell id of dot to monitor (6117 : mage armor, 47755 : rapture, ...)
+	color =															see note below [default: class color]
+	filling = true|false											fill the bar or empty it ! [default : false]
+	duration = number												timer before next tic [default: 5]
+
+	DOT
+	anchor = 														see note below
+	width = number													width of health bar [default: 85]
+	height = number													height of health bar [default: 10]
+	spellID = number												spell id of dot to monitor
+	latency = true|false											indicate latency on buff (usefull for ignite)
+	threshold = number or 0											threshold to work with colors [default: 0]
+	colors = array of array : 
+		{
+			{255/255, 165/255, 0, 1},						Bad color : under 75% of threshold -- here orange -- [default: class color]
+			{255/255, 255/255, 0, 1},						Intermediate color : 0,75% of threshold -- here yellow -- [default: class color]
+			{127/255, 255/255, 0, 1},						Good color : over threshold -- here green -- [default: class color]
+		},
+	color = {r,g,b,a}												if treshold is set to 0	[default: class color]
+
+	WILDMUSHROOMS
+	anchor = 														see note below
+	width = number													width of health bar [default: 85]
+	height = number													height of health bar [default: 10]
+	spacing = number												space between runes [default: 3]
+	color|colors =													see note below [default: class color]
+
 	Notes about anchor
 	anchor = { "POSITION", parent, "POSITION", offsetX, offsetY }
 		-> one anchor whatever spec is used
@@ -82,7 +113,7 @@ C["classmonitor"] = {
 			autohide = false,
 			anchor = { "CENTER", UIParent, "CENTER", 0, -120 },
 			width = 262,
-			height = 10,
+			height = 15,
 		},
 		{
 			name = "CM_COMBO",
@@ -105,11 +136,20 @@ C["classmonitor"] = {
 			kind = "ECLIPSE",
 			anchor = { "BOTTOMLEFT", "CM_RESOURCE", "TOPLEFT", 0, 3 },
 			width = 262,
-			height = 10,
+			height = 15,
 			colors = {
 				{0.50, 0.52, 0.70, 1}, -- Lunar
 				{0.80, 0.82, 0.60, 1}, -- Solar
 			},
+		},
+		{
+			name = "CM_WILDMUSHROOMS",
+			kind = "WILDMUSHROOMS",
+			anchor = { "TOPLEFT", "CM_RESOURCE", "BOTTOMLEFT", 0, -3 },
+			width = 85,
+			height = 15,
+			spacing = 3,
+			color = { 95/255, 222/255,  95/255, 1 },
 		}
 	},
 	["PALADIN"] = {
@@ -129,7 +169,7 @@ C["classmonitor"] = {
 			autohide = false,
 			anchor = {"CENTER", UIParent, "CENTER", -0, -100},
 			width = 262, -- 50 + 3 + 50 + 3 + 50 + 3 + 50 + 3 + 50
-			height = 10,
+			height = 15,
 		},
 		{
 			name = "CM_HOLYPOWER",
@@ -156,7 +196,7 @@ C["classmonitor"] = {
 			autohide = false,
 			anchor = { "CENTER", UIParent, "CENTER", 0, -100 },
 			width = 261,
-			height = 10,
+			height = 15,
 		},
 		{
 			-- SPEC_WARLOCK_AFFLICTION
@@ -237,7 +277,7 @@ C["classmonitor"] = {
 			autohide = false,
 			anchor = { "CENTER", UIParent, "CENTER", 0, -100 },
 			width = 262,
-			height = 10,
+			height = 15,
 		},
 		{
 			name = "CM_COMBO",
@@ -255,6 +295,19 @@ C["classmonitor"] = {
 			},
 			filled = false,
 		},
+		{
+			name = "CM_ANTICIPATION",
+			kind = "AURA",
+			spellID = 114015,
+			filter = "HELPFUL",
+			count = 5,
+			anchor = {"BOTTOMLEFT", "CM_COMBO", "TOPLEFT", 0, 3},
+			width = 50,
+			height = 15,
+			spacing = 3,
+			color = {0.33, 0.63, 0.33, 1},
+			filled = false,
+		},
 	},
 	["PRIEST"] = {
 		{
@@ -264,7 +317,7 @@ C["classmonitor"] = {
 			autohide = false,
 			anchor = { "CENTER", UIParent, "CENTER", 0, -100 },
 			width = 261,
-			height = 10,
+			height = 15,
 		},
 		{
 			name = "CM_SHADOW_ORB",
@@ -288,7 +341,7 @@ C["classmonitor"] = {
 			autohide = false,
 			anchor = { "CENTER", UIParent, "CENTER", 0, -100},
 			width = 261,
-			height = 10,
+			height = 15,
 		},
 		{
 			name = "CM_ARCANE_BLAST",
@@ -336,7 +389,7 @@ C["classmonitor"] = {
 			autohide = false,
 			anchor = { "CENTER", UIParent, "CENTER", 0, -100 },
 			width = 261,
-			height = 10,
+			height = 15,
 		},
 		{
 			name = "CM_RUNES",
@@ -371,7 +424,7 @@ C["classmonitor"] = {
 			autohide = false,
 			anchor = {"CENTER", UIParent, "CENTER", 0, -123},
 			width = 262,
-			height = 10,
+			height = 15,
 		},
 		{
 			name = "CM_RSA",
@@ -395,7 +448,7 @@ C["classmonitor"] = {
 			autohide = false,
 			anchor = {"CENTER", UIParent, "CENTER", 0, -123},
 			width = 261,
-			height = 10,
+			height = 15,
 		}
 	},
 	["SHAMAN"] = {
@@ -406,7 +459,7 @@ C["classmonitor"] = {
 			autohide = false,
 			anchor = { "CENTER", UIParent, "CENTER", 0, -123 },
 			width = 267,
-			height = 10,
+			height = 15,
 		},
 		{
 			name = "CM_FULMINATION",
@@ -417,7 +470,7 @@ C["classmonitor"] = {
 			count = 9,
 			anchor = {"BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3},
 			width = 27,
-			height = 10,
+			height = 15,
 			spacing = 3,
 			color = {0.5, 0, 0.7, 1},
 			filled = false,
@@ -431,7 +484,7 @@ C["classmonitor"] = {
 			count = 5,
 			anchor = {"BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3},
 			width = 51,
-			height = 10,
+			height = 15,
 			spacing = 3,
 			color = {0.5, 0, 0.7, 1},
 			filled = false,
@@ -450,7 +503,7 @@ C["classmonitor"] = {
 			count = 4,
 			anchor = {"TOPLEFT", "CM_MANA", "BOTTOMLEFT", 0, -3},
 			width = 66,
-			height = 10,
+			height = 15,
 			spacing = 1,
 			colors = {
 			-- In the order, fire, earth, water, air
@@ -469,7 +522,7 @@ C["classmonitor"] = {
 			autohide = false,
 			anchor = { "CENTER", UIParent, "CENTER", 0, -120 },
 			width = 262,
-			height = 10,
+			height = 15,
 		},
 		{
 			name = "CM_CHI",

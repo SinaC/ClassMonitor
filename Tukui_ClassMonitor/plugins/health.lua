@@ -1,10 +1,12 @@
 -- Resource Plugin
+local ADDON_NAME, Engine = ...
 local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
 
-function CreateHealthMonitor(name, text, autohide, anchor, width, height, colors, spec)
+function Engine:CreateHealthMonitor(name, text, autohide, anchor, width, height, colors, spec)
 	local cmHealth = CreateFrame("Frame", name, TukuiPetBattleHider)
 	--cmHealth:CreatePanel("Default", width , height, unpack(anchor))
 	cmHealth:SetTemplate()
+	cmHealth:SetFrameStrata("BACKGROUND")
 	cmHealth:Size(width, height)
 
 	cmHealth.status = CreateFrame("StatusBar", "cmHealthStatus", cmHealth)
@@ -53,16 +55,18 @@ function CreateHealthMonitor(name, text, autohide, anchor, width, height, colors
 	cmHealth:RegisterEvent("PLAYER_ENTERING_WORLD")
 	cmHealth:RegisterEvent("PLAYER_REGEN_DISABLED")
 	cmHealth:RegisterEvent("PLAYER_REGEN_ENABLED")
-	cmHealth:RegisterEvent("UNIT_HEALTH")
-	cmHealth:RegisterEvent("UNIT_MAXHEALTH")
-	cmHealth:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
-	cmHealth:SetScript("OnEvent", function(self, event, arg1)
+	cmHealth:RegisterUnitEvent("UNIT_HEALTH", "player")
+	cmHealth:RegisterUnitEvent("UNIT_MAXHEALTH", "player")
+	cmHealth:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
+	--cmHealth:SetScript("OnEvent", function(self, event, arg1)
+	cmHealth:SetScript("OnEvent", function(self, event)
 		if spec ~= "any" and spec ~= GetSpecialization() then
 			cmHealth:Hide()
 			return
 		end
 
-		if event == "PLAYER_ENTERING_WORLD" or ((event == "UNIT_MAXHEALTH" or event == "PLAYER_SPECIALIZATION_CHANGED") and arg1 == "player") then
+		--if event == "PLAYER_ENTERING_WORLD" or ((event == "UNIT_MAXHEALTH" or event == "PLAYER_SPECIALIZATION_CHANGED") and arg1 == "player") then
+		if event == "PLAYER_ENTERING_WORLD" or event == "UNIT_MAXHEALTH" or event == "PLAYER_SPECIALIZATION_CHANGED" then
 			local valueMax = UnitHealthMax("player")
 			local color = (colors and (colors[resourceName] or colors[1])) or T.UnitColor.power[resourceName] or T.UnitColor.class[T.myclass]
 			cmHealth.status:SetStatusBarColor(unpack(color))

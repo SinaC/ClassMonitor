@@ -4,6 +4,7 @@
 -- each plugin frame should be children of core frame
 -- plugin should be load-on-demand
 
+local ADDON_NAME, Engine = ...
 local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
 
 local CMDebug = false
@@ -82,20 +83,19 @@ for i, section in ipairs(settings) do
 			local autohide = section.autohide or false
 			local colors = section.colors or (section.color and {section.color})
 
-
-			frame = CreateResourceMonitor(name, text, autohide, anchor, width, height, colors, spec)
+			frame = Engine:CreateResourceMonitor(name, text, autohide, anchor, width, height, colors, spec)
 		elseif kind == "HEALTH" then
 			local text = section.text or true
 			local autohide = section.autohide or false
 			local colors = section.colors or (section.color and {section.color})
 
-			frame = CreateHealthMonitor(name, text, autohide, anchor, width, height, colors, spec)
+			frame = Engine:CreateHealthMonitor(name, text, autohide, anchor, width, height, colors, spec)
 		elseif kind == "COMBO" then
 			local spacing = section.spacing or 3
 			local color = section.color or T.UnitColor.class[T.myclass]
 			local colors = section.colors or CreateColorArray(color, 5)
 
-			frame = CreateComboMonitor(name, anchor, width, height, spacing, colors, filled, spec)
+			frame = Engine:CreateComboMonitor(name, anchor, width, height, spacing, colors, filled, spec)
 		elseif kind == "POWER" then
 			local powerType = section.powerType
 			local count = section.count
@@ -105,13 +105,13 @@ for i, section in ipairs(settings) do
 			local filled = section.filled or false
 
 			if powerType == SPELL_POWER_BURNING_EMBERS then
-				frame = CreateBurningEmbersMonitor(name, anchor, width, height, spacing, colors)
+				frame = Engine:CreateBurningEmbersMonitor(name, anchor, width, height, spacing, colors)
 			elseif powerType == SPELL_POWER_DEMONIC_FURY then
 				local text = section.text or true
 				local autohide = section.autohide or false
-				frame = CreateDemonicFuryMonitor(name, text, autohide, anchor, width, height, colors)
+				frame = Engine:CreateDemonicFuryMonitor(name, text, autohide, anchor, width, height, colors)
 			elseif powerType and count then
-				frame = CreatePowerMonitor(name, powerType, count, anchor, width, height, spacing, colors, filled, spec)
+				frame = Engine:CreatePowerMonitor(name, powerType, count, anchor, width, height, spacing, colors, filled, spec)
 			else
 				WARNING("section:"..name..":"..(powerType and "" or " missing powerType")..(count and "" or " missing count"))
 			end
@@ -125,7 +125,7 @@ for i, section in ipairs(settings) do
 			local filled = section.filled or false
 
 			if spellID and filter and count then
-				frame = CreateAuraMonitor(name, spellID, filter, count, anchor, width, height, spacing, colors, filled, spec)
+				frame = Engine:CreateAuraMonitor(name, spellID, filter, count, anchor, width, height, spacing, colors, filled, spec)
 			else
 				WARNING("section:"..name..":"..(spellID and "" or " missing spellID")..(filter and "" or " missing filter")..(count and "" or " missing count"))
 			end
@@ -150,7 +150,7 @@ for i, section in ipairs(settings) do
 			local runemap = section.runemap
 
 			if runemap and colors then
-				frame = CreateRunesMonitor(name, updatethreshold, autohide, orientation, anchor, width, height, spacing, colors, runemap)
+				frame = Engine:CreateRunesMonitor(name, updatethreshold, autohide, orientation, anchor, width, height, spacing, colors, runemap)
 			else
 				WARNING("section:"..name..":"..(runemap and "" or " missing runemap")..(colors and "" or " missing colors"))
 			end
@@ -160,17 +160,27 @@ for i, section in ipairs(settings) do
 			local colors = section.colors
 
 			if colors then
-				frame = CreateEclipseMonitor(name, anchor, width, height, colors)
+				frame = Engine:CreateEclipseMonitor(name, anchor, width, height, colors)
 			else
 				WARNING("section:"..name..": missing colors")
 			end
 		elseif kind == "TOTEM" then
 			local count = section.count
 			local spacing = section.spacing
+			local color = section.color or T.UnitColor.class[T.myclass]
 			local colors = section.colors or CreateColorArray(color, count)
 
 			if colors then
-				frame = CreateTotemMonitor(name, count, anchor, width, height, spacing, colors)
+				frame = Engine:CreateTotemMonitor(name, count, anchor, width, height, spacing, colors)
+			else
+				WARNING("section:"..name..": missing colors")
+			end
+		elseif kind == "WILDMUSHROOMS" then
+			local spacing = section.spacing
+			local color = section.color or T.UnitColor.class[T.myclass]
+			local colors = section.colors or CreateColorArray(color, 3)
+			if colors then
+				frame = Engine:CreateWildMushroomsMonitor(name, anchor, width, height, spacing, colors)
 			else
 				WARNING("section:"..name..": missing colors")
 			end

@@ -1,4 +1,5 @@
 -- Power plugin
+local ADDON_NAME, Engine = ...
 local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
 
 -- Ildyria: really nice idea but there are some bugs when a holypower fades out and when 3rd holypower is refreshed
@@ -28,13 +29,14 @@ local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C 
 --			hide
 --			remove OnUpdate
 
-function CreatePowerMonitor(name, powerType, count, anchor, width, height, spacing, colors, filled, spec)
+function Engine:CreatePowerMonitor(name, powerType, count, anchor, width, height, spacing, colors, filled, spec)
 	local cmPMs = {}
 
 	for i = 1, count do
 		local cmPM = CreateFrame("Frame", name, TukuiPetBattleHider) -- name is used for 1st power point
 		--cmPM:CreatePanel("Default", width, height, unpack(anchor))
 		cmPM:SetTemplate()
+		cmPM:SetFrameStrata("BACKGROUND")
 		cmPM:Size(width, height)
 		if i == 1 then
 			cmPM:Point(unpack(anchor))
@@ -66,11 +68,12 @@ function CreatePowerMonitor(name, powerType, count, anchor, width, height, spaci
 	cmPMs.totalWidth = width * count + spacing * (count - 1)
 
 	cmPMs[1]:RegisterEvent("PLAYER_ENTERING_WORLD")
-	cmPMs[1]:RegisterEvent("UNIT_POWER")
-	cmPMs[1]:RegisterEvent("UNIT_MAXPOWER")
-	cmPMs[1]:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
-	cmPMs[1]:SetScript("OnEvent", function(self, event, arg1)
-		if (event == "UNIT_POWER" or event == "UNIT_MAXPOWER" or event == "PLAYER_SPECIALIZATION_CHANGED") and arg1 ~= "player" then return end
+	cmPMs[1]:RegisterUnitEvent("UNIT_POWER", "player")
+	cmPMs[1]:RegisterUnitEvent("UNIT_MAXPOWER", "player")
+	cmPMs[1]:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
+	--cmPMs[1]:SetScript("OnEvent", function(self, event, arg1)
+	cmPMs[1]:SetScript("OnEvent", function(self, event)
+		--if (event == "UNIT_POWER" or event == "UNIT_MAXPOWER" or event == "PLAYER_SPECIALIZATION_CHANGED") and arg1 ~= "player" then return end
 
 		if spec ~= "any" and spec ~= GetSpecialization() then
 			for i = 1, count do cmPMs[i]:Hide() end

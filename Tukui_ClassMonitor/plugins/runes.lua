@@ -1,7 +1,8 @@
 -- Runes plugin (based on fRunes by Krevlorne [https://github.com/Krevlorne])
+local ADDON_NAME, Engine = ...
 local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
 
-function CreateRunesMonitor(name, updatethreshold, autohide, orientation, anchor, width, height, spacing, colors, runemap)
+function Engine:CreateRunesMonitor(name, updatethreshold, autohide, orientation, anchor, width, height, spacing, colors, runemap)
 	-- Create the frame
 	local cmRunes = CreateFrame("Frame", "Frame_"..name, UIParent)
 	-- Create the runes
@@ -10,6 +11,7 @@ function CreateRunesMonitor(name, updatethreshold, autohide, orientation, anchor
 		local rune = CreateFrame("Frame", name, TukuiPetBattleHider)
 		--rune:CreatePanel("Default", width, height, unpack(anchor))
 		rune:SetTemplate()
+		rune:SetFrameStrata("BACKGROUND")
 		rune:Size(width, height)
 		if i == 1 then
 			rune:Point(unpack(anchor))

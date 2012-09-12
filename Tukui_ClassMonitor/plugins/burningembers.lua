@@ -1,7 +1,8 @@
 -- Burning Embers plugin
+local ADDON_NAME, Engine = ...
 local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
 
-function CreateBurningEmbersMonitor(name, anchor, width, height, spacing, colors)
+function Engine:CreateBurningEmbersMonitor(name, anchor, width, height, spacing, colors)
 --print("CreateBurningEmbersMonitor")
 	local cmBEMs = {}
 	local count = 4 -- max embers
@@ -9,6 +10,7 @@ function CreateBurningEmbersMonitor(name, anchor, width, height, spacing, colors
 		local cmBEM = CreateFrame("Frame", name, TukuiPetBattleHider) -- name is used for 1st power point
 		--cmBEM:CreatePanel("Default", width, height, unpack(anchor))
 		cmBEM:SetTemplate()
+		cmBEM:SetFrameStrata("BACKGROUND")
 		cmBEM:Size(width, height)
 		if i == 1 then
 			cmBEM:Point(unpack(anchor))
@@ -30,11 +32,12 @@ function CreateBurningEmbersMonitor(name, anchor, width, height, spacing, colors
 	cmBEMs.totalWidth = width * count + spacing * (count - 1)
 
 	cmBEMs[1]:RegisterEvent("PLAYER_ENTERING_WORLD")
-	cmBEMs[1]:RegisterEvent("UNIT_POWER")
-	cmBEMs[1]:RegisterEvent("UNIT_MAXPOWER")
-	cmBEMs[1]:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
-	cmBEMs[1]:SetScript("OnEvent", function(self, event, arg1)
-		if (event == "UNIT_POWER" or event == "UNIT_MAXPOWER" or event == "PLAYER_SPECIALIZATION_CHANGED") and arg1 ~= "player" then return end
+	cmBEMs[1]:RegisterUnitEvent("UNIT_POWER", "player")
+	cmBEMs[1]:RegisterUnitEvent("UNIT_MAXPOWER", "player")
+	cmBEMs[1]:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
+	--cmBEMs[1]:SetScript("OnEvent", function(self, event, arg1)
+	cmBEMs[1]:SetScript("OnEvent", function(self, event)
+		--if (event == "UNIT_POWER" or event == "UNIT_MAXPOWER" or event == "PLAYER_SPECIALIZATION_CHANGED") and arg1 ~= "player" then return end
 
 		local spec = GetSpecialization()
 		if spec ~= SPEC_WARLOCK_DESTRUCTION then

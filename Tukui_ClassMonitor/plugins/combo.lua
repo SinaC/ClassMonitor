@@ -1,12 +1,14 @@
 -- Combo Points plugin
+local ADDON_NAME, Engine = ...
 local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
 
-function CreateComboMonitor(name, anchor, width, height, spacing, colors, filled, spec)
+function Engine:CreateComboMonitor(name, anchor, width, height, spacing, colors, filled, spec)
 	local cmCombos = {}
 	for i = 1, 5 do
 		local cmCombo = CreateFrame("Frame", name, TukuiPetBattleHider) -- name is used for 1st power point
 		--cmCombo:CreatePanel("Default", width, height, unpack(anchor))
 		cmCombo:SetTemplate()
+		cmCombo:SetFrameStrata("BACKGROUND")
 		cmCombo:Size(width, height)
 		if i == 1 then
 			cmCombo:Point(unpack(anchor))
@@ -30,9 +32,9 @@ function CreateComboMonitor(name, anchor, width, height, spacing, colors, filled
 	end
 
 	cmCombos[1]:RegisterEvent("PLAYER_ENTERING_WORLD")
-	cmCombos[1]:RegisterEvent("UNIT_COMBO_POINTS")
+	cmCombos[1]:RegisterUnitEvent("UNIT_COMBO_POINTS", "player")
 	cmCombos[1]:RegisterEvent("PLAYER_TARGET_CHANGED")
-	cmCombos[1]:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+	cmCombos[1]:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
 	cmCombos[1]:SetScript("OnEvent", function(self, event)
 		local points = GetComboPoints("player", "target")
 		if points and points > 0 and (spec == "any" or spec == GetSpecialization()) then

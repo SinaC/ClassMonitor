@@ -1,14 +1,16 @@
 -- Aura plugin
+local ADDON_NAME, Engine = ...
 local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
 
 -- Generic method to create BUFF/DEBUFF monitor
-function CreateAuraMonitor(name, spellID, filter, count, anchor, width, height, spacing, colors, filled, spec)
+function Engine:CreateAuraMonitor(name, spellID, filter, count, anchor, width, height, spacing, colors, filled, spec)
 	local aura = GetSpellInfo(spellID)
 	local cmAMs = {}
 	for i = 1, count do
 		local cmAM = CreateFrame("Frame", name, TukuiPetBattleHider) -- name is used for 1st power point
 		--cmAM:CreatePanel("Default", width, height, unpack(anchor))
 		cmAM:SetTemplate()
+		cmAM:SetFrameStrata("BACKGROUND")
 		cmAM:Size(width, height)
 		if i == 1 then
 			cmAM:Point(unpack(anchor))
@@ -32,10 +34,11 @@ function CreateAuraMonitor(name, spellID, filter, count, anchor, width, height, 
 	end
 
 	cmAMs[1]:RegisterEvent("PLAYER_ENTERING_WORLD")
-	cmAMs[1]:RegisterEvent("UNIT_AURA")
-	cmAMs[1]:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
-	cmAMs[1]:SetScript("OnEvent", function(self, event, arg1)
-		if (event == "UNIT_AURA" or event == "PLAYER_SPECIALIZATION_CHANGED") and arg1 ~= "player" then return end
+	cmAMs[1]:RegisterUnitEvent("UNIT_AURA", "player")
+	cmAMs[1]:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
+	--cmAMs[1]:SetScript("OnEvent", function(self, event, arg1)
+	cmAMs[1]:SetScript("OnEvent", function(self, event)
+		--if (event == "UNIT_AURA" or event == "PLAYER_SPECIALIZATION_CHANGED") and arg1 ~= "player" then return end
 		local found = false
 		if spec == "any" or spec == GetSpecialization() then
 			for i = 1, 40, 1 do

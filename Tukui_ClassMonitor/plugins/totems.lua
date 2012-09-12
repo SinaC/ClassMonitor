@@ -1,7 +1,8 @@
 local T, C, L = unpack(Tukui)
+local ADDON_NAME, Engine = ...
 
 -- Generic method to create Totem monitor
-function CreateTotemMonitor(name, count, anchor, width, height, spacing, colors)
+function Engine:CreateTotemMonitor(name, count, anchor, width, height, spacing, colors)
 
 	local total = 0
 	local delay = 0.01
@@ -15,6 +16,7 @@ function CreateTotemMonitor(name, count, anchor, width, height, spacing, colors)
 		totems[i] = CreateFrame("Frame", name..i, TukuiPetBattleHider)
 		--totems[i]:CreatePanel("Default", width , height, unpack(anchor))
 		totems[i]:SetTemplate()
+		totems[i]:SetFrameStrata("BACKGROUND")
 		totems[i]:Size(width, height)
 		totems[i].status = CreateFrame("StatusBar", name..i.."status", totems[i])
 		totems[i].status:SetStatusBarTexture(C.media.normTex)

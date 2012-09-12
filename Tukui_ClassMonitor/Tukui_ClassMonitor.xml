@@ -12,5 +12,8 @@
 	<Script file="plugins\burningembers.lua"/>
 	<Script file="plugins\demonicfury.lua"/>
 	<Script file="plugins\dots.lua"/>
+	<Script file="plugins\regen.lua"/>
+	<Script file="plugins\wildmushrooms.lua"/>
+
 	<Script file="core.lua"/>
 </Ui>
