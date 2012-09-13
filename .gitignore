@@ -163,9 +163,9 @@ pip-log.txt
 .DS_Store
 
 # Backup files
-.old
-.bak
+*.old
+*.bak
 
 # Archive files
-.zip
-.7z
+*.zip
+*.7z
