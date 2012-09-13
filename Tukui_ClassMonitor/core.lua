@@ -78,7 +78,11 @@ for i, section in ipairs(settings) do
 		-- for AURA, POWER and COMBO, if colors doesn't exist create it using color for each entry
 		-- if color doesn't exist, use T.UnitColor.class[T.myclass]
 		local frame
-		if kind == "RESOURCE" then
+		if kind == "MOVER" then
+			local text = section.text or name.."_MOVER"
+
+			frame = Engine:CreateMover(name, width, height, anchor, text)
+		elseif kind == "RESOURCE" then
 			local text = section.text or true
 			local autohide = section.autohide or false
 			local colors = section.colors or (section.color and {section.color})

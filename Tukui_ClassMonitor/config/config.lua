@@ -5,6 +5,11 @@ C["classmonitor"] = {
 	name = frame name (can be used in anchor)
 	kind = POWER | AURA | RESOURCE(mana/runic/energy/focus/rage) | ECLIPSE | COMBO | RUNES | DOT | REGEN | WILDMUSHROOMS
 
+	MOVER	create a mover in Tukui to be able to move bars via /moveui
+	text = string													text to display in config mode
+	width = number													width of anchor bar
+	height = number													height of anchor bar
+
 	RESOURCE (mana/runic power/energy/focus/rage/chi):
 	text = true|false												display resource value (% for mana) [default: true]
 	autohide = true|false											hide or not while out of combat [default: false]
@@ -12,7 +17,6 @@ C["classmonitor"] = {
 	width = number													width of resource bar [default: 85]
 	height = number													height of resource bar [default: 15]
 	color|colors =													see note below [default: tukui power color]
-
 
 	COMBO:
 	anchor|anchors =												see note below
@@ -107,11 +111,20 @@ C["classmonitor"] = {
 --]]
 	["DRUID"] = {
 		{
+			name = "CM_MOVER",
+			kind = "MOVER",
+			anchor = { "CENTER", UIParent, "CENTER", 0, -140 },
+			width = 262,
+			height = 15,
+			text = L.move_classmonitor
+		},
+		{
 			name = "CM_RESOURCE",
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchor = { "CENTER", UIParent, "CENTER", 0, -120 },
+			--anchor = { "CENTER", UIParent, "CENTER", 0, -140 },
+			anchor = { "TOPLEFT", "CM_MOVER", 0, 0 },
 			width = 262,
 			height = 15,
 		},
@@ -153,6 +166,14 @@ C["classmonitor"] = {
 		}
 	},
 	["PALADIN"] = {
+		{
+			name = "CM_MOVER",
+			kind = "MOVER",
+			anchor = { "CENTER", UIParent, "CENTER", 0, -140 },
+			width = 262,
+			height = 15,
+			text = L.move_classmonitor
+		},
 		--{
 		--	name = "CM_HEALTH",
 		--	kind = "HEALTH",
@@ -167,7 +188,8 @@ C["classmonitor"] = {
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchor = {"CENTER", UIParent, "CENTER", -0, -100},
+			--anchor = {"CENTER", UIParent, "CENTER", -0, -140},
+			anchor = { "TOPLEFT", "CM_MOVER", 0, 0 },
 			width = 262, -- 50 + 3 + 50 + 3 + 50 + 3 + 50 + 3 + 50
 			height = 15,
 		},
@@ -190,11 +212,20 @@ C["classmonitor"] = {
 	},
 	["WARLOCK"] = {
 		{
+			name = "CM_MOVER",
+			kind = "MOVER",
+			anchor = { "CENTER", UIParent, "CENTER", 0, -140 },
+			width = 261,
+			height = 15,
+			text = L.move_classmonitor
+		},
+		{
 			name = "CM_MANA",
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchor = { "CENTER", UIParent, "CENTER", 0, -100 },
+			--anchor = { "CENTER", UIParent, "CENTER", 0, -100 },
+			anchor = { "TOPLEFT", "CM_MOVER", 0, 0 },
 			width = 261,
 			height = 15,
 		},
@@ -238,44 +269,23 @@ C["classmonitor"] = {
 			color = {95/255, 222/255,  95/255, 1},
 			filled = false,
 		},
---[[
-		if (spec == SPEC_WARLOCK_DESTRUCTION) then -- {222/255, 95/255,  95/255, 1}
-			local maxPower = UnitPowerMax("player", SPELL_POWER_BURNING_EMBERS, true)
-			local power = UnitPower("player", SPELL_POWER_BURNING_EMBERS, true)
-			local numEmbers = power / MAX_POWER_PER_EMBER
-			local numBars = floor(maxPower / MAX_POWER_PER_EMBER)
-			
-			for i = 1, numBars do
-				wsb[i]:SetMinMaxValues((MAX_POWER_PER_EMBER * i) - MAX_POWER_PER_EMBER, MAX_POWER_PER_EMBER * i)
-				wsb[i]:SetValue(power)
-			end
-		elseif ( spec == SPEC_WARLOCK_AFFLICTION ) then -- {255/255, 101/255, 101/255, 1}
-			local numShards = UnitPower("player", SPELL_POWER_SOUL_SHARDS)
-			local maxShards = UnitPowerMax("player", SPELL_POWER_SOUL_SHARDS)
-			
-			for i = 1, maxShards do
-				if i <= numShards then
-					wsb[i]:SetAlpha(1)
-				else
-					wsb[i]:SetAlpha(.2)
-				end
-			end
-		elseif spec == SPEC_WARLOCK_DEMONOLOGY then -- {95/255, 222/255,  95/255, 1}
-			local power = UnitPower("player", SPELL_POWER_DEMONIC_FURY)
-			local maxPower = UnitPowerMax("player", SPELL_POWER_DEMONIC_FURY)
-						
-			wsb[1]:SetMinMaxValues(0, maxPower)
-			wsb[1]:SetValue(power)
-		end
---]]
 	},
 	["ROGUE"] = {
+		{
+			name = "CM_MOVER",
+			kind = "MOVER",
+			anchor = { "CENTER", UIParent, "CENTER", 0, -140 },
+			width = 262,
+			height = 15,
+			text = L.move_classmonitor
+		},
 		{
 			name = "CM_ENERGY",
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchor = { "CENTER", UIParent, "CENTER", 0, -100 },
+			--anchor = { "CENTER", UIParent, "CENTER", 0, -100 },
+			anchor = { "TOPLEFT", "CM_MOVER", 0, 0 },
 			width = 262,
 			height = 15,
 		},
@@ -311,11 +321,20 @@ C["classmonitor"] = {
 	},
 	["PRIEST"] = {
 		{
+			name = "CM_MOVER",
+			kind = "MOVER",
+			anchor = { "CENTER", UIParent, "CENTER", 0, -140 },
+			width = 261,
+			height = 15,
+			text = L.move_classmonitor
+		},
+		{
 			name = "CM_MANA",
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchor = { "CENTER", UIParent, "CENTER", 0, -100 },
+			--anchor = { "CENTER", UIParent, "CENTER", 0, -100 },
+			anchor = { "TOPLEFT", "CM_MOVER", 0, 0 },
 			width = 261,
 			height = 15,
 		},
@@ -335,11 +354,20 @@ C["classmonitor"] = {
 	},
 	["MAGE"] = {
 		{
+			name = "CM_MOVER",
+			kind = "MOVER",
+			anchor = { "CENTER", UIParent, "CENTER", 0, -140 },
+			width = 261,
+			height = 15,
+			text = L.move_classmonitor
+		},
+		{
 			name = "CM_MANA",
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchor = { "CENTER", UIParent, "CENTER", 0, -100},
+			--anchor = { "CENTER", UIParent, "CENTER", 0, -100},
+			anchor = { "TOPLEFT", "CM_MOVER", 0, 0 },
 			width = 261,
 			height = 15,
 		},
@@ -383,11 +411,20 @@ C["classmonitor"] = {
 	},
 	["DEATHKNIGHT"] = {
 		{
+			name = "CM_MOVER",
+			kind = "MOVER",
+			anchor = { "CENTER", UIParent, "CENTER", 0, -140 },
+			width = 261,
+			height = 15,
+			text = L.move_classmonitor
+		},
+		{
 			name = "CM_RUNIC_POWER",
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchor = { "CENTER", UIParent, "CENTER", 0, -100 },
+			--anchor = { "CENTER", UIParent, "CENTER", 0, -100 },
+			anchor = { "TOPLEFT", "CM_MOVER", 0, 0 },
 			width = 261,
 			height = 15,
 		},
@@ -418,11 +455,20 @@ C["classmonitor"] = {
 	},
 	["HUNTER"] = {
 		{
+			name = "CM_MOVER",
+			kind = "MOVER",
+			anchor = { "CENTER", UIParent, "CENTER", 0, -140 },
+			width = 262,
+			height = 15,
+			text = L.move_classmonitor
+		},
+		{
 			name = "CM_FOCUS",
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchor = {"CENTER", UIParent, "CENTER", 0, -123},
+			--anchor = {"CENTER", UIParent, "CENTER", 0, -123},
+			anchor = { "TOPLEFT", "CM_MOVER", 0, 0 },
 			width = 262,
 			height = 15,
 		},
@@ -442,22 +488,40 @@ C["classmonitor"] = {
 	},
 	["WARRIOR"] = {
 		{
+			name = "CM_MOVER",
+			kind = "MOVER",
+			anchor = { "CENTER", UIParent, "CENTER", 0, -140 },
+			width = 261,
+			height = 15,
+			text = L.move_classmonitor
+		},
+		{
 			name = "CM_RAGE",
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchor = {"CENTER", UIParent, "CENTER", 0, -123},
+			--anchor = {"CENTER", UIParent, "CENTER", 0, -123},
+			anchor = { "TOPLEFT", "CM_MOVER", 0, 0 },
 			width = 261,
 			height = 15,
 		}
 	},
 	["SHAMAN"] = {
 		{
+			name = "CM_MOVER",
+			kind = "MOVER",
+			anchor = { "CENTER", UIParent, "CENTER", 0, -140 },
+			width = 267,
+			height = 15,
+			text = L.move_classmonitor
+		},
+		{
 			name = "CM_MANA",
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchor = { "CENTER", UIParent, "CENTER", 0, -123 },
+			--anchor = { "CENTER", UIParent, "CENTER", 0, -123 },
+			anchor = { "TOPLEFT", "CM_MOVER", 0, 0 },
 			width = 267,
 			height = 15,
 		},
@@ -516,11 +580,20 @@ C["classmonitor"] = {
 	},
 	["MONK"] = {
 		{
+			name = "CM_MOVER",
+			kind = "MOVER",
+			anchor = { "CENTER", UIParent, "CENTER", 0, -140 },
+			width = 262,
+			height = 15,
+			text = L.move_classmonitor
+		},
+		{
 			name = "CM_RESOURCE",
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchor = { "CENTER", UIParent, "CENTER", 0, -120 },
+			--anchor = { "CENTER", UIParent, "CENTER", 0, -120 },
+			anchor = { "TOPLEFT", "CM_MOVER", 0, 0 },
 			width = 262,
 			height = 15,
 		},

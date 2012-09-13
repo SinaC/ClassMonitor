@@ -8,62 +8,12 @@ function Engine:CreateResourceMonitor(name, text, autohide, anchor, width, heigh
 	cmResource:SetFrameStrata("BACKGROUND")
 	cmResource:Size(width, height)
 	cmResource:Point(unpack(anchor))
--- print("UserPlaced:"..tostring(cmResource:IsUserPlaced()))
-	-- -- if cmResource:IsUserPlaced() == false then
--- -- print("ANCHORING...")
-		-- -- cmResource:Point(unpack(anchor))
-	-- -- end
-	-- cmResource:SetMovable(true)
-	-- cmResource.text = T.SetFontString(cmResource, C.media.uffont, 12)
-	-- --cmResource.text:SetFrameStrata("MEDIUM")
-	-- cmResource.text:SetPoint("CENTER")
-	-- cmResource.text:SetText("MOVE RESOURCE BAR")
-	-- cmResource.text:Hide()
-	-- cmResource.exec = function(self, enable)
--- print("ENABLE: "..tostring(enable))
-		-- if enable then
-			-- self.status:Hide()
-			-- self:SetBackdropBorderColor(1,0,0,1)
-		-- else
-			-- self.status:Show()
-			-- self:SetBackdropBorderColor(unpack(C.media.bordercolor))
-		-- end
-	-- end
-	-- tinsert(T.AllowFrameMoving, cmResource)
 
-	-- --cmResource:SetMovable(true)
-	-- --Engine:CreateMoverFrame_OLD(name, width, height, cmResource, "CENTER", 0, 0, "MOVE RESOURCE BAR")
-	-- local holder = Engine:CreateMoverFrame(name, width, height, anchor, "MOVE RESOURCE BAR")
-	-- cmResource:Size(width, height)
+	-- local mover = Engine:CreateMover(name, width, height, anchor, "Move resource bar")
 	-- cmResource:ClearAllPoints()
-	-- cmResource:Point("CENTER", holder, "CENTER", 0, 0)
-	-- --cmResource:SetAllPoints(holder)
+	-- cmResource:Point("TOPLEFT", mover, 0, 0)
 
-	-- local mover = CreateFrame("Frame", name.."_MOVER", UIParent)
-	-- mover:SetTemplate()
-	-- mover:SetMovable(true)
-	-- mover:Size(30, 30)
-	-- local point, relativeFrame, relativePoint, ofsx, ofsy = unpack(anchor)
-	-- mover:Point("LEFT", relativeFrame, relativePoint, ofsx + width/2 + 10, ofsy) -- LEFT of resource anchor  width/2 because relativePoint == CENTER
-	-- mover:SetBackdropBorderColor(1, 0, 0)
-	-- mover:SetFrameLevel(2)
-	-- mover:SetFrameStrata("HIGH")
-	-- mover.text = T.SetFontString(mover, C.media.uffont, 12)
-	-- mover.text:SetPoint("CENTER")
-	-- mover.text:SetText("MOVE RESOURCE BAR")
-	-- mover:Hide()
-	-- mover.exec = function(self, enable)
-		-- if enable then
-			-- self:Show()
-		-- else
-			-- self:Hide()
-		-- end
-	-- end
-	-- tinsert(T.AllowFrameMoving, mover)
-	-- cmResource:ClearAllPoints()
-	-- cmResource:Point("BOTTOMRIGHT", mover, "BOTTOMLEFT", -10, 0)
-
-	cmResource.status = CreateFrame("StatusBar", "cmResourceStatus", cmResource)
+	cmResource.status = CreateFrame("StatusBar", name.."Status", cmResource)
 	cmResource.status:SetStatusBarTexture(C.media.normTex)
 	cmResource.status:SetFrameLevel(6)
 	--cmResource.status:SetStatusBarColor(unpack(color)) color will be set later
