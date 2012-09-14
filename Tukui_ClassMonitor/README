@@ -1,0 +1,63 @@
+2.7.2
+Eclipse fixed
+Unused code removed
+
+2.7.1
+Movers added
+
+2.6.2
+Bug fixed
+Unused code removed
+
+2.6.1
+Plugins are now in addon namespace instead of global one
+Wildmushrooms and Regen added
+Framestrata fixed for every plugin
+RegisterUnitEvent used when possible (instead of RegisterEvent)
+
+2.5.2
+Demonic Fury, Burning Embers added
+Number of power unit handled dynamically
+Bug fixes
+
+2.5.1
+Monk config added
+dynamic power unit
+
+2.5.0
+MoP ready
+
+2.4.6
+Regen plugin
+
+2.4.5
+Dot plugin
+
+2.4.4
+Shaman config
+Bug fixed
+
+2.4.3
+Totems plugin
+
+2.4.2
+Health plugin
+Movers out of Tukui added
+
+2.4.1
+Runes fixed
+
+2.3.0
+Patch 4.3 ready
+
+2.2.0
+Config structure modified
+
+2.1
+Aura, power, resource bug fixed
+
+2.0
+Totally rewritten
+
+1.0
+First commit
