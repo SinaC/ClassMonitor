@@ -1,10 +1,9 @@
--- Resource Plugin
+-- Resource Plugin, credits to Ildyria
 local ADDON_NAME, Engine = ...
 local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
 
 function Engine:CreateHealthMonitor(name, text, autohide, anchor, width, height, colors, spec)
 	local cmHealth = CreateFrame("Frame", name, TukuiPetBattleHider)
-	--cmHealth:CreatePanel("Default", width , height, unpack(anchor))
 	cmHealth:SetTemplate()
 	cmHealth:SetFrameStrata("BACKGROUND")
 	cmHealth:Size(width, height)
@@ -12,7 +11,6 @@ function Engine:CreateHealthMonitor(name, text, autohide, anchor, width, height,
 	cmHealth.status = CreateFrame("StatusBar", "cmHealthStatus", cmHealth)
 	cmHealth.status:SetStatusBarTexture(C.media.normTex)
 	cmHealth.status:SetFrameLevel(6)
-	--cmHealth.status:SetStatusBarColor(unpack(color)) color will be set later
 	cmHealth.status:Point("TOPLEFT", cmHealth, "TOPLEFT", 2, -2)
 	cmHealth.status:Point("BOTTOMRIGHT", cmHealth, "BOTTOMRIGHT", -2, 2)
 	cmHealth.status:SetMinMaxValues(0, UnitHealthMax("player"))
@@ -58,14 +56,12 @@ function Engine:CreateHealthMonitor(name, text, autohide, anchor, width, height,
 	cmHealth:RegisterUnitEvent("UNIT_HEALTH", "player")
 	cmHealth:RegisterUnitEvent("UNIT_MAXHEALTH", "player")
 	cmHealth:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
-	--cmHealth:SetScript("OnEvent", function(self, event, arg1)
 	cmHealth:SetScript("OnEvent", function(self, event)
 		if spec ~= "any" and spec ~= GetSpecialization() then
 			cmHealth:Hide()
 			return
 		end
 
-		--if event == "PLAYER_ENTERING_WORLD" or ((event == "UNIT_MAXHEALTH" or event == "PLAYER_SPECIALIZATION_CHANGED") and arg1 == "player") then
 		if event == "PLAYER_ENTERING_WORLD" or event == "UNIT_MAXHEALTH" or event == "PLAYER_SPECIALIZATION_CHANGED" then
 			local valueMax = UnitHealthMax("player")
 			local color = (colors and (colors[resourceName] or colors[1])) or T.UnitColor.power[resourceName] or T.UnitColor.class[T.myclass]

@@ -1,12 +1,11 @@
-local T, C, L = unpack(Tukui)
+-- Totem plugin, credits to Ildyria
 local ADDON_NAME, Engine = ...
+local T, C, L = unpack(Tukui)
 
 -- Generic method to create Totem monitor
 function Engine:CreateTotemMonitor(name, count, anchor, width, height, spacing, colors)
-
 	local total = 0
 	local delay = 0.01
-
 
 	local cmTotemTimers = CreateFrame("Frame", name, UIParent)
 
@@ -14,7 +13,6 @@ function Engine:CreateTotemMonitor(name, count, anchor, width, height, spacing, 
 
 	for i=1,4 do
 		totems[i] = CreateFrame("Frame", name..i, TukuiPetBattleHider)
-		--totems[i]:CreatePanel("Default", width , height, unpack(anchor))
 		totems[i]:SetTemplate()
 		totems[i]:SetFrameStrata("BACKGROUND")
 		totems[i]:Size(width, height)
@@ -111,6 +109,6 @@ function Engine:CreateTotemMonitor(name, count, anchor, width, height, spacing, 
 	cmTotemTimers:RegisterEvent("PLAYER_ENTERING_WORLD")
 	cmTotemTimers:RegisterEvent("PLAYER_TOTEM_UPDATE")
 	cmTotemTimers:SetScript("OnEvent", UpdateSlot)
-	
+
 	return cmTotemTimers
 end

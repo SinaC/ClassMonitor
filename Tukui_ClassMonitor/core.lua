@@ -1,9 +1,3 @@
--- TODO:
--- =====
--- add a visibility function (we dont want to see resource bar while in travel/flying form)
--- each plugin frame should be children of core frame
--- plugin should be load-on-demand
-
 local ADDON_NAME, Engine = ...
 local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
 
@@ -159,12 +153,11 @@ for i, section in ipairs(settings) do
 				WARNING("section:"..name..":"..(runemap and "" or " missing runemap")..(colors and "" or " missing colors"))
 			end
 		elseif kind == "ECLIPSE" then
-			-- TODO
-			--WARNING("section:"..name..": Eclipse not yet implemented")
 			local colors = section.colors
+			local text = section.text or true
 
 			if colors then
-				frame = Engine:CreateEclipseMonitor(name, anchor, width, height, colors)
+				frame = Engine:CreateEclipseMonitor(name, text, anchor, width, height, colors)
 			else
 				WARNING("section:"..name..": missing colors")
 			end

@@ -9,14 +9,9 @@ function Engine:CreateResourceMonitor(name, text, autohide, anchor, width, heigh
 	cmResource:Size(width, height)
 	cmResource:Point(unpack(anchor))
 
-	-- local mover = Engine:CreateMover(name, width, height, anchor, "Move resource bar")
-	-- cmResource:ClearAllPoints()
-	-- cmResource:Point("TOPLEFT", mover, 0, 0)
-
 	cmResource.status = CreateFrame("StatusBar", name.."Status", cmResource)
 	cmResource.status:SetStatusBarTexture(C.media.normTex)
 	cmResource.status:SetFrameLevel(6)
-	--cmResource.status:SetStatusBarColor(unpack(color)) color will be set later
 	cmResource.status:Point("TOPLEFT", cmResource, "TOPLEFT", 2, -2)
 	cmResource.status:Point("BOTTOMRIGHT", cmResource, "BOTTOMRIGHT", -2, 2)
 	cmResource.status:SetMinMaxValues(0, UnitPowerMax("player"))
@@ -69,23 +64,17 @@ function Engine:CreateResourceMonitor(name, text, autohide, anchor, width, heigh
 	cmResource:RegisterUnitEvent("UNIT_POWER", "player")
 	cmResource:RegisterUnitEvent("UNIT_MAXPOWER", "player")
 	cmResource:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
-	--cmResource:SetScript("OnEvent", function(self, event, arg1)
 	cmResource:SetScript("OnEvent", function(self, event)
---print("Resource: event:"..event)
-
 		if spec ~= "any" and spec ~= GetSpecialization() then
 			cmResource:Hide()
 			return
 		end
 
-		--if event == "PLAYER_ENTERING_WORLD" or ((event == "UNIT_DISPLAYPOWER" or event == "UNIT_MAXPOWER" or event == "PLAYER_SPECIALIZATION_CHANGED") and arg1 == "player") then
 		if event == "PLAYER_ENTERING_WORLD" or event == "UNIT_DISPLAYPOWER" or event == "UNIT_MAXPOWER" or event == "PLAYER_SPECIALIZATION_CHANGED" then
 			local resource, resourceName = UnitPowerType("player")
 			local valueMax = UnitPowerMax("player", resource)
---print("Resource: "..resource.."  "..resourceName.."  "..valueMax)
 			-- use colors[resourceName] if defined, else use default resource color or class color
 			local color = (colors and (colors[resourceName] or colors[1])) or T.UnitColor.power[resourceName] or T.UnitColor.class[T.myclass]
---print("Resource:"..tostring(color[1]).."  "..tostring(color[2]).."  "..tostring(color[3]))
 			cmResource.status:SetStatusBarColor(unpack(color))
 			cmResource.status:SetMinMaxValues(0, valueMax)
 			cmResource:Show()

@@ -3,12 +3,10 @@ local ADDON_NAME, Engine = ...
 local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
 
 function Engine:CreateBurningEmbersMonitor(name, anchor, width, height, spacing, colors)
---print("CreateBurningEmbersMonitor")
 	local cmBEMs = {}
 	local count = 4 -- max embers
 	for i = 1, count do
 		local cmBEM = CreateFrame("Frame", name, TukuiPetBattleHider) -- name is used for 1st power point
-		--cmBEM:CreatePanel("Default", width, height, unpack(anchor))
 		cmBEM:SetTemplate()
 		cmBEM:SetFrameStrata("BACKGROUND")
 		cmBEM:Size(width, height)
@@ -35,10 +33,7 @@ function Engine:CreateBurningEmbersMonitor(name, anchor, width, height, spacing,
 	cmBEMs[1]:RegisterUnitEvent("UNIT_POWER", "player")
 	cmBEMs[1]:RegisterUnitEvent("UNIT_MAXPOWER", "player")
 	cmBEMs[1]:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
-	--cmBEMs[1]:SetScript("OnEvent", function(self, event, arg1)
 	cmBEMs[1]:SetScript("OnEvent", function(self, event)
-		--if (event == "UNIT_POWER" or event == "UNIT_MAXPOWER" or event == "PLAYER_SPECIALIZATION_CHANGED") and arg1 ~= "player" then return end
-
 		local spec = GetSpecialization()
 		if spec ~= SPEC_WARLOCK_DESTRUCTION then
 			for i = 1, count do cmBEMs[i]:Hide() end
@@ -48,10 +43,8 @@ function Engine:CreateBurningEmbersMonitor(name, anchor, width, height, spacing,
 		local value = UnitPower("player", SPELL_POWER_BURNING_EMBERS, true)
 		local maxValue = UnitPowerMax("player", SPELL_POWER_BURNING_EMBERS, true)
 		local numBars = floor(maxValue / MAX_POWER_PER_EMBER)
---print("Value:"..tostring(value).."/"..tostring(numBars).."  "..tostring(cmBEMs.numBars).."  "..tostring(count))
 
 		if numBars ~= cmBEMs.numBars and numBars <= count then
---print("resize")
 			-- hide bars
 			for i = 1, count do
 				cmBEMs[i]:Hide()
@@ -68,7 +61,6 @@ function Engine:CreateBurningEmbersMonitor(name, anchor, width, height, spacing,
 			cmBEMs[i].status:SetValue(value)
 			cmBEMs[i]:Show()
 		end
-		--for i = 1, count do cmBEMs[i]:Show() end
 	end)
 
 	return cmBEMs[1]

@@ -3,11 +3,9 @@ local ADDON_NAME, Engine = ...
 local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
 
 function Engine:CreateWildMushroomsMonitor(name, anchor, width, height, spacing, colors)
---print("CreateWildMushroomsMonitor")
 	local cmWMMs = {}
 	for i = 1, 3 do
 		local cmWMM = CreateFrame("Frame", name, TukuiPetBattleHider) -- name is used for 1st power point
-		--cmWMM:CreatePanel("Default", width, height, unpack(anchor))
 		cmWMM:SetTemplate()
 		cmWMM:SetFrameStrata("BACKGROUND")
 		cmWMM:Size(width, height)

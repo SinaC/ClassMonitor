@@ -1,7 +1,7 @@
 local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
 
 -- if T.myname == "Meuhhnon" then
-	-- C["classmonitor"]["DRUID"][1].anchor = nil -- RESOURCE
+	-- C["classmonitor"]["DRUID"][1].anchor = nil -- MOVER
 	-- C["classmonitor"]["DRUID"][1].anchors = {
 		-- { "CENTER", UIParent, "CENTER", 0, -140 }, -- Balance
 		-- { "CENTER", UIParent, "CENTER", 0, -140 }, -- Feral
@@ -10,7 +10,7 @@ local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C 
 	-- }
 -- end
 -- if T.myname == "Enimouchet" then
-	-- C["classmonitor"]["PALADIN"][1].anchor = nil -- RESOURCE
+	-- C["classmonitor"]["PALADIN"][1].anchor = nil -- MOVER
 	-- C["classmonitor"]["PALADIN"][1].anchors = {
 		-- --{"CENTER", UIParent, "CENTER", -543, 290}, -- Holy
 		-- { "CENTER", UIParent, "CENTER", 0, -140 }, -- Holy
@@ -19,5 +19,5 @@ local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C 
 	-- }
 -- end
 -- if T.myname == "Nyara" or T.myname == "Graougraou" then
-	-- C["classmonitor"]["ROGUE"][1].anchor = { "CENTER", UIParent, "CENTER", 0, -150 } -- RESOURCE
+	-- C["classmonitor"]["ROGUE"][1].anchor = { "CENTER", UIParent, "CENTER", 0, -150 } -- MOVER
 -- end

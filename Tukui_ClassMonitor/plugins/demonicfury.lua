@@ -3,9 +3,7 @@ local ADDON_NAME, Engine = ...
 local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
 
 function Engine:CreateDemonicFuryMonitor(name, text, autohide, anchor, width, height, colors)
---print("CreateDemonicFuryMonitor")
 	local cmDFM = CreateFrame("Frame", name, TukuiPetBattleHider)
-	--cmDFM:CreatePanel("Default", width , height, unpack(anchor))
 	cmDFM:SetTemplate()
 	cmDFM:SetFrameStrata("BACKGROUND")
 	cmDFM:Size(width, height)
@@ -14,7 +12,6 @@ function Engine:CreateDemonicFuryMonitor(name, text, autohide, anchor, width, he
 	cmDFM.status = CreateFrame("StatusBar", "cmDFMStatus", cmDFM)
 	cmDFM.status:SetStatusBarTexture(C.media.normTex)
 	cmDFM.status:SetFrameLevel(6)
-	--cmDFM.status:SetStatusBarColor(unpack(color)) color will be set later
 	cmDFM.status:Point("TOPLEFT", cmDFM, "TOPLEFT", 2, -2)
 	cmDFM.status:Point("BOTTOMRIGHT", cmDFM, "BOTTOMRIGHT", -2, 2)
 	cmDFM.status:SetMinMaxValues(0, UnitPowerMax("player"))
@@ -32,7 +29,6 @@ function Engine:CreateDemonicFuryMonitor(name, text, autohide, anchor, width, he
 		cmDFM.timeSinceLastUpdate = cmDFM.timeSinceLastUpdate + elapsed
 		if cmDFM.timeSinceLastUpdate > 0.2 then
 			local value = UnitPower("player", SPELL_POWER_DEMONIC_FURY)
---print("Value:"..value)
 			cmDFM.status:SetValue(value)
 			if text == true then
 				cmDFM.text:SetText(value)
@@ -48,17 +44,14 @@ function Engine:CreateDemonicFuryMonitor(name, text, autohide, anchor, width, he
 	cmDFM:RegisterUnitEvent("UNIT_POWER", "player")
 	cmDFM:RegisterUnitEvent("UNIT_MAXPOWER", "player")
 	cmDFM:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
-	--cmDFM:SetScript("OnEvent", function(self, event, arg1)
 	cmDFM:SetScript("OnEvent", function(self, event)
 
 		local spec = GetSpecialization()
---print("Resource: event:"..event.."  "..tostring(spec).."  "..tostring(SPEC_WARLOCK_DEMONOLOGY))
 		if spec ~= SPEC_WARLOCK_DEMONOLOGY then
 			cmDFM:Hide()
 			return
 		end
 
-		--if event == "PLAYER_ENTERING_WORLD" or ((event == "UNIT_DISPLAYPOWER" or event == "UNIT_MAXPOWER" or event == "PLAYER_SPECIALIZATION_CHANGED" ) and arg1 == "player") then
 		if event == "PLAYER_ENTERING_WORLD" or event == "UNIT_DISPLAYPOWER" or event == "UNIT_MAXPOWER" or event == "PLAYER_SPECIALIZATION_CHANGED" then
 			local valueMax = UnitPowerMax("player", SPELL_POWER_DEMONIC_FURY)
 			-- use colors[SPELL_POWER_DEMONIC_FURY] if defined, else use default resource color or class color

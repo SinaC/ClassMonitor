@@ -1,13 +1,11 @@
--- Dot Plugin
+-- Dot Plugin, credits to Ildyria
 local ADDON_NAME, Engine = ...
 local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
 
 function Engine:CreateDotMonitor(name, spelltracked, anchor, width, height, colors, threshold, latency)
-
 	local aura = GetSpellInfo(spelltracked)
 
 	local cmDot = CreateFrame("Frame", name, TukuiPetBattleHider)
-	--cmDot:CreatePanel("Default", width , height, unpack(anchor))
 	cmDot:SetTemplate()
 	cmDot:SetFrameStrata("BACKGROUND")
 	cmDot:Size(width, height)
@@ -16,7 +14,6 @@ function Engine:CreateDotMonitor(name, spelltracked, anchor, width, height, colo
 	cmDot.status = CreateFrame("StatusBar", "cmDotStatus", cmDot)
 	cmDot.status:SetStatusBarTexture(C.media.normTex)
 	cmDot.status:SetFrameLevel(6)
-	-- cmDot.status:SetStatusBarColor(unpack(color)) -- color will be set later
 	cmDot.status:Point("TOPLEFT", cmDot, "TOPLEFT", 2, -2)
 	cmDot.status:Point("BOTTOMRIGHT", cmDot, "BOTTOMRIGHT", -2, 2)
 	cmDot.status:SetMinMaxValues(0, UnitPowerMax("player"))

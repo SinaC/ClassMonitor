@@ -6,7 +6,6 @@ function Engine:CreateComboMonitor(name, anchor, width, height, spacing, colors,
 	local cmCombos = {}
 	for i = 1, 5 do
 		local cmCombo = CreateFrame("Frame", name, TukuiPetBattleHider) -- name is used for 1st power point
-		--cmCombo:CreatePanel("Default", width, height, unpack(anchor))
 		cmCombo:SetTemplate()
 		cmCombo:SetFrameStrata("BACKGROUND")
 		cmCombo:Size(width, height)

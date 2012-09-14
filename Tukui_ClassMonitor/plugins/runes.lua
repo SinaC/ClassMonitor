@@ -9,7 +9,6 @@ function Engine:CreateRunesMonitor(name, updatethreshold, autohide, orientation,
 	local runes = {}
 	for i = 1, 6 do
 		local rune = CreateFrame("Frame", name, TukuiPetBattleHider)
-		--rune:CreatePanel("Default", width, height, unpack(anchor))
 		rune:SetTemplate()
 		rune:SetFrameStrata("BACKGROUND")
 		rune:Size(width, height)
@@ -91,11 +90,12 @@ function Engine:CreateRunesMonitor(name, updatethreshold, autohide, orientation,
 	end)
 
 	-- Hide blizzard runeframe
-	RuneFrame:Hide()
-	RuneFrame:SetScript("OnShow", function(self)
-		self:Hide()
-	end)
-	
+	-- RuneFrame:Hide()
+	-- RuneFrame:SetScript("OnShow", function(self)
+		-- self:Hide()
+	-- end)
+	RuneFrame:Kill()
+
 	return runes[1]
 end
 -- one bar with 6 status bar

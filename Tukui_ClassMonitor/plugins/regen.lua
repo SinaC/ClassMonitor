@@ -1,11 +1,10 @@
--- Dot Plugin
+-- Dot Plugin, credits to Ildyria
 local ADDON_NAME, Engine = ...
 local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
 
 function Engine:CreateRegenMonitor(name, spelltracked, anchor, width, height, colors, duration, filling)
 
 	local cmRegen = CreateFrame("Frame", name, TukuiPetBattleHider)
-	--cmRegen:CreatePanel("Default", width , height, unpack(anchor))
 	cmRegen:SetTemplate()
 	cmRegen:SetFrameStrata("BACKGROUND")
 	cmRegen:Size(width, height)
