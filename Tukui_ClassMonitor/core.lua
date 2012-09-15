@@ -135,7 +135,7 @@ for i, section in ipairs(settings) do
 
 
 			if spellID then
-				frame = CreateDotMonitor(name, spellID, anchor, width, height, colors, threshold, latency, spec)
+				frame = Engine:CreateDotMonitor(name, spellID, anchor, width, height, colors, threshold, latency, spec)
 			else
 				WARNING("section:"..name..":"..(spellID and "" or " missing spellID"))
 			end

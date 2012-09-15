@@ -36,9 +36,9 @@ function Engine:CreateTotemMonitor(name, count, anchor, width, height, spacing, 
 	totems[3]:ClearAllPoints();
 	totems[4]:ClearAllPoints();
 	totems[2]:Point(unpack(anchor))
-	totems[1]:Point("LEFT", totems[2], "RIGHT", 1, 0)
-	totems[3]:Point("LEFT", totems[1], "RIGHT", 1, 0)
-	totems[4]:Point("LEFT", totems[3], "RIGHT", 1, 0)
+	totems[1]:Point("LEFT", totems[2], "RIGHT", spacing, 0)
+	totems[3]:Point("LEFT", totems[1], "RIGHT", spacing, 0)
+	totems[4]:Point("LEFT", totems[3], "RIGHT", spacing, 0)
 
 	local function ToClock(seconds)
 		seconds = ceil(tonumber(seconds))

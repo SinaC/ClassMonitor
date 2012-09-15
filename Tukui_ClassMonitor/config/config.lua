@@ -336,10 +336,9 @@ C["classmonitor"] = {
 			height = 15,
 		},
 		{
-			name = "CM_SHADOW_ORB",
-			kind = "AURA",
-			spellID = 77487,
-			filter = "HELPFUL",
+			name = "CM_SHADOW_ORBS",
+			kind = "POWER",
+			powerType = SPELL_POWER_SHADOW_ORBS,
 			count = 3,
 			anchor = {"BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3},
 			width = 85,
@@ -347,7 +346,7 @@ C["classmonitor"] = {
 			spacing = 3,
 			color = {0.5, 0, 0.7, 1},
 			filled = false,
-		},
+		}
 	},
 	["MAGE"] = {
 		{
@@ -374,7 +373,7 @@ C["classmonitor"] = {
 			filter = "HARMFUL",
 			count = 6,
 			anchor = {"BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3},
-			width = 63,
+			width = 41,
 			height = 15,
 			spacing = 3,
 			filled = false,
@@ -385,7 +384,7 @@ C["classmonitor"] = {
 			spellID = 12654, -- ignite spellID
 			anchor = {"BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3},
 			width = 261,
-			height = 10,
+			height = 15,
 			colors = { 
 				{255/255, 165/255, 0, 1}, -- bad -- orange
 				{255/255, 255/255, 0, 1}, -- 0,75% -- yellow
@@ -400,7 +399,7 @@ C["classmonitor"] = {
 			spellID = 83853, -- Combustion spellID
 			anchor = {"TOPLEFT", "CM_MANA", "BOTTOMLEFT", 0, -3},
 			width = 261,
-			height = 10,
+			height = 15,
 			color = {228/255, 225/255, 16/255, 1},
 			latency = false,
 		},
@@ -466,19 +465,19 @@ C["classmonitor"] = {
 			width = 262,
 			height = 15,
 		},
-		{
-			name = "CM_RSA",
-			kind = "AURA",
-			spellID = 82925,
-			filter = "HELPFUL",
-			count = 5,
-			anchor = {"BOTTOMLEFT", "CM_FOCUS", "TOPLEFT", 0, 3},
-			width = 50,
-			height = 15,
-			spacing = 3,
-			color = {0.5, 0, 0.7, 1},
-			filled = false,
-		},
+		-- { -- useless with MoP, when 3rd charge is reached, RSA is replaced with another buff
+			-- name = "CM_RSA",
+			-- kind = "AURA",
+			-- spellID = 82925,
+			-- filter = "HELPFUL",
+			-- count = 5,
+			-- anchor = {"BOTTOMLEFT", "CM_FOCUS", "TOPLEFT", 0, 3},
+			-- width = 50,
+			-- height = 15,
+			-- spacing = 3,
+			-- color = {0.5, 0, 0.7, 1},
+			-- filled = false,
+		-- },
 	},
 	["WARRIOR"] = {
 		{
@@ -504,7 +503,7 @@ C["classmonitor"] = {
 			name = "CM_MOVER",
 			kind = "MOVER",
 			anchor = { "CENTER", UIParent, "CENTER", 0, -140 },
-			width = 267,
+			width = 262,
 			height = 15,
 			text = L.move_classmonitor
 		},
@@ -514,7 +513,7 @@ C["classmonitor"] = {
 			text = true,
 			autohide = false,
 			anchor = { "TOPLEFT", "CM_MOVER", 0, 0 },
-			width = 267,
+			width = 262,
 			height = 15,
 		},
 		{
@@ -523,11 +522,11 @@ C["classmonitor"] = {
 			spec = 1,  -- elem shaman
 			spellID = 324,
 			filter = "HELPFUL",
-			count = 9,
+			count = 7,
 			anchor = {"BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3},
-			width = 27,
+			width = 34,
 			height = 15,
-			spacing = 3,
+			spacing = 4,
 			color = {0.5, 0, 0.7, 1},
 			filled = false,
 		},
@@ -539,28 +538,20 @@ C["classmonitor"] = {
 			filter = "HELPFUL",
 			count = 5,
 			anchor = {"BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3},
-			width = 51,
+			width = 50,
 			height = 15,
 			spacing = 3,
 			color = {0.5, 0, 0.7, 1},
 			filled = false,
 		},
-		-- Nota : Vive les équations de Diophantes
-		-- to make it pixel perfect, we need to solve :
-		-- Z = 9 x + 3 x 8
-		-- Z = 5 y + 3 x 4
-		-- gives us : 9 x - 5 y = - 12 ( 9 and 5 are prime with themselves => Bezout => 9 x - 5 y = 1 have a solution : 9 x (-1) - 5 x (-2) = 1 )
-		-- => x = 12 + 5k and y = 9k + 24
-		-- using k = 3 we have x = 27 and y = 51
-		-- and z = 9 x 27 + 24 = 5 x 51 + 12 = 267
 		{
 			name = "CM_TOTEMS",
 			kind = "TOTEM",
 			count = 4,
 			anchor = {"TOPLEFT", "CM_MANA", "BOTTOMLEFT", 0, -3},
-			width = 66,
+			width = 64,
 			height = 15,
-			spacing = 1,
+			spacing = 2,
 			colors = {
 			-- In the order, fire, earth, water, air
 				[1] = {.58,.23,.10},
