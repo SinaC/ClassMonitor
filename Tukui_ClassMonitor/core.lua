@@ -121,9 +121,16 @@ for i, section in ipairs(settings) do
 			local color = section.color or T.UnitColor.class[T.myclass]
 			local colors = section.colors or CreateColorArray(color, count)
 			local filled = section.filled or false
+			local bar = section.bar or false
+			local text = section.text or true
+			local duration = section.duration or false
 
 			if spellID and filter and count then
-				frame = Engine:CreateAuraMonitor(name, spellID, filter, count, anchor, width, height, spacing, colors, filled, spec)
+				if bar then
+					frame = Engine:CreateBarAuraMonitor(name, spellID, filter, count, anchor, width, height, color, text, duration, spec)
+				else
+					frame = Engine:CreateAuraMonitor(name, spellID, filter, count, anchor, width, height, spacing, colors, filled, spec)
+				end
 			else
 				WARNING("section:"..name..":"..(spellID and "" or " missing spellID")..(filter and "" or " missing filter")..(count and "" or " missing count"))
 			end
