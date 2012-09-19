@@ -1,26 +1,23 @@
--- Resource Plugin, credits to Ildyria
+-- Resource Plugin, written to Ildyria
 local ADDON_NAME, Engine = ...
-local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
+if not Engine.Enabled then return end
 
-function Engine:CreateHealthMonitor(name, text, autohide, anchor, width, height, colors, spec)
-	local cmHealth = CreateFrame("Frame", name, TukuiPetBattleHider)
+Engine.CreateHealthMonitor = function(name, text, autohide, anchor, width, height, colors, specs)
+	local cmHealth = CreateFrame("Frame", name, Engine.BattlerHider)
 	cmHealth:SetTemplate()
 	cmHealth:SetFrameStrata("BACKGROUND")
 	cmHealth:Size(width, height)
 
 	cmHealth.status = CreateFrame("StatusBar", "cmHealthStatus", cmHealth)
-	cmHealth.status:SetStatusBarTexture(C.media.normTex)
+	cmHealth.status:SetStatusBarTexture(Engine.NormTex)
 	cmHealth.status:SetFrameLevel(6)
 	cmHealth.status:Point("TOPLEFT", cmHealth, "TOPLEFT", 2, -2)
 	cmHealth.status:Point("BOTTOMRIGHT", cmHealth, "BOTTOMRIGHT", -2, 2)
 	cmHealth.status:SetMinMaxValues(0, UnitHealthMax("player"))
 
 	if text == true then
-		cmHealth.text = cmHealth.status:CreateFontString(nil, "OVERLAY")
-		cmHealth.text:SetFont(C.media.uffont, 12)
+		cmHealth.text = Engine.SetFontString(cmHealth.status, 12)
 		cmHealth.text:Point("CENTER", cmHealth.status)
-		cmHealth.text:SetShadowColor(0, 0, 0)
-		cmHealth.text:SetShadowOffset(1.25, -1.25)
 	end
 
 	cmHealth.timeSinceLastUpdate = GetTime()
@@ -50,6 +47,9 @@ function Engine:CreateHealthMonitor(name, text, autohide, anchor, width, height,
 		end
 	end
 
+	local CheckSpec = Engine.CheckSpec
+	local PowerColor = Engine.Color
+	local ClassColor = Engine.ClassColor
 	cmHealth:RegisterEvent("PLAYER_ENTERING_WORLD")
 	cmHealth:RegisterEvent("PLAYER_REGEN_DISABLED")
 	cmHealth:RegisterEvent("PLAYER_REGEN_ENABLED")
@@ -57,14 +57,14 @@ function Engine:CreateHealthMonitor(name, text, autohide, anchor, width, height,
 	cmHealth:RegisterUnitEvent("UNIT_MAXHEALTH", "player")
 	cmHealth:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
 	cmHealth:SetScript("OnEvent", function(self, event)
-		if spec ~= "any" and spec ~= GetSpecialization() then
+		if not CheckSpec(specs) then
 			cmHealth:Hide()
 			return
 		end
 
 		if event == "PLAYER_ENTERING_WORLD" or event == "UNIT_MAXHEALTH" or event == "PLAYER_SPECIALIZATION_CHANGED" then
 			local valueMax = UnitHealthMax("player")
-			local color = (colors and (colors[resourceName] or colors[1])) or T.UnitColor.power[resourceName] or T.UnitColor.class[T.myclass]
+			local color = (colors and (colors[resourceName] or colors[1])) or PowerColor(resourceName) or ClassColor()
 			cmHealth.status:SetStatusBarColor(unpack(color))
 			cmHealth.status:SetMinMaxValues(0, valueMax)
 			cmHealth:Show()

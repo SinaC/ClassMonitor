@@ -1,12 +1,12 @@
 -- Burning Embers plugin
 local ADDON_NAME, Engine = ...
-local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
+if not Engine.Enabled then return end
 
-function Engine:CreateBurningEmbersMonitor(name, anchor, width, height, spacing, colors)
+Engine.CreateBurningEmbersMonitor = function(name, anchor, width, height, spacing, colors)
 	local cmBEMs = {}
 	local count = 4 -- max embers
 	for i = 1, count do
-		local cmBEM = CreateFrame("Frame", name, TukuiPetBattleHider) -- name is used for 1st power point
+		local cmBEM = CreateFrame("Frame", name, Engine.BattlerHider)
 		cmBEM:SetTemplate()
 		cmBEM:SetFrameStrata("BACKGROUND")
 		cmBEM:Size(width, height)
@@ -16,7 +16,7 @@ function Engine:CreateBurningEmbersMonitor(name, anchor, width, height, spacing,
 			cmBEM:Point("LEFT", cmBEMs[i-1], "RIGHT", spacing, 0)
 		end
 		cmBEM.status = CreateFrame("StatusBar", name.."_status_"..i, cmBEM)
-		cmBEM.status:SetStatusBarTexture(C.media.normTex)
+		cmBEM.status:SetStatusBarTexture(Engine.NormTex)
 		cmBEM.status:SetFrameLevel(6)
 		cmBEM.status:Point("TOPLEFT", cmBEM, "TOPLEFT", 2, -2)
 		cmBEM.status:Point("BOTTOMRIGHT", cmBEM, "BOTTOMRIGHT", -2, 2)
@@ -44,7 +44,7 @@ function Engine:CreateBurningEmbersMonitor(name, anchor, width, height, spacing,
 		local maxValue = UnitPowerMax("player", SPELL_POWER_BURNING_EMBERS, true)
 		local numBars = floor(maxValue / MAX_POWER_PER_EMBER)
 
-		if numBars ~= cmBEMs.numBars and numBars <= count then
+		if numBars ~= cmBEMs.numBars and numBars <= count then -- resize if needed
 			-- hide bars
 			for i = 1, count do
 				cmBEMs[i]:Hide()

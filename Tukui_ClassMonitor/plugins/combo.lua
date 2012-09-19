@@ -1,11 +1,11 @@
 -- Combo Points plugin
 local ADDON_NAME, Engine = ...
-local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
+if not Engine.Enabled then return end
 
-function Engine:CreateComboMonitor(name, anchor, width, height, spacing, colors, filled, spec)
+Engine.CreateComboMonitor = function(name, anchor, width, height, spacing, colors, filled, specs)
 	local cmCombos = {}
 	for i = 1, 5 do
-		local cmCombo = CreateFrame("Frame", name, TukuiPetBattleHider) -- name is used for 1st power point
+		local cmCombo = CreateFrame("Frame", name, Engine.BattlerHider)
 		cmCombo:SetTemplate()
 		cmCombo:SetFrameStrata("BACKGROUND")
 		cmCombo:Size(width, height)
@@ -16,7 +16,7 @@ function Engine:CreateComboMonitor(name, anchor, width, height, spacing, colors,
 		end
 		if filled then
 			cmCombo.status = CreateFrame("StatusBar", name.."_status_"..i, cmCombo)
-			cmCombo.status:SetStatusBarTexture(C.media.normTex)
+			cmCombo.status:SetStatusBarTexture(Engine.NormTex)
 			cmCombo.status:SetFrameLevel(6)
 			cmCombo.status:Point("TOPLEFT", cmCombo, "TOPLEFT", 2, -2)
 			cmCombo.status:Point("BOTTOMRIGHT", cmCombo, "BOTTOMRIGHT", -2, 2)
@@ -30,13 +30,14 @@ function Engine:CreateComboMonitor(name, anchor, width, height, spacing, colors,
 		tinsert(cmCombos, cmCombo)
 	end
 
+	local CheckSpec = Engine.CheckSpec
 	cmCombos[1]:RegisterEvent("PLAYER_ENTERING_WORLD")
 	cmCombos[1]:RegisterUnitEvent("UNIT_COMBO_POINTS", "player")
 	cmCombos[1]:RegisterEvent("PLAYER_TARGET_CHANGED")
 	cmCombos[1]:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
 	cmCombos[1]:SetScript("OnEvent", function(self, event)
 		local points = GetComboPoints("player", "target")
-		if points and points > 0 and (spec == "any" or spec == GetSpecialization()) then
+		if points and points > 0 and CheckSpec(specs) then
 			for i = 1, points do cmCombos[i]:Show() end
 			for i = points+1, 5 do cmCombos[i]:Hide() end
 		else

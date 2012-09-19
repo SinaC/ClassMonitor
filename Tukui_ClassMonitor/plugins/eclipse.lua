@@ -1,9 +1,9 @@
 -- Eclipse plugin, credits to Tukz
 local ADDON_NAME, Engine = ...
-local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
+if not Engine.Enabled then return end
 
-function Engine:CreateEclipseMonitor(name, text, anchor, width, height, colors)
-	local cmEclipse = CreateFrame("Frame", name, TukuiPetBattleHider)
+Engine.CreateEclipseMonitor = function(name, text, anchor, width, height, colors)
+	local cmEclipse = CreateFrame("Frame", name, Engine.BattlerHider)
 	cmEclipse:SetTemplate()
 	cmEclipse:SetFrameStrata("BACKGROUND")
 	cmEclipse:Size(width, height)
@@ -13,42 +13,40 @@ function Engine:CreateEclipseMonitor(name, text, anchor, width, height, colors)
 	cmEclipse.lunar = CreateFrame("StatusBar", name.."_lunar", cmEclipse)
 	cmEclipse.lunar:Point("TOPLEFT", cmEclipse, "TOPLEFT", 2, -2)
 	cmEclipse.lunar:Size(width-4, height-4)
-	cmEclipse.lunar:SetStatusBarTexture(C.media.normTex)
+	cmEclipse.lunar:SetStatusBarTexture(Engine.NormTex)
 	cmEclipse.lunar:SetStatusBarColor(unpack(colors[1]))
 
 	-- solar status bar
 	cmEclipse.solar = CreateFrame("StatusBar", name.."_solar", cmEclipse)
 	cmEclipse.solar:Point("LEFT", cmEclipse.lunar:GetStatusBarTexture(), "RIGHT", 0, 0) -- solar will move when lunar moves
 	cmEclipse.solar:Size(width-4, height-4)
-	cmEclipse.solar:SetStatusBarTexture(C.media.normTex)
+	cmEclipse.solar:SetStatusBarTexture(Engine.NormTex)
 	cmEclipse.solar:SetStatusBarColor(unpack(colors[2]))
 
 	-- direction
 	if text == true then
-		cmEclipse.directionText = cmEclipse.lunar:CreateFontString(nil, "OVERLAY")
-		cmEclipse.directionText:SetFont(C.media.uffont, 12)
+		cmEclipse.directionText = Engine.SetFontString(cmEclipse.lunar, 12)
 		cmEclipse.directionText:Point("CENTER", cmEclipse.lunar)
-		cmEclipse.directionText:SetShadowColor(0, 0, 0)
-		cmEclipse.directionText:SetShadowOffset(1.25, -1.25)
 	end
 
 	cmEclipse.inEclipse = false -- not in eclipse by default
 
 	--
+	local BorderColor = Engine.BorderColor
 	cmEclipse:RegisterEvent("PLAYER_ENTERING_WORLD")
 	cmEclipse:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 	cmEclipse:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
 	cmEclipse:RegisterUnitEvent("UNIT_POWER", "player")
 	cmEclipse:RegisterUnitEvent("UNIT_AURA", "player")
 	cmEclipse:SetScript("OnEvent", function(self, event, arg1, arg2)
+		if GetShapeshiftFormID() ~= MOONKIN_FORM and GetSpecialization() ~= 1 then -- visible if moonkin or balance
+			cmEclipse:Hide()
+			return
+		end
 		-- update visibility
 		if event == "PLAYER_ENTERING_WORLD" or event == "PLAYER_SPECIALIZATION_CHANGED" or event == "UPDATE_SHAPESHIFT_FORM"  then
 			cmEclipse:UnregisterEvent("PLAYER_ENTERING_WORLD") -- fire only once
-			if GetShapeshiftFormID() == MOONKIN_FORM or GetSpecialization() == 1 then -- visible if moonkin or balance
-				cmEclipse:Show()
-			else
-				cmEclipse:Hide()
-			end
+			cmEclipse:Show()
 		end
 		-- update lunar/solar power
 		if (event == "UNIT_POWER" and arg2 == "ECLIPSE") or event == "PLAYER_ENTERING_WORLD" then
@@ -76,27 +74,27 @@ function Engine:CreateEclipseMonitor(name, text, anchor, width, height, colors)
 				end
 			end
 			if not cmEclipse.inEclipse then
-				cmEclipse:SetBackdropBorderColor(unpack(C.general.bordercolor))
+				cmEclipse:SetBackdropBorderColor(unpack(BorderColor))
 			end
 		end
-		-- update text
-		if text == true then
-			if GetEclipseDirection() == "sun" then
-				if cmEclipse.inEclipse then
-					cmEclipse.directionText:SetText(">>>")
-				else
-					cmEclipse.directionText:SetText(">")
-				end
-			elseif GetEclipseDirection() == "moon" then
-				if cmEclipse.inEclipse then
-					cmEclipse.directionText:SetText("<<<")
-				else
-					cmEclipse.directionText:SetText("<")
-				end
-			else
-				cmEclipse.directionText:SetText("")
-			end
-		end
+		-- -- update text
+		-- if text == true then
+			-- if GetEclipseDirection() == "sun" then
+				-- if cmEclipse.inEclipse then
+					-- cmEclipse.directionText:SetText(">>>")
+				-- else
+					-- cmEclipse.directionText:SetText(">")
+				-- end
+			-- elseif GetEclipseDirection() == "moon" then
+				-- if cmEclipse.inEclipse then
+					-- cmEclipse.directionText:SetText("<<<")
+				-- else
+					-- cmEclipse.directionText:SetText("<")
+				-- end
+			-- else
+				-- cmEclipse.directionText:SetText("")
+			-- end
+		-- end
 	end)
 
 	return cmEclipse

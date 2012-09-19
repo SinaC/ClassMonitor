@@ -1,14 +1,14 @@
 -- Runes plugin (based on fRunes by Krevlorne [https://github.com/Krevlorne])
 local ADDON_NAME, Engine = ...
-local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
+if not Engine.Enabled then return end
 
-function Engine:CreateRunesMonitor(name, updatethreshold, autohide, orientation, anchor, width, height, spacing, colors, runemap)
+Engine.CreateRunesMonitor = function(name, updatethreshold, autohide, orientation, anchor, width, height, spacing, colors, runemap)
 	-- Create the frame
-	local cmRunes = CreateFrame("Frame", "Frame_"..name, UIParent)
+	local cmRunes = CreateFrame("Frame", "Frame_"..name)
 	-- Create the runes
 	local runes = {}
 	for i = 1, 6 do
-		local rune = CreateFrame("Frame", name, TukuiPetBattleHider)
+		local rune = CreateFrame("Frame", name, Engine.BattlerHider)
 		rune:SetTemplate()
 		rune:SetFrameStrata("BACKGROUND")
 		rune:Size(width, height)
@@ -18,7 +18,7 @@ function Engine:CreateRunesMonitor(name, updatethreshold, autohide, orientation,
 			rune:Point("LEFT", runes[i-1], "RIGHT", spacing, 0)
 		end
 		rune.status = CreateFrame("StatusBar", "cmRunesRuneStatus"..i, rune)
-		rune.status:SetStatusBarTexture(C.media.normTex)
+		rune.status:SetStatusBarTexture(Engine.NormTex)
 		rune.status:SetStatusBarColor(unpack(colors[math.ceil(runemap[i]/2)]))
 		rune.status:SetFrameLevel(6)
 		rune.status:SetMinMaxValues(0, 10)
@@ -125,7 +125,7 @@ end
 -- -- Create the runes
 -- for i = 1, 6 do
 	-- local rune = CreateFrame("StatusBar", "cmRunesRune"..i, cmRunes)
-	-- rune:SetStatusBarTexture(C.media.normTex)
+	-- rune:SetStatusBarTexture(Engine.NormTex)
 	-- rune:SetStatusBarColor(unpack(O.colors[math.ceil(O.runemap[i]/2)]))
 	-- rune:SetMinMaxValues(0, 10)
 

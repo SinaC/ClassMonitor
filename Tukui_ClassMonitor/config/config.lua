@@ -1,11 +1,14 @@
-local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
+local ADDON_NAME, Engine = ...
+if not Engine.Enabled then return end
 
-C["classmonitor"] = {
+local L = Engine.Locales
+
+Engine.Config = {
 --[[
 	name = frame name (can be used in anchor)
-	kind = POWER | AURA | RESOURCE(mana/runic/energy/focus/rage) | ECLIPSE | COMBO | RUNES | DOT | REGEN | WILDMUSHROOMS
+	kind = MOVER | RESOURCE(mana/runic/energy/focus/rage) | COMBO | POWER | AURA | RUNES | ECLIPSE | REGEN | HEALTH  | DOT| TOTEM
 
-	MOVER	create a mover in Tukui to be able to move bars via /moveui
+	MOVER	create a mover in Tukui/ElvUI to be able to move bars via /moveui
 	text = string													text to display in config mode
 	width = number													width of anchor bar
 	height = number													height of anchor bar
@@ -17,6 +20,7 @@ C["classmonitor"] = {
 	width = number													width of resource bar [default: 85]
 	height = number													height of resource bar [default: 15]
 	color|colors =													see note below [default: tukui power color]
+	spec|specs = 													see note below [default: any]
 
 	COMBO:
 	anchor|anchors =												see note below
@@ -25,9 +29,10 @@ C["classmonitor"] = {
 	spacing = number												space between combo points [default: 3]
 	color|colors =													see note below [default: class color]
 	filled = true|false												is combo point filled or not [default: false]
+	spec|specs = 													see note below [default: any]
 
-	POWER (holy power/soul shard/light force):
-	powerType = SPELL_POWER_HOLY_POWER | SPELL_POWER_SOUL_SHARDS | SPELL_POWER_LIGHT_FORCE | SPELL_POWER_BURNING_EMBERS | SPELL_POWER_DEMONIC_FURY	power to monitor (can be any power type (http://www.wowwiki.com/PowerType)
+	POWER (holy power/soul shard/light force, ...):
+	powerType = SPELL_POWER_HOLY_POWER|SPELL_POWER_SOUL_SHARDS|SPELL_POWER_LIGHT_FORCE|SPELL_POWER_BURNING_EMBERS|SPELL_POWER_DEMONIC_FURY|SPELL_POWER_SHADOW_ORBS	power to monitor (can be any power type (http://www.wowwiki.com/PowerType)
 	count = number													max number of points to display
 	anchor|anchors =												see note below
 	width = number													width of power point [default: 85]
@@ -35,17 +40,22 @@ C["classmonitor"] = {
 	spacing = number												space between power points [default: 3]
 	color|colors =													see note below [default: class color]
 	filled = true|false												is power point filled or not [default: false]
+	spec|specs = 													see note below [default: any], not available for SPELL_POWER_BURNING_EMBERS|SPELL_POWER_DEMONIC_FURY
 
 	AURA (buff/debuff):
 	spellID = number												spell id of buff/debuff to monitor
 	filter = "HELPFUL" | "HARMFUL"									BUFF or DEBUFF
 	count = number													max number of stack to display
 	anchor|anchors =												see note below
-	width = number													width of buff stack [default: 85]
-	height = number													height of buff stack [default: 15]
-	spacing = number												space between buff stack [default: 3]
+	width = number													width of buff stack or bar[default: 85]
+	height = number													height of buff stack or bar [default: 15]
+	spacing = number												space between buff stack if no bar[default: 3]
 	color|colors =													see note below [default: class color]
-	filled = true|false												is buff stack filled or not [default: false]
+	filled = true|false												is buff stack filled or not if no bar[default: false]
+	bar = true|false												status bar instead of stack [default: false]
+	text = true|false												display current/max stack in status bar [default:true]
+	duration = true|false											display buff|debuff time left in status bar [default:false]
+	spec|specs = 													see note below [default: any]
 
 	RUNES
 	updatethreshold = number										interval between runes display update [default: 0.1]
@@ -58,43 +68,56 @@ C["classmonitor"] = {
 	colors = { blood, unholy, frost, death }						color of runes
 	runemap = { 1, 2, 3, 4, 5, 6 }									see instruction in DEATHKNIGHT section
 
-	ECLIPSE:
+	ECLIPSE
 	text = true|false												display eclipse direction [default: true]
 	anchor|anchors=													see note below
-	width = number													half-width of eclipse bar (width of lunar and solar bar)
-	height = number													height of eclipse bar
+	width = number													width of eclipse bar [default: 85]
+	height = number													height of eclipse bar [default: 15]
 	colors = { lunar, solar }										color of lunar and solar bar
 
 	REGEN
 	anchor = 														see note below
+	text = true|false												display regen value (% for mana) [default: true]
+	autohide = true|false											hide or not while out of combat [default: false]
 	width = number													width of health bar [default: 85]
-	height = number													height of health bar [default: 10]
-	spellID = number												spell id of dot to monitor (6117 : mage armor, 47755 : rapture, ...)
+	height = number													height of health bar [default: 15]
 	color =															see note below [default: class color]
-	filling = true|false											fill the bar or empty it ! [default : false]
-	duration = number												timer before next tic [default: 5]
+
+	HEALTH
+	anchor = 														see note below
+	width = number													width of health bar [default: 85]
+	height = number													height of health bar [default: 15]
+	color =															see note below [default: class color]
+	spec|specs = 													see note below [default: any]
 
 	DOT
 	anchor = 														see note below
 	width = number													width of health bar [default: 85]
-	height = number													height of health bar [default: 10]
+	height = number													height of health bar [default: 15]
 	spellID = number												spell id of dot to monitor
 	latency = true|false											indicate latency on buff (usefull for ignite)
 	threshold = number or 0											threshold to work with colors [default: 0]
 	colors = array of array : 
 		{
-			{255/255, 165/255, 0, 1},						Bad color : under 75% of threshold -- here orange -- [default: class color]
-			{255/255, 255/255, 0, 1},						Intermediate color : 0,75% of threshold -- here yellow -- [default: class color]
-			{127/255, 255/255, 0, 1},						Good color : over threshold -- here green -- [default: class color]
+			{255/255, 165/255, 0, 1},								bad color : under 75% of threshold -- here orange -- [default: class color]
+			{255/255, 255/255, 0, 1},								intermediate color : 0,75% of threshold -- here yellow -- [default: class color]
+			{127/255, 255/255, 0, 1},								good color : over threshold -- here green -- [default: class color]
 		},
-	color = {r,g,b,a}												if treshold is set to 0	[default: class color]
+	color = {r, g, b, a}											if treshold is set to 0	[default: class color]
+	spec|specs = 													see note below [default: any]
 
-	WILDMUSHROOMS
+	TOTEM (totems or wildmushrooms):
 	anchor = 														see note below
 	width = number													width of health bar [default: 85]
-	height = number													height of health bar [default: 10]
-	spacing = number												space between runes [default: 3]
+	height = number													height of health bar [default: 15]
+	spacing = number												spacing between each totems [default: 3]
+	count = number													number of totems (4 for shaman totems, 3 for druid mushrooms)
 	color|colors =													see note below [default: class color]
+	spec|specs = 													see note below [default: any]
+	text = true|false												display totem duration left [default:false]
+	map = array of number											totem remapping
+		{ 2, 1, 3, 4 }												display second totem, followed by first totem, then third and fourth
+
 
 	Notes about anchor
 	anchor = { "POSITION", parent, "POSITION", offsetX, offsetY }
@@ -109,6 +132,10 @@ C["classmonitor"] = {
 		-> one different color by point (for kind COMBO/AURA/POWER)
 	colors = { [RESOURCE_TYPE] = {r, g, b, a}, [RESOURCE_TYPE] = {r, g, b, a}, ...[RESOURCE_TYPE] = {r, g, b, a}}
 		-> one different color by resource type (only for kind RESOURCE) (if no color is specified, default resource color will be used)
+
+	Notes about spec
+	spec = 1|2|3|4|"any" -> only shown in specified spec
+	specs = {table of spec} -> only shown when in any of the specified spec
 --]]
 	["DRUID"] = {
 		{
@@ -117,7 +144,7 @@ C["classmonitor"] = {
 			anchor = { "CENTER", UIParent, "CENTER", 0, -140 },
 			width = 262,
 			height = 15,
-			text = L.move_classmonitor
+			text = L.classmonitor_move
 		},
 		{
 			name = "CM_RESOURCE",
@@ -158,7 +185,9 @@ C["classmonitor"] = {
 		},
 		{
 			name = "CM_WILDMUSHROOMS",
-			kind = "WILDMUSHROOMS",
+			kind = "TOTEM",
+			count = 3,
+			specs = {1, 4},
 			anchor = { "TOPLEFT", "CM_RESOURCE", "BOTTOMLEFT", 0, -3 },
 			width = 85,
 			height = 15,
@@ -173,14 +202,14 @@ C["classmonitor"] = {
 			anchor = { "CENTER", UIParent, "CENTER", 0, -140 },
 			width = 262,
 			height = 15,
-			text = L.move_classmonitor
+			text = L.classmonitor_move
 		},
 		--{
 		--	name = "CM_HEALTH",
 		--	kind = "HEALTH",
 		--	text = true,
 		--	autohide = false,
-		--	anchor = {"TOP", "movingframe", "BOTTOM", 0, -20},
+		--	anchor = { "TOP", "CM_MOVER", "BOTTOM", 0, -20},
 		--	width = 261,
 		--	height = 10,
 		--},
@@ -198,11 +227,7 @@ C["classmonitor"] = {
 			kind = "POWER",
 			powerType = SPELL_POWER_HOLY_POWER,
 			count = 5,
-			--anchor = {"BOTTOMLEFT", "CM_HEALTH", "TOPLEFT", 0, 3},
-			anchor = {"BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3},
-			-- width = 85,
-			-- height = 15,
-			-- spacing = 3,
+			anchor = { "BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3 },
 			width = 50,
 			height = 15,
 			spacing = 3,
@@ -217,7 +242,7 @@ C["classmonitor"] = {
 			anchor = { "CENTER", UIParent, "CENTER", 0, -140 },
 			width = 261,
 			height = 15,
-			text = L.move_classmonitor
+			text = L.classmonitor_move
 		},
 		{
 			name = "CM_MANA",
@@ -229,13 +254,12 @@ C["classmonitor"] = {
 			height = 15,
 		},
 		{
-			-- SPEC_WARLOCK_AFFLICTION
-			spec = SPEC_WARLOCK_AFFLICTION,
 			name = "CM_SOUL_SHARD",
 			kind = "POWER",
+			spec = SPEC_WARLOCK_AFFLICTION,
 			powerType = SPELL_POWER_SOUL_SHARDS,
 			count = 4,
-			anchor = {"BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3},
+			anchor = { "BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3 },
 			width = 63,
 			height = 15,
 			spacing = 3,
@@ -243,12 +267,12 @@ C["classmonitor"] = {
 			filled = false,
 		},
 		{
-			-- SPEC_WARLOCK_DESTRUCTION
 			name = "CM_BURNING_EMBERS",
 			kind = "POWER",
+			spec = SPEC_WARLOCK_DESTRUCTION,
 			powerType = SPELL_POWER_BURNING_EMBERS,
 			count = 4,
-			anchor = {"BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3},
+			anchor = { "BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3 },
 			width = 63,
 			height = 15,
 			spacing = 3,
@@ -256,12 +280,12 @@ C["classmonitor"] = {
 			filled = false,
 		},
 		{
-			-- SPEC_WARLOCK_DEMONOLOGY
 			name = "CM_DEMONIC_FURY",
 			kind = "POWER",
+			spec = SPEC_WARLOCK_DEMONOLOGY,
 			powerType = SPELL_POWER_DEMONIC_FURY,
 			count = 1,
-			anchor = {"BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3},
+			anchor = { "BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3 },
 			width = 261,
 			height = 15,
 			spacing = 3,
@@ -276,7 +300,7 @@ C["classmonitor"] = {
 			anchor = { "CENTER", UIParent, "CENTER", 0, -140 },
 			width = 262,
 			height = 15,
-			text = L.move_classmonitor
+			text = L.classmonitor_move
 		},
 		{
 			name = "CM_ENERGY",
@@ -290,7 +314,7 @@ C["classmonitor"] = {
 		{
 			name = "CM_COMBO",
 			kind = "COMBO",
-			anchor = {"BOTTOMLEFT", "CM_ENERGY", "TOPLEFT", 0, 3},
+			anchor = { "BOTTOMLEFT", "CM_ENERGY", "TOPLEFT", 0, 3 },
 			width = 50,
 			height = 15,
 			spacing = 3,
@@ -309,7 +333,7 @@ C["classmonitor"] = {
 			spellID = 114015,
 			filter = "HELPFUL",
 			count = 5,
-			anchor = {"BOTTOMLEFT", "CM_COMBO", "TOPLEFT", 0, 3},
+			anchor = { "BOTTOMLEFT", "CM_COMBO", "TOPLEFT", 0, 3 },
 			width = 50,
 			height = 15,
 			spacing = 3,
@@ -324,7 +348,7 @@ C["classmonitor"] = {
 			anchor = { "CENTER", UIParent, "CENTER", 0, -140 },
 			width = 261,
 			height = 15,
-			text = L.move_classmonitor
+			text = L.classmonitor_move
 		},
 		{
 			name = "CM_MANA",
@@ -338,15 +362,27 @@ C["classmonitor"] = {
 		{
 			name = "CM_SHADOW_ORBS",
 			kind = "POWER",
+			spec = 3, -- Shadow
 			powerType = SPELL_POWER_SHADOW_ORBS,
 			count = 3,
-			anchor = {"BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3},
+			anchor = { "BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3 },
 			width = 85,
 			height = 15,
 			spacing = 3,
 			color = {0.5, 0, 0.7, 1},
 			filled = false,
-		}
+		},
+		{
+			name = "CM_RAPTURE",
+			kind = "REGEN",
+			spec = 1, -- Discipline
+			anchor = { "TOPLEFT", "CM_MANA", "BOTTOMLEFT", 0, -2 },
+			width = 261,
+			height = 3,
+			spellID = 47755,
+			filling = false,
+			duration = 12,
+		},
 	},
 	["MAGE"] = {
 		{
@@ -355,7 +391,7 @@ C["classmonitor"] = {
 			anchor = { "CENTER", UIParent, "CENTER", 0, -140 },
 			width = 261,
 			height = 15,
-			text = L.move_classmonitor
+			text = L.classmonitor_move
 		},
 		{
 			name = "CM_MANA",
@@ -369,20 +405,26 @@ C["classmonitor"] = {
 		{
 			name = "CM_ARCANE_BLAST",
 			kind = "AURA",
+			spec = 1, -- Arcane
 			spellID = 36032,
 			filter = "HARMFUL",
 			count = 6,
-			anchor = {"BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3},
+			anchor = { "BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3 },
 			width = 41,
 			height = 15,
 			spacing = 3,
 			filled = false,
+			-- width = 261,
+			-- height = 15,
+			-- bar = true,
+			-- text = true,
+			-- duration = true,
 		},
 		{
 			name = "CM_IGNITE",
 			kind = "DOT",
 			spellID = 12654, -- ignite spellID
-			anchor = {"BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3},
+			anchor = { "BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3 },
 			width = 261,
 			height = 15,
 			colors = { 
@@ -397,7 +439,7 @@ C["classmonitor"] = {
 			name = "CM_COMBU",
 			kind = "DOT",
 			spellID = 83853, -- Combustion spellID
-			anchor = {"TOPLEFT", "CM_MANA", "BOTTOMLEFT", 0, -3},
+			anchor = { "TOPLEFT", "CM_MANA", "BOTTOMLEFT", 0, -3 },
 			width = 261,
 			height = 15,
 			color = {228/255, 225/255, 16/255, 1},
@@ -411,7 +453,7 @@ C["classmonitor"] = {
 			anchor = { "CENTER", UIParent, "CENTER", 0, -140 },
 			width = 261,
 			height = 15,
-			text = L.move_classmonitor
+			text = L.classmonitor_move
 		},
 		{
 			name = "CM_RUNIC_POWER",
@@ -433,18 +475,32 @@ C["classmonitor"] = {
 			height = 15,
 			spacing = 3,
 			colors = {
-				{ 0.69, 0.31, 0.31, 1}, -- Blood
-				{ 0.33, 0.59, 0.33, 1}, -- Unholy
-				{ 0.31, 0.45, 0.63, 1}, -- Frost
-				{ 0.84, 0.75, 0.65, 1}, -- Death
+				{ 0.69, 0.31, 0.31, 1 }, -- Blood
+				{ 0.33, 0.59, 0.33, 1 }, -- Unholy
+				{ 0.31, 0.45, 0.63, 1 }, -- Frost
+				{ 0.84, 0.75, 0.65, 1 }, -- Death
 			},
-				-- runemap instructions.
-				-- This is the order you want your runes to be displayed in (down to bottom or left to right).
-				-- 1,2 = Blood
-				-- 3,4 = Unholy
-				-- 5,6 = Frost
-				-- (Note: All numbers must be included or it will break)
+			-- runemap instructions.
+			-- This is the order you want your runes to be displayed in (down to bottom or left to right).
+			-- 1,2 = Blood
+			-- 3,4 = Unholy
+			-- 5,6 = Frost
+			-- (Note: All numbers must be included or it will break)
 			runemap = { 1, 2, 3, 4, 5, 6 },
+		},
+		{
+			name = "CM_SHADOW_INFUSION",
+			kind = "AURA",
+			spec = 3,
+			spellID = 91342,
+			filter = "HELPFUL",
+			count = 5,
+			anchor = { "TOPLEFT", "CM_RUNIC_POWER", "BOTTOMLEFT", 0, -3 },
+			width = 50,
+			height = 15,
+			spacing = 3,
+			color = { 0.33, 0.59, 0.33, 1 },
+			filled = true,
 		},
 	},
 	["HUNTER"] = {
@@ -454,7 +510,7 @@ C["classmonitor"] = {
 			anchor = { "CENTER", UIParent, "CENTER", 0, -140 },
 			width = 262,
 			height = 15,
-			text = L.move_classmonitor
+			text = L.classmonitor_move
 		},
 		{
 			name = "CM_FOCUS",
@@ -471,7 +527,7 @@ C["classmonitor"] = {
 			-- spellID = 82925,
 			-- filter = "HELPFUL",
 			-- count = 5,
-			-- anchor = {"BOTTOMLEFT", "CM_FOCUS", "TOPLEFT", 0, 3},
+			-- anchor = { "BOTTOMLEFT", "CM_FOCUS", "TOPLEFT", 0, 3},
 			-- width = 50,
 			-- height = 15,
 			-- spacing = 3,
@@ -486,7 +542,7 @@ C["classmonitor"] = {
 			anchor = { "CENTER", UIParent, "CENTER", 0, -140 },
 			width = 261,
 			height = 15,
-			text = L.move_classmonitor
+			text = L.classmonitor_move
 		},
 		{
 			name = "CM_RAGE",
@@ -505,7 +561,7 @@ C["classmonitor"] = {
 			anchor = { "CENTER", UIParent, "CENTER", 0, -140 },
 			width = 262,
 			height = 15,
-			text = L.move_classmonitor
+			text = L.classmonitor_move
 		},
 		{
 			name = "CM_MANA",
@@ -519,11 +575,11 @@ C["classmonitor"] = {
 		{
 			name = "CM_FULMINATION",
 			kind = "AURA",
-			spec = 1,  -- elem shaman
+			spec = 1,  -- Elemental
 			spellID = 324,
 			filter = "HELPFUL",
 			count = 7,
-			anchor = {"BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3},
+			anchor = { "BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3 },
 			width = 34,
 			height = 15,
 			spacing = 4,
@@ -533,11 +589,11 @@ C["classmonitor"] = {
 		{
 			name = "CM_MAELSTROMM",
 			kind = "AURA",
-			spec = 2,  -- enhancement shaman
+			spec = 2,  -- Enhancement
 			spellID = 53817,
 			filter = "HELPFUL",
 			count = 5,
-			anchor = {"BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3},
+			anchor = { "BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3 },
 			width = 50,
 			height = 15,
 			spacing = 3,
@@ -548,10 +604,11 @@ C["classmonitor"] = {
 			name = "CM_TOTEMS",
 			kind = "TOTEM",
 			count = 4,
-			anchor = {"TOPLEFT", "CM_MANA", "BOTTOMLEFT", 0, -3},
+			anchor = { "TOPLEFT", "CM_MANA", "BOTTOMLEFT", 0, -3 },
 			width = 64,
 			height = 15,
 			spacing = 2,
+			text = true,
 			colors = {
 			-- In the order, fire, earth, water, air
 				[1] = {.58,.23,.10},
@@ -559,6 +616,8 @@ C["classmonitor"] = {
 				[3] = {.19,.48,.60},
 				[4] = {.42,.18,.74},
 			},
+			-- earth, fire, water, air
+			map = {2, 1, 3, 4},
 		},
 	},
 	["MONK"] = {
@@ -568,7 +627,7 @@ C["classmonitor"] = {
 			anchor = { "CENTER", UIParent, "CENTER", 0, -140 },
 			width = 262,
 			height = 15,
-			text = L.move_classmonitor
+			text = L.classmonitor_move
 		},
 		{
 			name = "CM_RESOURCE",

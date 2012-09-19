@@ -1,9 +1,9 @@
 local ADDON_NAME, Engine = ...
-local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
+if not Engine.Enabled then return end
 
 local CMDebug = false
 
-local settings = C["classmonitor"][T.myclass]
+local settings = Engine.Config[Engine.MyClass]
 if not settings then return end
 
 local function WARNING(line)
@@ -26,7 +26,7 @@ end
 -- When multiple anchors are specified, anchor depends on current spec
 local function SetMultipleAnchorHandler(frame, anchors)
 	if not anchors then return end
-	frame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+	frame:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
 	frame:RegisterEvent("PLAYER_ENTERING_WORLD")
 	frame:HookScript("OnEvent", function(self, event)
 		if event ~= "PLAYER_SPECIALIZATION_CHANGED" and event ~= "PLAYER_ENTERING_WORLD" then return end
@@ -50,12 +50,12 @@ end
 ---------------------------------------
 -- Main
 
--- Remove non-class specific spell-list
-for class in pairs(C["classmonitor"]) do
-	if class ~= T.myclass then
-		C["classmonitor"][class] = nil
-	end
-end
+-- -- Remove non-class specific spell-list
+-- for class in pairs(Engine.Config) do
+	-- if class ~= Engine.MyClass then
+		-- Engine.Config[class] = nil
+	-- end
+-- end
 
 -- Create monitor frames
 for i, section in ipairs(settings) do
@@ -66,73 +66,83 @@ for i, section in ipairs(settings) do
 	local width = section.width or 85
 	local height = section.height or 15
 	local spec = section.spec or "any"
+	local specs = section.specs or { spec }
 
 	DEBUG("section:"..name)
 	if name and kind and anchor then
 		-- for AURA, POWER and COMBO, if colors doesn't exist create it using color for each entry
-		-- if color doesn't exist, use T.UnitColor.class[T.myclass]
+		-- if color doesn't exist, use ClassColor
 		local frame
 		if kind == "MOVER" then
 			local text = section.text or name.."_MOVER"
-
-			frame = Engine:CreateMover(name, width, height, anchor, text)
+			frame = Engine.CreateMover(name, width, height, anchor, text)
 		elseif kind == "RESOURCE" then
 			local text = section.text or true
 			local autohide = section.autohide or false
 			local colors = section.colors or (section.color and {section.color})
 
-			frame = Engine:CreateResourceMonitor(name, text, autohide, anchor, width, height, colors, spec)
+			frame = Engine.CreateResourceMonitor(name, text, autohide, anchor, width, height, colors, specs)
 		elseif kind == "HEALTH" then
 			local text = section.text or true
 			local autohide = section.autohide or false
 			local colors = section.colors or (section.color and {section.color})
 
-			frame = Engine:CreateHealthMonitor(name, text, autohide, anchor, width, height, colors, spec)
+			frame = Engine.CreateHealthMonitor(name, text, autohide, anchor, width, height, colors, specs)
+		elseif kind == "REGEN" then
+			local spellID = section.spellID
+			local filling = section.filling or false
+			local duration = section.duration
+			local color = section.color or Engine:ClassColor()
+			if spellID and duration then
+				frame = Engine.CreateRegenMonitor(name, spellID, anchor, width, height, color, duration, filling)
+			else
+				WARNING("section:"..name..":"..(spellID and "" or " missing spellID")..(duration and "" or " missing duration")) -- TODO: locales
+			end
 		elseif kind == "COMBO" then
 			local spacing = section.spacing or 3
-			local color = section.color or T.UnitColor.class[T.myclass]
+			local color = section.color or Engine:ClassColor()
 			local colors = section.colors or CreateColorArray(color, 5)
 
-			frame = Engine:CreateComboMonitor(name, anchor, width, height, spacing, colors, filled, spec)
+			frame = Engine.CreateComboMonitor(name, anchor, width, height, spacing, colors, filled, specs)
 		elseif kind == "POWER" then
 			local powerType = section.powerType
 			local count = section.count
 			local spacing = section.spacing or 3
-			local color = section.color or T.UnitColor.class[T.myclass]
+			local color = section.color or Engine:ClassColor()
 			local colors = section.colors or CreateColorArray(color, count)
 			local filled = section.filled or false
 
 			if powerType == SPELL_POWER_BURNING_EMBERS then
-				frame = Engine:CreateBurningEmbersMonitor(name, anchor, width, height, spacing, colors)
+				frame = Engine.CreateBurningEmbersMonitor(name, anchor, width, height, spacing, colors)
 			elseif powerType == SPELL_POWER_DEMONIC_FURY then
 				local text = section.text or true
 				local autohide = section.autohide or false
-				frame = Engine:CreateDemonicFuryMonitor(name, text, autohide, anchor, width, height, colors)
+				frame = Engine.CreateDemonicFuryMonitor(name, text, autohide, anchor, width, height, colors)
 			elseif powerType and count then
-				frame = Engine:CreatePowerMonitor(name, powerType, count, anchor, width, height, spacing, colors, filled, spec)
+				frame = Engine.CreatePowerMonitor(name, powerType, count, anchor, width, height, spacing, colors, filled, specs)
 			else
-				WARNING("section:"..name..":"..(powerType and "" or " missing powerType")..(count and "" or " missing count"))
+				WARNING("section:"..name..":"..(powerType and "" or " missing powerType")..(count and "" or " missing count")) -- TODO: locales
 			end
 		elseif kind == "AURA" then
 			local spellID = section.spellID
 			local filter = section.filter
 			local count = section.count
-			local spacing = section.spacing
-			local color = section.color or T.UnitColor.class[T.myclass]
-			local colors = section.colors or CreateColorArray(color, count)
-			local filled = section.filled or false
-			local bar = section.bar or false
-			local text = section.text or true
-			local duration = section.duration or false
-
 			if spellID and filter and count then
+				local spacing = section.spacing
+				local color = section.color or Engine:ClassColor()
+				local colors = section.colors or CreateColorArray(color, count)
+				local filled = section.filled or false
+				local bar = section.bar or false
+				local text = section.text or true
+				local duration = section.duration or false
+
 				if bar then
-					frame = Engine:CreateBarAuraMonitor(name, spellID, filter, count, anchor, width, height, color, text, duration, spec)
+					frame = Engine.CreateBarAuraMonitor(name, spellID, filter, count, anchor, width, height, color, text, duration, specs)
 				else
-					frame = Engine:CreateAuraMonitor(name, spellID, filter, count, anchor, width, height, spacing, colors, filled, spec)
+					frame = Engine.CreateAuraMonitor(name, spellID, filter, count, anchor, width, height, spacing, colors, filled, specs)
 				end
 			else
-				WARNING("section:"..name..":"..(spellID and "" or " missing spellID")..(filter and "" or " missing filter")..(count and "" or " missing count"))
+				WARNING("section:"..name..":"..(spellID and "" or " missing spellID")..(filter and "" or " missing filter")..(count and "" or " missing count")) -- TODO: locales
 			end
 		elseif kind == "DOT" then
 			local spellID = section.spellID
@@ -140,11 +150,10 @@ for i, section in ipairs(settings) do
 			local latency = section.latency or false
 			local threshold = section.threshold or 0
 
-
 			if spellID then
-				frame = Engine:CreateDotMonitor(name, spellID, anchor, width, height, colors, threshold, latency, spec)
+				frame = Engine.CreateDotMonitor(name, spellID, anchor, width, height, colors, threshold, latency, specs)
 			else
-				WARNING("section:"..name..":"..(spellID and "" or " missing spellID"))
+				WARNING("section:"..name..":"..(spellID and "" or " missing spellID")) -- TODO: locales
 			end
 		elseif kind == "RUNES" then
 			local updatethreshold = section.updatethreshold or 0.1
@@ -155,51 +164,50 @@ for i, section in ipairs(settings) do
 			local runemap = section.runemap
 
 			if runemap and colors then
-				frame = Engine:CreateRunesMonitor(name, updatethreshold, autohide, orientation, anchor, width, height, spacing, colors, runemap)
+				frame = Engine.CreateRunesMonitor(name, updatethreshold, autohide, orientation, anchor, width, height, spacing, colors, runemap)
 			else
-				WARNING("section:"..name..":"..(runemap and "" or " missing runemap")..(colors and "" or " missing colors"))
+				WARNING("section:"..name..":"..(runemap and "" or " missing runemap")..(colors and "" or " missing colors")) -- TODO: locales
 			end
 		elseif kind == "ECLIPSE" then
 			local colors = section.colors
 			local text = section.text or true
 
 			if colors then
-				frame = Engine:CreateEclipseMonitor(name, text, anchor, width, height, colors)
+				frame = Engine.CreateEclipseMonitor(name, text, anchor, width, height, colors)
 			else
-				WARNING("section:"..name..": missing colors")
+				WARNING("section:"..name..": missing colors") -- TODO: locales
 			end
 		elseif kind == "TOTEM" then
 			local count = section.count
-			local spacing = section.spacing
-			local color = section.color or T.UnitColor.class[T.myclass]
-			local colors = section.colors or CreateColorArray(color, count)
-
-			if colors then
-				frame = Engine:CreateTotemMonitor(name, count, anchor, width, height, spacing, colors)
+			if count then
+				local spacing = section.spacing or 3
+				local color = section.color or Engine:ClassColor()
+				local colors = section.colors or CreateColorArray(color, count)
+				local text = section.text or false
+				local map = section.map
+				if map and #map ~= count then
+					WARNING("section:"..name..": map table's size <> count") -- TODO: locales
+				else
+					frame = Engine.CreateTotemMonitor(name, count, anchor, width, height, spacing, colors, text, map, specs)
+				end
 			else
-				WARNING("section:"..name..": missing colors")
-			end
-		elseif kind == "WILDMUSHROOMS" then
-			local spacing = section.spacing
-			local color = section.color or T.UnitColor.class[T.myclass]
-			local colors = section.colors or CreateColorArray(color, 3)
-			if colors then
-				frame = Engine:CreateWildMushroomsMonitor(name, anchor, width, height, spacing, colors)
-			else
-				WARNING("section:"..name..": missing colors")
+				WARNING("section:"..name..": missing count") -- TODO: locales
 			end
 		else
-			WARNING("section:"..name..": invalid kind:"..kind)
+			WARNING("section:"..name..": invalid kind:"..kind) -- TODO: locales
 		end
 
 		-- WARNING if frame not created
-		if not frame then DEBUG("section:"..name.." frame not created") end-- DEBUG
+		if not frame then DEBUG("section:"..name.." frame not created") end-- DEBUG -- TODO: locales
 
 		-- Add multiple anchor handler
 		if anchors and frame then
 			SetMultipleAnchorHandler(frame, anchors)
 		end
 	else
-		WARNING((name and "" or " missing name")..(kind and "" or " missing kind")..(anchor and "" or " missing anchor"))
+		WARNING((name and "" or " missing name")..(kind and "" or " missing kind")..(anchor and "" or " missing anchor")) -- TODO: locales
 	end
 end
+
+-- Delete config
+wipe(Engine.Config)

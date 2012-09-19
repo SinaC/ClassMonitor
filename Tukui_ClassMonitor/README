@@ -1,3 +1,12 @@
+3.0
+ElvUI compatible
+Shadow infusion aura added for DK
+
+2.7.5
+Additional info in config file
+Totem plugin rewritten to be more generic and include wild mushrooms
+Multi spec restriction added
+
 2.7.4
 Additional layout for aura plugin, bar+text+duration instead of points (useful to track mana tea)
 
@@ -18,7 +27,7 @@ Unused code removed
 
 2.6.1
 Plugins are now in addon namespace instead of global one
-Wildmushrooms and Regen added
+Wildmushrooms and Regen readded
 Framestrata fixed for every plugin
 RegisterUnitEvent used when possible (instead of RegisterEvent)
 
@@ -35,20 +44,20 @@ dynamic power unit
 MoP ready
 
 2.4.6
-Regen plugin
+Regen plugin by Ildyria
 
 2.4.5
-Dot plugin
+Dot plugin by Ildyria
 
 2.4.4
 Shaman config
 Bug fixed
 
 2.4.3
-Totems plugin
+Totems plugin by Ildyria
 
 2.4.2
-Health plugin
+Health plugin by Ildyria
 Movers out of Tukui added
 
 2.4.1

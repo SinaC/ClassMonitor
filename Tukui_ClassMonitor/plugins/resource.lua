@@ -1,27 +1,24 @@
 -- Resource Plugin
 local ADDON_NAME, Engine = ...
-local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
+if not Engine.Enabled then return end
 
-function Engine:CreateResourceMonitor(name, text, autohide, anchor, width, height, colors, spec)
-	local cmResource = CreateFrame("Frame", name, TukuiPetBattleHider)
+Engine.CreateResourceMonitor = function(name, text, autohide, anchor, width, height, colors, specs)
+	local cmResource = CreateFrame("Frame", name, Engine.BattlerHider)
 	cmResource:SetTemplate()
 	cmResource:SetFrameStrata("BACKGROUND")
 	cmResource:Size(width, height)
 	cmResource:Point(unpack(anchor))
 
 	cmResource.status = CreateFrame("StatusBar", name.."Status", cmResource)
-	cmResource.status:SetStatusBarTexture(C.media.normTex)
+	cmResource.status:SetStatusBarTexture(Engine.NormTex)
 	cmResource.status:SetFrameLevel(6)
 	cmResource.status:Point("TOPLEFT", cmResource, "TOPLEFT", 2, -2)
 	cmResource.status:Point("BOTTOMRIGHT", cmResource, "BOTTOMRIGHT", -2, 2)
 	cmResource.status:SetMinMaxValues(0, UnitPowerMax("player"))
 
 	if text == true then
-		cmResource.valueText = cmResource.status:CreateFontString(nil, "OVERLAY")
-		cmResource.valueText:SetFont(C.media.uffont, 12)
+		cmResource.valueText = Engine.SetFontString(cmResource.status, 12)
 		cmResource.valueText:Point("CENTER", cmResource.status)
-		cmResource.valueText:SetShadowColor(0, 0, 0)
-		cmResource.valueText:SetShadowOffset(1.25, -1.25)
 	end
 
 	cmResource.timeSinceLastUpdate = GetTime()
@@ -57,6 +54,9 @@ function Engine:CreateResourceMonitor(name, text, autohide, anchor, width, heigh
 		end
 	end
 
+	local CheckSpec = Engine.CheckSpec
+	local PowerColor = Engine.PowerColor
+	local ClassColor = Engine.ClassColor
 	cmResource:RegisterEvent("PLAYER_ENTERING_WORLD")
 	cmResource:RegisterUnitEvent("UNIT_DISPLAYPOWER", "player")
 	cmResource:RegisterEvent("PLAYER_REGEN_DISABLED")
@@ -65,7 +65,7 @@ function Engine:CreateResourceMonitor(name, text, autohide, anchor, width, heigh
 	cmResource:RegisterUnitEvent("UNIT_MAXPOWER", "player")
 	cmResource:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
 	cmResource:SetScript("OnEvent", function(self, event)
-		if spec ~= "any" and spec ~= GetSpecialization() then
+		if not CheckSpec(specs) then
 			cmResource:Hide()
 			return
 		end
@@ -74,7 +74,7 @@ function Engine:CreateResourceMonitor(name, text, autohide, anchor, width, heigh
 			local resource, resourceName = UnitPowerType("player")
 			local valueMax = UnitPowerMax("player", resource)
 			-- use colors[resourceName] if defined, else use default resource color or class color
-			local color = (colors and (colors[resourceName] or colors[1])) or T.UnitColor.power[resourceName] or T.UnitColor.class[T.myclass]
+			local color = (colors and (colors[resourceName] or colors[1])) or PowerColor(resourceName) or ClassColor()
 			cmResource.status:SetStatusBarColor(unpack(color))
 			cmResource.status:SetMinMaxValues(0, valueMax)
 			cmResource:Show()

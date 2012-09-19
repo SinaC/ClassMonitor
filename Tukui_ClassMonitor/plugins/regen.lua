@@ -1,35 +1,32 @@
--- Dot Plugin, credits to Ildyria
+-- Regen Plugin, written to Ildyria
 local ADDON_NAME, Engine = ...
-local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
+if not Engine.Enabled then return end
 
-function Engine:CreateRegenMonitor(name, spelltracked, anchor, width, height, colors, duration, filling)
-
-	local cmRegen = CreateFrame("Frame", name, TukuiPetBattleHider)
+Engine.CreateRegenMonitor = function(name, spelltracked, anchor, width, height, color, duration, filling)
+	local cmRegen = CreateFrame("Frame", name, Engine.BattlerHider)
 	cmRegen:SetTemplate()
 	cmRegen:SetFrameStrata("BACKGROUND")
 	cmRegen:Size(width, height)
 	cmRegen:Point(unpack(anchor))
 
 	cmRegen.status = CreateFrame("StatusBar", "cmRegenStatus", cmRegen)
-	cmRegen.status:SetStatusBarTexture(C.media.normTex)
+	cmRegen.status:SetStatusBarTexture(Engine.NormTex)
 	cmRegen.status:SetFrameLevel(6)
 	cmRegen.status:Point("TOPLEFT", cmRegen, "TOPLEFT", 1, -1)
 	cmRegen.status:Point("BOTTOMRIGHT", cmRegen, "BOTTOMRIGHT", -1, 1)
 	cmRegen.status:SetMinMaxValues(0, duration)
-	cmRegen:Hide()
-
-	local color = colors or T.UnitColor.class[T.myclass]
 	cmRegen.status:SetStatusBarColor(unpack(color))
+	cmRegen:Hide()
 
 	cmRegen.timeSinceLastUpdate = GetTime()
 	local function OnUpdate(self, elapsed)
 		cmRegen.timeSinceLastUpdate = cmRegen.timeSinceLastUpdate + elapsed
 		if cmRegen.timeSinceLastUpdate > 0.05 then
-			local remainTime = cmRegen.status:GetValue()
+			local timeLeft = cmRegen.status:GetValue()
 			if filling then
-				cmRegen.status:SetValue(remainTime + cmRegen.timeSinceLastUpdate)
+				cmRegen.status:SetValue(timeLeft + cmRegen.timeSinceLastUpdate)
 			else
-				cmRegen.status:SetValue(remainTime - cmRegen.timeSinceLastUpdate)
+				cmRegen.status:SetValue(timeLeft - cmRegen.timeSinceLastUpdate)
 			end
 			if cmRegen.status:GetValue() == 0 or cmRegen.status:GetValue() == duration then cmRegen:Hide() end
 			cmRegen.timeSinceLastUpdate = 0

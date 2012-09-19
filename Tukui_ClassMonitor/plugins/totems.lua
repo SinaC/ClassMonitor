@@ -1,114 +1,105 @@
--- Totem plugin, credits to Ildyria
+-- Totem plugin, credits to Ildyria and Tukz
 local ADDON_NAME, Engine = ...
-local T, C, L = unpack(Tukui)
+if not Engine.Enabled then return end
 
--- Generic method to create Totem monitor
-function Engine:CreateTotemMonitor(name, count, anchor, width, height, spacing, colors)
-	local total = 0
-	local delay = 0.01
-
-	local cmTotemTimers = CreateFrame("Frame", name, UIParent)
-
-	local totems = {}
-
-	for i=1,4 do
-		totems[i] = CreateFrame("Frame", name..i, TukuiPetBattleHider)
-		totems[i]:SetTemplate()
-		totems[i]:SetFrameStrata("BACKGROUND")
-		totems[i]:Size(width, height)
-		totems[i].status = CreateFrame("StatusBar", name..i.."status", totems[i])
-		totems[i].status:SetStatusBarTexture(C.media.normTex)
-		totems[i].status:SetFrameLevel(6)
-		totems[i].status:Point("TOPLEFT", totems[i], "TOPLEFT", 2, -2)
-		totems[i].status:Point("BOTTOMRIGHT", totems[i], "BOTTOMRIGHT", -2, 2)
-		totems[i].status:SetOrientation("HORIZONTAL")
-
-		totems[i].timer = totems[i].status:CreateFontString(nil, "OVERLAY")
-		totems[i].timer:SetFont(C.media.uffont, 12)
-		totems[i].timer:Point("CENTER", totems[i].status)
-		totems[i].timer:SetShadowColor(0, 0, 0)
-		totems[i].timer:SetShadowOffset(1.25, -1.25)
-	end
-
-	-- re-arrange the order
-	totems[2]:ClearAllPoints();
-	totems[1]:ClearAllPoints();
-	totems[3]:ClearAllPoints();
-	totems[4]:ClearAllPoints();
-	totems[2]:Point(unpack(anchor))
-	totems[1]:Point("LEFT", totems[2], "RIGHT", spacing, 0)
-	totems[3]:Point("LEFT", totems[1], "RIGHT", spacing, 0)
-	totems[4]:Point("LEFT", totems[3], "RIGHT", spacing, 0)
-
-	local function ToClock(seconds)
-		seconds = ceil(tonumber(seconds))
-		if(seconds <= 0) then
-			return " "
-		elseif seconds < 600 then
-			local d, h, m, s = ChatFrame_TimeBreakDown(seconds)
-			return format("%01d:%02d", m, s)
-		elseif(seconds < 3600) then
-			local d, h, m, s = ChatFrame_TimeBreakDown(seconds);
-			return format("%02d:%02d", m, s)
+-- Generic method to create totem monitor
+Engine.CreateTotemMonitor = function(name, count, anchor, width, height, spacing, colors, text, map, specs)
+	local cmTotems = {}
+	for i = 1, count do
+		local cmTotem = CreateFrame("Frame", name, Engine.BattlerHider)
+		cmTotem:SetTemplate()
+		cmTotem:SetFrameStrata("BACKGROUND")
+		cmTotem:Size(width, height)
+		if i == 1 then
+			cmTotem:Point(unpack(anchor))
 		else
-			return "1 hr+"
+			cmTotem:Point("LEFT", cmTotems[i-1], "RIGHT", spacing, 0)
 		end
+		cmTotem.status = CreateFrame("StatusBar", name.."_status_"..i, cmTotem)
+		cmTotem.status:SetStatusBarTexture(Engine.NormTex)
+		cmTotem.status:SetFrameLevel(6)
+		cmTotem.status:Point("TOPLEFT", cmTotem, "TOPLEFT", 2, -2)
+		cmTotem.status:Point("BOTTOMRIGHT", cmTotem, "BOTTOMRIGHT", -2, 2)
+		cmTotem.status:SetStatusBarColor(unpack(colors[i]))
+		cmTotem.status:GetStatusBarTexture():SetHorizTile(false)
+		cmTotem.status:SetMinMaxValues(0, 300)
+		cmTotem.status:SetValue(0)
+
+		if text == true then
+			cmTotem.text = Engine.SetFontString(cmTotem.status, 12)
+			cmTotem.text:Point("CENTER", cmTotem.status)
+		end
+
+		cmTotem:Hide()
+
+		tinsert(cmTotems, cmTotem)
 	end
 
-	local function GetTimeLeft(slot)
-		local havetotem, name, startTime, duration = GetTotemInfo(slot)
-		return (duration-(GetTime() - startTime))
-	end
-
-	local function UpdateSlot()
-		for slot=1, 4 do
-			local havetotem, name, startTime, duration = GetTotemInfo(slot)
-			totems[slot].status:SetStatusBarColor(unpack(colors[slot]))
-			totems[slot].status:SetValue(0)
-
---			totems[slot].ID = slot
-
-			-- If we have a totems then set his value
-			if(havetotem) then
-				if(duration >= 0) then
-					totems[slot].status:SetMinMaxValues(0, duration)
-					totems[slot].status:SetValue(GetTimeLeft(slot)) -- -(GetTime() - startTime))
-					totems[slot].timer:SetText()
-					-- Status bar update
-					totems[slot]:SetScript("OnUpdate",function(self,elapsed)
-						total = total + elapsed
-						if total >= delay then
-							total = 0
-							havetotem, name, startTime, duration = GetTotemInfo(slot)
-							if (GetTimeLeft(slot) >= 0) then --(GetTime() - startTime) <= 0) then
-								-- totems[slot]:Show()
-								totems[slot].status:SetValue(GetTimeLeft(slot))
-								totems[slot].timer:SetText(ToClock(GetTimeLeft(slot)))
-								totems[slot]:SetAlpha(1)
-							else
-								totems[slot].status:SetValue(0)
-								totems[slot].timer:SetText(" ")
-								totems[slot]:SetAlpha(0)
-							end
-						end
-					end)
-				else
-					-- There's no need to update because it doesn't have any duration
-					totems[slot]:SetScript("OnUpdate",nil)
-					totems[slot].status:SetValue(0)
-					totems[slot]:SetAlpha(0)
-				end
+	if map then -- totem remapping
+		for i = 1, count do
+			local index = map[i]
+			local cmTotem = cmTotems[index]
+			if i == 1 then
+				cmTotem:ClearAllPoints()
+				cmTotem:Point(unpack(anchor))
 			else
-				-- No totems = no time
-				totems[slot]:SetAlpha(0)
-				totems[slot].status:SetValue(0)
+				local previousIndex = map[i-1]
+				cmTotem:ClearAllPoints()
+				cmTotem:Point("LEFT", cmTotems[previousIndex], "RIGHT", spacing, 0)
 			end
 		end
 	end
 
-	cmTotemTimers:RegisterEvent("PLAYER_ENTERING_WORLD")
-	cmTotemTimers:RegisterEvent("PLAYER_TOTEM_UPDATE")
-	cmTotemTimers:SetScript("OnEvent", UpdateSlot)
+	local ToClock = Engine.ToClock
+	local function UpdateTotemTimer(self, elapsed)
+		if not self.status.expirationTime then return end
+		self.status.expirationTime = self.status.expirationTime - elapsed
 
-	return cmTotemTimers
+		local timeLeft = self.status.expirationTime
+		if timeLeft > 0 then
+			self.status:SetValue(timeLeft)
+			if text == true then
+				self.text:SetText(ToClock(timeLeft))
+			end
+		else
+			self:SetScript("OnUpdate", nil)
+			if text == true then
+				self.text:SetText("")
+			end
+		end
+	end
+
+	local CheckSpec = Engine.CheckSpec
+	cmTotems[1]:RegisterEvent("PLAYER_ENTERING_WORLD")
+	cmTotems[1]:RegisterEvent("PLAYER_TOTEM_UPDATE")
+	cmTotems[1]:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
+	cmTotems[1]:SetScript("OnEvent", function(self, event)
+		if CheckSpec(specs) then
+			for i = 1, count do
+				local cmTotem = cmTotems[i]
+				local up, name, start, duration, icon = GetTotemInfo(i)
+				if up then
+					local timeLeft = (start+duration) - GetTime()
+					cmTotem.status.duration = duration
+					cmTotem.status.expirationTime = timeLeft
+					cmTotem.status:SetMinMaxValues(0, duration)
+					cmTotem:SetScript("OnUpdate", UpdateTotemTimer)
+					cmTotem:Show()
+				else
+					cmTotem.status:SetValue(0)
+					cmTotem:SetScript("OnUpdate", nil)
+					cmTotem:Hide()
+				end
+			end
+		else
+			for i = 1, count do
+				local cmTotem = cmTotems[i]
+				cmTotem.status:SetValue(0)
+				cmTotem:SetScript("OnUpdate", nil)
+				cmTotem:Hide()
+			end
+		end
+	end)
+
+	return cmTotems[1]
 end

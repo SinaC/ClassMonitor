@@ -1,5 +1,6 @@
--- Add locales in Tukui
+local ADDON_NAME, Engine = ...
+local L = Engine.Locales
 
-local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
-
-L.move_classmonitor = "Move class monitor"
+L.classmonitor_move = "Move class monitor"
+L.classmonitor_disableoldversion_tukui = "Old version of Tukui_ClassMonitor detected. Disable it?"
+L.classmonitor_disableoldversion_elvui = "Old version of ElvUI_ClassMonitor detected. Disable it?"

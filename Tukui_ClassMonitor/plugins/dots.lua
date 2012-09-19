@@ -1,28 +1,25 @@
--- Dot Plugin, credits to Ildyria
+-- Dot Plugin, written to Ildyria
 local ADDON_NAME, Engine = ...
-local T, C, L = unpack(Tukui) -- Import: T - functions, constants, variables; C - config; L - locales
+if not Engine.Enabled then return end
 
-function Engine:CreateDotMonitor(name, spelltracked, anchor, width, height, colors, threshold, latency)
+Engine.CreateDotMonitor = function(name, spelltracked, anchor, width, height, colors, threshold, latency, specs)
 	local aura = GetSpellInfo(spelltracked)
 
-	local cmDot = CreateFrame("Frame", name, TukuiPetBattleHider)
+	local cmDot = CreateFrame("Frame", name, Engine.BattlerHider)
 	cmDot:SetTemplate()
 	cmDot:SetFrameStrata("BACKGROUND")
 	cmDot:Size(width, height)
 	cmDot:Point(unpack(anchor))
 
 	cmDot.status = CreateFrame("StatusBar", "cmDotStatus", cmDot)
-	cmDot.status:SetStatusBarTexture(C.media.normTex)
+	cmDot.status:SetStatusBarTexture(Engine.NormTex)
 	cmDot.status:SetFrameLevel(6)
 	cmDot.status:Point("TOPLEFT", cmDot, "TOPLEFT", 2, -2)
 	cmDot.status:Point("BOTTOMRIGHT", cmDot, "BOTTOMRIGHT", -2, 2)
 	cmDot.status:SetMinMaxValues(0, UnitPowerMax("player"))
 
-	cmDot.text = cmDot.status:CreateFontString(nil, "OVERLAY")
-	cmDot.text:SetFont(C.media.uffont, 12)
+	cmDot.text = Engine.SetFontString(cmDot.status, 12)
 	cmDot.text:Point("CENTER", cmDot.status)
-	cmDot.text:SetShadowColor(0, 0, 0)
-	cmDot.text:SetShadowOffset(1.25, -1.25)
 
 	cmDot.dmg = 0
 	cmDot.timeSinceLastUpdate = GetTime()
@@ -81,7 +78,13 @@ function Engine:CreateDotMonitor(name, spelltracked, anchor, width, height, colo
 	cmDot.combatcheck:RegisterEvent("PLAYER_REGEN_ENABLED")
 	cmDot.combatcheck:SetScript("OnEvent", CombatCheck)
 
-	local function CombatAuraCheck(self,event)																			-- Aura check
+	local CheckSpec = Engine.CheckSpec
+	local function CombatAuraCheck(self,event)																		-- Aura check
+		if not CheckSpec(specs) then
+			cmDot:Hide()
+			return
+		end
+
 		local _, _, _, count, _, duration, expTime, _, _, _, _ = UnitAura("target", aura, nil, "PLAYER|HARMFUL")
 		if expTime ~= nil then
 			local remainTime = expTime - GetTime()
@@ -109,6 +112,6 @@ function Engine:CreateDotMonitor(name, spelltracked, anchor, width, height, colo
 	-- This is what stops constant OnUpdate
 	cmDot:SetScript("OnShow", function(self) self:SetScript("OnUpdate", OnUpdate) end)
 	cmDot:SetScript("OnHide", function (self) self:SetScript("OnUpdate", nil) end)
-	
+
 	return cmDot
 end
