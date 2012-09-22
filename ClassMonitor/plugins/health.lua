@@ -1,22 +1,24 @@
--- Resource Plugin, written to Ildyria
+-- Resource Plugin, written to Ildyria, edited by SinaC
 local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
+local UI = Engine.UI
 
-Engine.CreateHealthMonitor = function(name, text, autohide, anchor, width, height, colors, specs)
-	local cmHealth = CreateFrame("Frame", name, Engine.BattlerHider)
+Engine.CreateHealthMonitor = function(name, unit, text, autohide, anchor, width, height, color, specs)
+	local cmHealth = CreateFrame("Frame", name, UI.BattlerHider)
 	cmHealth:SetTemplate()
 	cmHealth:SetFrameStrata("BACKGROUND")
 	cmHealth:Size(width, height)
+	cmHealth:Point(unpack(anchor))
 
 	cmHealth.status = CreateFrame("StatusBar", "cmHealthStatus", cmHealth)
-	cmHealth.status:SetStatusBarTexture(Engine.NormTex)
+	cmHealth.status:SetStatusBarTexture(UI.NormTex)
 	cmHealth.status:SetFrameLevel(6)
 	cmHealth.status:Point("TOPLEFT", cmHealth, "TOPLEFT", 2, -2)
 	cmHealth.status:Point("BOTTOMRIGHT", cmHealth, "BOTTOMRIGHT", -2, 2)
-	cmHealth.status:SetMinMaxValues(0, UnitHealthMax("player"))
+	cmHealth.status:SetMinMaxValues(0, UnitHealthMax(unit))
 
 	if text == true then
-		cmHealth.text = Engine.SetFontString(cmHealth.status, 12)
+		cmHealth.text = UI.SetFontString(cmHealth.status, 12)
 		cmHealth.text:Point("CENTER", cmHealth.status)
 	end
 
@@ -24,10 +26,11 @@ Engine.CreateHealthMonitor = function(name, text, autohide, anchor, width, heigh
 	local function OnUpdate(self, elapsed)
 		cmHealth.timeSinceLastUpdate = cmHealth.timeSinceLastUpdate + elapsed
 		if cmHealth.timeSinceLastUpdate > 0.2 then
-			local value = UnitHealth("player")
+--print("cmHealth:OnUpdate")
+			local value = UnitHealth(unit)
 			cmHealth.status:SetValue(value)
 			if text == true then
-				local valueMax = UnitHealthMax("player")
+				local valueMax = UnitHealthMax(unit)
 				if value == valueMax then
 					if value > 10000 then
 						cmHealth.text:SetFormattedText("%.1fk", value/1000)
@@ -48,31 +51,37 @@ Engine.CreateHealthMonitor = function(name, text, autohide, anchor, width, heigh
 	end
 
 	local CheckSpec = Engine.CheckSpec
-	local PowerColor = Engine.Color
-	local ClassColor = Engine.ClassColor
+	local HealthColor = UI.HealthColor
+	cmHealth:RegisterEvent("PLAYER_FOCUS_CHANGED")
+	cmHealth:RegisterEvent("PLAYER_TARGET_CHANGED")
 	cmHealth:RegisterEvent("PLAYER_ENTERING_WORLD")
 	cmHealth:RegisterEvent("PLAYER_REGEN_DISABLED")
 	cmHealth:RegisterEvent("PLAYER_REGEN_ENABLED")
-	cmHealth:RegisterUnitEvent("UNIT_HEALTH", "player")
-	cmHealth:RegisterUnitEvent("UNIT_MAXHEALTH", "player")
-	cmHealth:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
+	cmHealth:RegisterUnitEvent("UNIT_HEALTH", unit)
+	cmHealth:RegisterUnitEvent("UNIT_MAXHEALTH", unit)
+	cmHealth:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", unit)
 	cmHealth:SetScript("OnEvent", function(self, event)
 		if not CheckSpec(specs) then
 			cmHealth:Hide()
 			return
 		end
-
-		if event == "PLAYER_ENTERING_WORLD" or event == "UNIT_MAXHEALTH" or event == "PLAYER_SPECIALIZATION_CHANGED" then
-			local valueMax = UnitHealthMax("player")
-			local color = (colors and (colors[resourceName] or colors[1])) or PowerColor(resourceName) or ClassColor()
-			cmHealth.status:SetStatusBarColor(unpack(color))
-			cmHealth.status:SetMinMaxValues(0, valueMax)
-			cmHealth:Show()
+		-- TODO: problem while in combat with a target and pressing escape, code in comment un next if helps but show a null bar when no target and in combat
+		if event == "PLAYER_ENTERING_WORLD" or event == "UNIT_MAXHEALTH" or event == "PLAYER_SPECIALIZATION_CHANGED" or event == "PLAYER_TARGET_CHANGED" or event == "PLAYER_FOCUS_CHANGED" then
+			local class = select(2, UnitClass(unit))
+			if class then
+				local valueMax = UnitHealthMax(unit)
+				local healthColor = color or HealthColor(unit) or {1, 1, 1, 1}
+				cmHealth.status:SetStatusBarColor(unpack(healthColor))
+				cmHealth.status:SetMinMaxValues(0, valueMax)
+				cmHealth:Show()
+			else
+				cmHealth:Hide()
+			end
 		end
 		if autohide == true then
 			if event == "PLAYER_REGEN_DISABLED" then
 				cmHealth:Show()
-			elseif event == "UNIT_HEALTH" then
+			elseif event == "UNIT_HEALTH" or event == "UNIT_MAXHEALTH" --[[ or event == "PLAYER_TARGET_CHANGED" or event == "PLAYER_FOCUS_CHANGED"--]] then
 				if InCombatLockdown() then
 					cmHealth:Show()
 				end

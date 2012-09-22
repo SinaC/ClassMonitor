@@ -1,3 +1,22 @@
+3.2.2
+Default bool value overwriting set value bug fixed
+Additional option 'unit' in Aura plugin
+Typo fixed in config explanation
+Another pixel perfect bug fixed :)
+Missing method in native UI
+
+3.2.1
+Pixel perfect bug fixed
+Addon structure modified a little bit
+
+3.2 beta
+Doesn't need Tukui or ElvUI anymore but still compatible with them
+
+3.1
+Bug fixed in Health plugin
+Additional option 'unit' on Health plugin
+profiles.lua added to .gitignore + profiles_template.lua added
+
 3.0
 ElvUI compatible
 Shadow infusion aura added for DK

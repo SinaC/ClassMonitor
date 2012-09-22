@@ -1,16 +1,17 @@
 -- Regen Plugin, written to Ildyria
 local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
+local UI = Engine.UI
 
 Engine.CreateRegenMonitor = function(name, spelltracked, anchor, width, height, color, duration, filling)
-	local cmRegen = CreateFrame("Frame", name, Engine.BattlerHider)
+	local cmRegen = CreateFrame("Frame", name, UI.BattlerHider)
 	cmRegen:SetTemplate()
 	cmRegen:SetFrameStrata("BACKGROUND")
 	cmRegen:Size(width, height)
 	cmRegen:Point(unpack(anchor))
 
 	cmRegen.status = CreateFrame("StatusBar", "cmRegenStatus", cmRegen)
-	cmRegen.status:SetStatusBarTexture(Engine.NormTex)
+	cmRegen.status:SetStatusBarTexture(UI.NormTex)
 	cmRegen.status:SetFrameLevel(6)
 	cmRegen.status:Point("TOPLEFT", cmRegen, "TOPLEFT", 1, -1)
 	cmRegen.status:Point("BOTTOMRIGHT", cmRegen, "BOTTOMRIGHT", -1, 1)

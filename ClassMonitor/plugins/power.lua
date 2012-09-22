@@ -1,12 +1,13 @@
 -- Power plugin
 local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
+local UI = Engine.UI
 
 Engine.CreatePowerMonitor = function(name, powerType, count, anchor, width, height, spacing, colors, filled, specs)
 	local cmPMs = {}
 
 	for i = 1, count do
-		local cmPM = CreateFrame("Frame", name, Engine.BattlerHider) -- name is used for 1st power point
+		local cmPM = CreateFrame("Frame", name, UI.BattlerHider) -- name is used for 1st power point
 		cmPM:SetTemplate()
 		cmPM:SetFrameStrata("BACKGROUND")
 		cmPM:Size(width, height)
@@ -17,7 +18,7 @@ Engine.CreatePowerMonitor = function(name, powerType, count, anchor, width, heig
 		end
 		if filled then
 			cmPM.status = CreateFrame("StatusBar", name.."_status_"..i, cmPM)
-			cmPM.status:SetStatusBarTexture(Engine.NormTex)
+			cmPM.status:SetStatusBarTexture(UI.NormTex)
 			cmPM.status:SetFrameLevel(6)
 			cmPM.status:Point("TOPLEFT", cmPM, "TOPLEFT", 2, -2)
 			cmPM.status:Point("BOTTOMRIGHT", cmPM, "BOTTOMRIGHT", -2, 2)

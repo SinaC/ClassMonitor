@@ -1,23 +1,24 @@
 -- Demonic Fury Plugin
 local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
+local UI = Engine.UI
 
 Engine.CreateDemonicFuryMonitor = function(name, text, autohide, anchor, width, height, colors)
-	local cmDFM = CreateFrame("Frame", name, Engine.BattlerHider)
+	local cmDFM = CreateFrame("Frame", name, UI.BattlerHider)
 	cmDFM:SetTemplate()
 	cmDFM:SetFrameStrata("BACKGROUND")
 	cmDFM:Size(width, height)
 	cmDFM:Point(unpack(anchor))
 
 	cmDFM.status = CreateFrame("StatusBar", "cmDFMStatus", cmDFM)
-	cmDFM.status:SetStatusBarTexture(Engine.NormTex)
+	cmDFM.status:SetStatusBarTexture(UI.NormTex)
 	cmDFM.status:SetFrameLevel(6)
 	cmDFM.status:Point("TOPLEFT", cmDFM, "TOPLEFT", 2, -2)
 	cmDFM.status:Point("BOTTOMRIGHT", cmDFM, "BOTTOMRIGHT", -2, 2)
 	cmDFM.status:SetMinMaxValues(0, UnitPowerMax("player"))
 
 	if text == true then
-		cmDFM.text = Engine.SetFontString(cmDFM.status, 12)
+		cmDFM.text = UI.SetFontString(cmDFM.status, 12)
 		cmDFM.text:Point("CENTER", cmDFM.status)
 	end
 
@@ -34,8 +35,8 @@ Engine.CreateDemonicFuryMonitor = function(name, text, autohide, anchor, width, 
 		end
 	end
 
-	local PowerColor = Engine.PowerColor
-	local ClassColor = Engine.ClassColor
+	local PowerColor = UI.PowerColor
+	local ClassColor = UI.ClassColor
 	cmDFM:RegisterEvent("PLAYER_ENTERING_WORLD")
 	cmDFM:RegisterUnitEvent("UNIT_DISPLAYPOWER", "player")
 	cmDFM:RegisterEvent("PLAYER_REGEN_DISABLED")
@@ -61,7 +62,7 @@ Engine.CreateDemonicFuryMonitor = function(name, text, autohide, anchor, width, 
 		if autohide == true then
 			if event == "PLAYER_REGEN_DISABLED" then
 				cmDFM:Show()
-			elseif event == "UNIT_POWER" then
+			elseif event == "UNIT_POWER" or event == "UNIT_MAXPOWER" then
 				if InCombatLockdown() then
 					cmDFM:Show()
 				end

@@ -1,3 +1,0 @@
-local ADDON_NAME, Engine = ...
-
-Engine.Locales = {}

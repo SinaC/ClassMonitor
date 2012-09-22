@@ -169,3 +169,6 @@ pip-log.txt
 # Archive files
 *.zip
 *.7z
+
+# Profiles
+profiles.lua

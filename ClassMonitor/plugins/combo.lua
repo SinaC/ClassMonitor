@@ -1,11 +1,12 @@
 -- Combo Points plugin
 local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
+local UI = Engine.UI
 
 Engine.CreateComboMonitor = function(name, anchor, width, height, spacing, colors, filled, specs)
 	local cmCombos = {}
 	for i = 1, 5 do
-		local cmCombo = CreateFrame("Frame", name, Engine.BattlerHider)
+		local cmCombo = CreateFrame("Frame", name, UI.BattlerHider)
 		cmCombo:SetTemplate()
 		cmCombo:SetFrameStrata("BACKGROUND")
 		cmCombo:Size(width, height)
@@ -16,7 +17,7 @@ Engine.CreateComboMonitor = function(name, anchor, width, height, spacing, color
 		end
 		if filled then
 			cmCombo.status = CreateFrame("StatusBar", name.."_status_"..i, cmCombo)
-			cmCombo.status:SetStatusBarTexture(Engine.NormTex)
+			cmCombo.status:SetStatusBarTexture(UI.NormTex)
 			cmCombo.status:SetFrameLevel(6)
 			cmCombo.status:Point("TOPLEFT", cmCombo, "TOPLEFT", 2, -2)
 			cmCombo.status:Point("BOTTOMRIGHT", cmCombo, "BOTTOMRIGHT", -2, 2)

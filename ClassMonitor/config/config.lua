@@ -43,6 +43,7 @@ Engine.Config = {
 	spec|specs = 													see note below [default: any], not available for SPELL_POWER_BURNING_EMBERS|SPELL_POWER_DEMONIC_FURY
 
 	AURA (buff/debuff):
+	unit = "player"|"target"|"focus"								check aura on this unit [default:"player"]
 	spellID = number												spell id of buff/debuff to monitor
 	filter = "HELPFUL" | "HARMFUL"									BUFF or DEBUFF
 	count = number													max number of stack to display
@@ -79,12 +80,14 @@ Engine.Config = {
 	anchor = 														see note below
 	text = true|false												display regen value (% for mana) [default: true]
 	autohide = true|false											hide or not while out of combat [default: false]
-	width = number													width of health bar [default: 85]
-	height = number													height of health bar [default: 15]
+	width = number													width of regen bar [default: 85]
+	height = number													height of regen bar [default: 15]
 	color =															see note below [default: class color]
 
 	HEALTH
+	unit = "player"|"target"|"focus"								check aura on this unit [default:"player"]
 	anchor = 														see note below
+	autohide = true|false											hide or not while out of combat [default: true]
 	width = number													width of health bar [default: 85]
 	height = number													height of health bar [default: 15]
 	color =															see note below [default: class color]
@@ -92,8 +95,8 @@ Engine.Config = {
 
 	DOT
 	anchor = 														see note below
-	width = number													width of health bar [default: 85]
-	height = number													height of health bar [default: 15]
+	width = number													width of dot bar [default: 85]
+	height = number													height of dot bar [default: 15]
 	spellID = number												spell id of dot to monitor
 	latency = true|false											indicate latency on buff (usefull for ignite)
 	threshold = number or 0											threshold to work with colors [default: 0]
@@ -108,8 +111,8 @@ Engine.Config = {
 
 	TOTEM (totems or wildmushrooms):
 	anchor = 														see note below
-	width = number													width of health bar [default: 85]
-	height = number													height of health bar [default: 15]
+	width = number													width of totem bar [default: 85]
+	height = number													height of totem bar [default: 15]
 	spacing = number												spacing between each totems [default: 3]
 	count = number													number of totems (4 for shaman totems, 3 for druid mushrooms)
 	color|colors =													see note below [default: class color]
@@ -138,7 +141,7 @@ Engine.Config = {
 	specs = {table of spec} -> only shown when in any of the specified spec
 --]]
 	["DRUID"] = {
-		{
+		{ -- 1
 			name = "CM_MOVER",
 			kind = "MOVER",
 			anchor = { "CENTER", UIParent, "CENTER", 0, -140 },
@@ -146,7 +149,7 @@ Engine.Config = {
 			height = 15,
 			text = L.classmonitor_move
 		},
-		{
+		{ -- 2
 			name = "CM_RESOURCE",
 			kind = "RESOURCE",
 			text = true,
@@ -155,7 +158,7 @@ Engine.Config = {
 			width = 262,
 			height = 15,
 		},
-		{
+		{ -- 3
 			name = "CM_COMBO",
 			kind = "COMBO",
 			anchor = { "BOTTOMLEFT", "CM_RESOURCE", "TOPLEFT", 0, 3 },
@@ -171,7 +174,7 @@ Engine.Config = {
 			},
 			filled = false,
 		},
-		{
+		{ -- 4
 			name = "CM_ECLIPSE",
 			kind = "ECLIPSE",
 			anchor = { "BOTTOMLEFT", "CM_RESOURCE", "TOPLEFT", 0, 3 },
@@ -183,7 +186,7 @@ Engine.Config = {
 				{0.80, 0.82, 0.60, 1}, -- Solar
 			},
 		},
-		{
+		{ -- 5
 			name = "CM_WILDMUSHROOMS",
 			kind = "TOTEM",
 			count = 3,
@@ -193,7 +196,7 @@ Engine.Config = {
 			height = 15,
 			spacing = 3,
 			color = { 95/255, 222/255,  95/255, 1 },
-		}
+		},
 	},
 	["PALADIN"] = {
 		{
@@ -330,7 +333,7 @@ Engine.Config = {
 		{
 			name = "CM_ANTICIPATION",
 			kind = "AURA",
-			spellID = 114015,
+			spellID = 114015, -- Anticipation
 			filter = "HELPFUL",
 			count = 5,
 			anchor = { "BOTTOMLEFT", "CM_COMBO", "TOPLEFT", 0, 3 },
@@ -379,7 +382,7 @@ Engine.Config = {
 			anchor = { "TOPLEFT", "CM_MANA", "BOTTOMLEFT", 0, -2 },
 			width = 261,
 			height = 3,
-			spellID = 47755,
+			spellID = 47755, -- Rapture
 			filling = false,
 			duration = 12,
 		},
@@ -406,7 +409,7 @@ Engine.Config = {
 			name = "CM_ARCANE_BLAST",
 			kind = "AURA",
 			spec = 1, -- Arcane
-			spellID = 36032,
+			spellID = 36032, -- Arcane blast
 			filter = "HARMFUL",
 			count = 6,
 			anchor = { "BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3 },
@@ -423,7 +426,7 @@ Engine.Config = {
 		{
 			name = "CM_IGNITE",
 			kind = "DOT",
-			spellID = 12654, -- ignite spellID
+			spellID = 12654, -- Ignite 
 			anchor = { "BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3 },
 			width = 261,
 			height = 15,
@@ -438,7 +441,7 @@ Engine.Config = {
 		{
 			name = "CM_COMBU",
 			kind = "DOT",
-			spellID = 83853, -- Combustion spellID
+			spellID = 83853, -- Combustion
 			anchor = { "TOPLEFT", "CM_MANA", "BOTTOMLEFT", 0, -3 },
 			width = 261,
 			height = 15,
@@ -492,7 +495,7 @@ Engine.Config = {
 			name = "CM_SHADOW_INFUSION",
 			kind = "AURA",
 			spec = 3,
-			spellID = 91342,
+			spellID = 91342, -- Shadow infusion
 			filter = "HELPFUL",
 			count = 5,
 			anchor = { "TOPLEFT", "CM_RUNIC_POWER", "BOTTOMLEFT", 0, -3 },
@@ -576,7 +579,7 @@ Engine.Config = {
 			name = "CM_FULMINATION",
 			kind = "AURA",
 			spec = 1,  -- Elemental
-			spellID = 324,
+			spellID = 324, -- Fulmination
 			filter = "HELPFUL",
 			count = 7,
 			anchor = { "BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3 },
@@ -590,7 +593,7 @@ Engine.Config = {
 			name = "CM_MAELSTROMM",
 			kind = "AURA",
 			spec = 2,  -- Enhancement
-			spellID = 53817,
+			spellID = 53817, -- Maestrom
 			filter = "HELPFUL",
 			count = 5,
 			anchor = { "BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3 },
@@ -660,7 +663,7 @@ Engine.Config = {
 			name = "CM_MANATEA",
 			kind = "AURA",
 			spec = 2,  -- Mistweaver
-			spellID = 115867,
+			spellID = 115867, -- Mana tea
 			filter = "HELPFUL",
 			count = 20,
 			anchor = { "TOPLEFT", "CM_RESOURCE", "BOTTOMLEFT", 0, -3 },

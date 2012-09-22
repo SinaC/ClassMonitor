@@ -1,23 +1,24 @@
 -- Resource Plugin
 local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
+local UI = Engine.UI
 
 Engine.CreateResourceMonitor = function(name, text, autohide, anchor, width, height, colors, specs)
-	local cmResource = CreateFrame("Frame", name, Engine.BattlerHider)
+	local cmResource = CreateFrame("Frame", name, UI.BattlerHider)
 	cmResource:SetTemplate()
 	cmResource:SetFrameStrata("BACKGROUND")
 	cmResource:Size(width, height)
 	cmResource:Point(unpack(anchor))
 
 	cmResource.status = CreateFrame("StatusBar", name.."Status", cmResource)
-	cmResource.status:SetStatusBarTexture(Engine.NormTex)
+	cmResource.status:SetStatusBarTexture(UI.NormTex)
 	cmResource.status:SetFrameLevel(6)
 	cmResource.status:Point("TOPLEFT", cmResource, "TOPLEFT", 2, -2)
 	cmResource.status:Point("BOTTOMRIGHT", cmResource, "BOTTOMRIGHT", -2, 2)
 	cmResource.status:SetMinMaxValues(0, UnitPowerMax("player"))
 
 	if text == true then
-		cmResource.valueText = Engine.SetFontString(cmResource.status, 12)
+		cmResource.valueText = UI.SetFontString(cmResource.status, 12)
 		cmResource.valueText:Point("CENTER", cmResource.status)
 	end
 
@@ -55,8 +56,8 @@ Engine.CreateResourceMonitor = function(name, text, autohide, anchor, width, hei
 	end
 
 	local CheckSpec = Engine.CheckSpec
-	local PowerColor = Engine.PowerColor
-	local ClassColor = Engine.ClassColor
+	local PowerColor = UI.PowerColor
+	local ClassColor = UI.ClassColor
 	cmResource:RegisterEvent("PLAYER_ENTERING_WORLD")
 	cmResource:RegisterUnitEvent("UNIT_DISPLAYPOWER", "player")
 	cmResource:RegisterEvent("PLAYER_REGEN_DISABLED")

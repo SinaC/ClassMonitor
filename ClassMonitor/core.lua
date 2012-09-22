@@ -1,9 +1,11 @@
 local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
 
+local UI = Engine.UI
+
 local CMDebug = false
 
-local settings = Engine.Config[Engine.MyClass]
+local settings = Engine.Config[UI.MyClass]
 if not settings then return end
 
 local function WARNING(line)
@@ -32,8 +34,10 @@ local function SetMultipleAnchorHandler(frame, anchors)
 		if event ~= "PLAYER_SPECIALIZATION_CHANGED" and event ~= "PLAYER_ENTERING_WORLD" then return end
 		local anchor = GetAnchor(anchors)
 		if not anchor then return end
-		DEBUG("Anchor:"..event.." "..frame:GetName())
-		frame:Point(unpack(anchor))
+		DEBUG("Anchor:"..tostring(event).." "..tostring(self:GetName()))
+		self:ClearAllPoints()
+		self:Point(unpack(anchor))
+--print("SetMultipleAnchorHandler5:"..tostring(self:GetName()))
 	end)
 end
 
@@ -47,15 +51,16 @@ local function CreateColorArray(color, count)
 	return colors
 end
 
+local function DefaultBoolean(value, default)
+	if value == nil then
+		return default
+	else
+		return value
+	end
+end
+
 ---------------------------------------
 -- Main
-
--- -- Remove non-class specific spell-list
--- for class in pairs(Engine.Config) do
-	-- if class ~= Engine.MyClass then
-		-- Engine.Config[class] = nil
-	-- end
--- end
 
 -- Create monitor frames
 for i, section in ipairs(settings) do
@@ -66,33 +71,32 @@ for i, section in ipairs(settings) do
 	local width = section.width or 85
 	local height = section.height or 15
 	local spec = section.spec or "any"
-	local specs = section.specs or { spec }
+	local specs = section.specs or {spec}
 
 	DEBUG("section:"..name)
 	if name and kind and anchor then
-		-- for AURA, POWER and COMBO, if colors doesn't exist create it using color for each entry
-		-- if color doesn't exist, use ClassColor
 		local frame
 		if kind == "MOVER" then
 			local text = section.text or name.."_MOVER"
-			frame = Engine.CreateMover(name, width, height, anchor, text)
+			frame = UI.CreateMover(name, width, height, anchor, text)
 		elseif kind == "RESOURCE" then
-			local text = section.text or true
+			local text = DefaultBoolean(section.text, true)
 			local autohide = section.autohide or false
 			local colors = section.colors or (section.color and {section.color})
 
 			frame = Engine.CreateResourceMonitor(name, text, autohide, anchor, width, height, colors, specs)
 		elseif kind == "HEALTH" then
-			local text = section.text or true
-			local autohide = section.autohide or false
-			local colors = section.colors or (section.color and {section.color})
+			local unit = section.unit or "player"
+			local text = DefaultBoolean(section.text, true)
+			local autohide = DefaultBoolean(section.autohide, true)
+			local color = section.color
 
-			frame = Engine.CreateHealthMonitor(name, text, autohide, anchor, width, height, colors, specs)
+			frame = Engine.CreateHealthMonitor(name, unit, text, autohide, anchor, width, height, color, specs)
 		elseif kind == "REGEN" then
 			local spellID = section.spellID
-			local filling = section.filling or false
+			local filling = DefaultBoolean(section.filling, false)
 			local duration = section.duration
-			local color = section.color or Engine:ClassColor()
+			local color = section.color or UI.ClassColor()
 			if spellID and duration then
 				frame = Engine.CreateRegenMonitor(name, spellID, anchor, width, height, color, duration, filling)
 			else
@@ -100,7 +104,7 @@ for i, section in ipairs(settings) do
 			end
 		elseif kind == "COMBO" then
 			local spacing = section.spacing or 3
-			local color = section.color or Engine:ClassColor()
+			local color = section.color or UI.ClassColor()
 			local colors = section.colors or CreateColorArray(color, 5)
 
 			frame = Engine.CreateComboMonitor(name, anchor, width, height, spacing, colors, filled, specs)
@@ -108,15 +112,15 @@ for i, section in ipairs(settings) do
 			local powerType = section.powerType
 			local count = section.count
 			local spacing = section.spacing or 3
-			local color = section.color or Engine:ClassColor()
+			local color = section.color or UI.ClassColor()
 			local colors = section.colors or CreateColorArray(color, count)
-			local filled = section.filled or false
+			local filled = DefaultBoolean(section.filled, false)
 
 			if powerType == SPELL_POWER_BURNING_EMBERS then
 				frame = Engine.CreateBurningEmbersMonitor(name, anchor, width, height, spacing, colors)
 			elseif powerType == SPELL_POWER_DEMONIC_FURY then
-				local text = section.text or true
-				local autohide = section.autohide or false
+				local text = DefaultBoolean(section.text, true)
+				local autohide = DefaultBoolean(section.autohide, false)
 				frame = Engine.CreateDemonicFuryMonitor(name, text, autohide, anchor, width, height, colors)
 			elseif powerType and count then
 				frame = Engine.CreatePowerMonitor(name, powerType, count, anchor, width, height, spacing, colors, filled, specs)
@@ -124,22 +128,23 @@ for i, section in ipairs(settings) do
 				WARNING("section:"..name..":"..(powerType and "" or " missing powerType")..(count and "" or " missing count")) -- TODO: locales
 			end
 		elseif kind == "AURA" then
+			local unit = section.unit or "player"
 			local spellID = section.spellID
 			local filter = section.filter
 			local count = section.count
 			if spellID and filter and count then
 				local spacing = section.spacing
-				local color = section.color or Engine:ClassColor()
+				local color = section.color or UI.ClassColor()
 				local colors = section.colors or CreateColorArray(color, count)
-				local filled = section.filled or false
-				local bar = section.bar or false
-				local text = section.text or true
-				local duration = section.duration or false
+				local filled = DefaultBoolean(section.filled, false)
+				local bar = DefaultBoolean(section.bar, false)
+				local text = DefaultBoolean(section.text, true)
+				local duration = DefaultBoolean(section.duration, false)
 
 				if bar then
-					frame = Engine.CreateBarAuraMonitor(name, spellID, filter, count, anchor, width, height, color, text, duration, specs)
+					frame = Engine.CreateBarAuraMonitor(name, unit, spellID, filter, count, anchor, width, height, color, text, duration, specs)
 				else
-					frame = Engine.CreateAuraMonitor(name, spellID, filter, count, anchor, width, height, spacing, colors, filled, specs)
+					frame = Engine.CreateAuraMonitor(name, unit, spellID, filter, count, anchor, width, height, spacing, colors, filled, specs)
 				end
 			else
 				WARNING("section:"..name..":"..(spellID and "" or " missing spellID")..(filter and "" or " missing filter")..(count and "" or " missing count")) -- TODO: locales
@@ -147,7 +152,7 @@ for i, section in ipairs(settings) do
 		elseif kind == "DOT" then
 			local spellID = section.spellID
 			local colors = section.colors or (section.color and {section.color})
-			local latency = section.latency or false
+			local latency = DefaultBoolean(section.latency, false)
 			local threshold = section.threshold or 0
 
 			if spellID then
@@ -157,7 +162,7 @@ for i, section in ipairs(settings) do
 			end
 		elseif kind == "RUNES" then
 			local updatethreshold = section.updatethreshold or 0.1
-			local autohide = section.autohide or false
+			local autohide = DefaultBoolean(section.autohide, false)
 			local orientation = section.orientation or "HORIZONTAL"
 			local spacing = section.spacing or 3
 			local colors = section.colors
@@ -170,7 +175,7 @@ for i, section in ipairs(settings) do
 			end
 		elseif kind == "ECLIPSE" then
 			local colors = section.colors
-			local text = section.text or true
+			local text = DefaultBoolean(section.text, true)
 
 			if colors then
 				frame = Engine.CreateEclipseMonitor(name, text, anchor, width, height, colors)
@@ -181,9 +186,9 @@ for i, section in ipairs(settings) do
 			local count = section.count
 			if count then
 				local spacing = section.spacing or 3
-				local color = section.color or Engine:ClassColor()
+				local color = section.color or UI.ClassColor()
 				local colors = section.colors or CreateColorArray(color, count)
-				local text = section.text or false
+				local text = DefaultBoolean(section.text, false)
 				local map = section.map
 				if map and #map ~= count then
 					WARNING("section:"..name..": map table's size <> count") -- TODO: locales

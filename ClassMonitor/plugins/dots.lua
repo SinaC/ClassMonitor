@@ -1,24 +1,26 @@
 -- Dot Plugin, written to Ildyria
 local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
+local UI = Engine.UI
 
 Engine.CreateDotMonitor = function(name, spelltracked, anchor, width, height, colors, threshold, latency, specs)
+print("DOT:"..tostring(name))
 	local aura = GetSpellInfo(spelltracked)
 
-	local cmDot = CreateFrame("Frame", name, Engine.BattlerHider)
+	local cmDot = CreateFrame("Frame", name, UI.BattlerHider)
 	cmDot:SetTemplate()
 	cmDot:SetFrameStrata("BACKGROUND")
 	cmDot:Size(width, height)
 	cmDot:Point(unpack(anchor))
 
 	cmDot.status = CreateFrame("StatusBar", "cmDotStatus", cmDot)
-	cmDot.status:SetStatusBarTexture(Engine.NormTex)
+	cmDot.status:SetStatusBarTexture(UI.NormTex)
 	cmDot.status:SetFrameLevel(6)
 	cmDot.status:Point("TOPLEFT", cmDot, "TOPLEFT", 2, -2)
 	cmDot.status:Point("BOTTOMRIGHT", cmDot, "BOTTOMRIGHT", -2, 2)
 	cmDot.status:SetMinMaxValues(0, UnitPowerMax("player"))
 
-	cmDot.text = Engine.SetFontString(cmDot.status, 12)
+	cmDot.text = UI.SetFontString(cmDot.status, 12)
 	cmDot.text:Point("CENTER", cmDot.status)
 
 	cmDot.dmg = 0

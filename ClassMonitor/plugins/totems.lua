@@ -1,12 +1,13 @@
 -- Totem plugin, credits to Ildyria and Tukz
 local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
+local UI = Engine.UI
 
 -- Generic method to create totem monitor
 Engine.CreateTotemMonitor = function(name, count, anchor, width, height, spacing, colors, text, map, specs)
 	local cmTotems = {}
 	for i = 1, count do
-		local cmTotem = CreateFrame("Frame", name, Engine.BattlerHider)
+		local cmTotem = CreateFrame("Frame", name, UI.BattlerHider)
 		cmTotem:SetTemplate()
 		cmTotem:SetFrameStrata("BACKGROUND")
 		cmTotem:Size(width, height)
@@ -16,7 +17,7 @@ Engine.CreateTotemMonitor = function(name, count, anchor, width, height, spacing
 			cmTotem:Point("LEFT", cmTotems[i-1], "RIGHT", spacing, 0)
 		end
 		cmTotem.status = CreateFrame("StatusBar", name.."_status_"..i, cmTotem)
-		cmTotem.status:SetStatusBarTexture(Engine.NormTex)
+		cmTotem.status:SetStatusBarTexture(UI.NormTex)
 		cmTotem.status:SetFrameLevel(6)
 		cmTotem.status:Point("TOPLEFT", cmTotem, "TOPLEFT", 2, -2)
 		cmTotem.status:Point("BOTTOMRIGHT", cmTotem, "BOTTOMRIGHT", -2, 2)
@@ -26,7 +27,7 @@ Engine.CreateTotemMonitor = function(name, count, anchor, width, height, spacing
 		cmTotem.status:SetValue(0)
 
 		if text == true then
-			cmTotem.text = Engine.SetFontString(cmTotem.status, 12)
+			cmTotem.text = UI.SetFontString(cmTotem.status, 12)
 			cmTotem.text:Point("CENTER", cmTotem.status)
 		end
 

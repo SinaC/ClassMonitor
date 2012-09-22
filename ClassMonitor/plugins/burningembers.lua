@@ -1,12 +1,13 @@
 -- Burning Embers plugin
 local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
+local UI = Engine.UI
 
 Engine.CreateBurningEmbersMonitor = function(name, anchor, width, height, spacing, colors)
 	local cmBEMs = {}
 	local count = 4 -- max embers
 	for i = 1, count do
-		local cmBEM = CreateFrame("Frame", name, Engine.BattlerHider)
+		local cmBEM = CreateFrame("Frame", name, UI.BattlerHider)
 		cmBEM:SetTemplate()
 		cmBEM:SetFrameStrata("BACKGROUND")
 		cmBEM:Size(width, height)
@@ -16,7 +17,7 @@ Engine.CreateBurningEmbersMonitor = function(name, anchor, width, height, spacin
 			cmBEM:Point("LEFT", cmBEMs[i-1], "RIGHT", spacing, 0)
 		end
 		cmBEM.status = CreateFrame("StatusBar", name.."_status_"..i, cmBEM)
-		cmBEM.status:SetStatusBarTexture(Engine.NormTex)
+		cmBEM.status:SetStatusBarTexture(UI.NormTex)
 		cmBEM.status:SetFrameLevel(6)
 		cmBEM.status:Point("TOPLEFT", cmBEM, "TOPLEFT", 2, -2)
 		cmBEM.status:Point("BOTTOMRIGHT", cmBEM, "BOTTOMRIGHT", -2, 2)

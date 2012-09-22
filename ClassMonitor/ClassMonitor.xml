@@ -4,7 +4,10 @@
 	<Script file="locales\english.lua"/>
 	<Script file="locales\french.lua"/>
 
-	<Script file="Tukui_ElvUI_compatibility.lua"/>
+	<Script file="ui\common.lua"/>
+	<Script file="ui\tukui.lua"/>
+	<Script file="ui\elvui.lua"/>
+	<Script file="ui\native.lua"/>
 
 <!--Every file included below this, must check if Engine.Enabled is true-->
 
