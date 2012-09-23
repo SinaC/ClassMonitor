@@ -2,6 +2,7 @@
 local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
 local UI = Engine.UI
+local UIConfig = Engine.UIConfig
 
 -- Generic method to create BUFF/DEBUFF monitor
 Engine.CreateAuraMonitor = function(name, unit, spellID, filter, count, anchor, width, height, spacing, colors, filled, specs)
@@ -25,7 +26,9 @@ Engine.CreateAuraMonitor = function(name, unit, spellID, filter, count, anchor, 
 			cmAM.status:Point("BOTTOMRIGHT", cmAM, "BOTTOMRIGHT", -2, 2)
 			cmAM.status:SetStatusBarColor(unpack(colors[i]))
 		else
-			cmAM:CreateShadow("Default")
+			if UIConfig.shadow then
+				cmAM:CreateShadow("Default")
+			end
 			cmAM:SetBackdropBorderColor(unpack(colors[i]))
 		end
 		cmAM:Hide()

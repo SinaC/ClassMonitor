@@ -2,6 +2,7 @@
 local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
 local UI = Engine.UI
+local UIConfig = Engine.UIConfig
 
 Engine.CreateComboMonitor = function(name, anchor, width, height, spacing, colors, filled, specs)
 	local cmCombos = {}
@@ -23,7 +24,9 @@ Engine.CreateComboMonitor = function(name, anchor, width, height, spacing, color
 			cmCombo.status:Point("BOTTOMRIGHT", cmCombo, "BOTTOMRIGHT", -2, 2)
 			cmCombo.status:SetStatusBarColor(unpack(colors[i]))
 		else
-			cmCombo:CreateShadow("Default")
+			if UIConfig.shadow then
+				cmCombo:CreateShadow("Default")
+			end
 			cmCombo:SetBackdropBorderColor(unpack(colors[i]))
 		end
 		cmCombo:Hide()

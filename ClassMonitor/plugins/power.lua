@@ -2,6 +2,7 @@
 local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
 local UI = Engine.UI
+local UIConfig = Engine.UIConfig
 
 Engine.CreatePowerMonitor = function(name, powerType, count, anchor, width, height, spacing, colors, filled, specs)
 	local cmPMs = {}
@@ -24,7 +25,10 @@ Engine.CreatePowerMonitor = function(name, powerType, count, anchor, width, heig
 			cmPM.status:Point("BOTTOMRIGHT", cmPM, "BOTTOMRIGHT", -2, 2)
 			cmPM.status:SetStatusBarColor(unpack(colors[i]))
 		else
-			cmPM:CreateShadow("Default")
+			if UIConfig.shadow then
+print("SHADOW")
+				cmPM:CreateShadow("Default")
+			end
 			cmPM:SetBackdropBorderColor(unpack(colors[i]))
 		end
 		cmPM:Hide()

@@ -1,3 +1,7 @@
+3.2.3
+Shadow can be disabled by setting Engine.UIConfig.shadow = false in your profiles.lua
+Elusive brew and Tigereye brew added for monk (thanks Soulshard)
+
 3.2.2
 Default bool value overwriting set value bug fixed
 Additional option 'unit' in Aura plugin

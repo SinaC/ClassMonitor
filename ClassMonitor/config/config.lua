@@ -3,6 +3,10 @@ if not Engine.Enabled then return end
 
 local L = Engine.Locales
 
+Engine.UIConfig = {
+	shadow = false,
+}
+
 Engine.Config = {
 --[[
 	name = frame name (can be used in anchor)
@@ -657,22 +661,55 @@ Engine.Config = {
 				[4] = {.46, .63, .35, 1},
 				[5] = {.33, .63, .33, 1},
 			},
-			filled = true,
+			filled = false,
 		},
+		-- {
+			-- name = "CM_MANATEA",
+			-- kind = "AURA",
+			-- spec = 2,  -- Mistweaver
+			-- spellID = 115867, -- Mana tea
+			-- filter = "HELPFUL",
+			-- count = 20,
+			-- anchor = { "TOPLEFT", "CM_RESOURCE", "BOTTOMLEFT", 0, -3 },
+			-- width = 262,
+			-- height = 15,
+			-- color = {0.5, 0.9, 0.7, 1},
+			-- filled = false,
+			-- bar = true,
+			-- text = true,
+			-- duration = true,
+		-- },
+		-- {
+			-- name = "CM_TIGEREYEBREW",
+			-- kind = "AURA",
+			-- spec = 3, -- Windwalker
+			-- spellID = 125195, -- Tigereye brew
+			-- filter = "HELPFUL",
+			-- count = 10,
+			-- anchor = { "TOPLEFT", "CM_RESOURCE", "BOTTOMLEFT", 0, -3 },
+			-- width = 262,
+			-- height = 15,
+			-- color = {0.5, 0.9, 0.7, 1},
+			-- filled = false,
+			-- bar = true,
+			-- text = true,
+			-- duration = true,
+		-- },
 		{
-			name = "CM_MANATEA",
+			name = "CM_ELUSIVEBREW",
 			kind = "AURA",
-			spec = 2,  -- Mistweaver
-			spellID = 115867, -- Mana tea
+			spec = 1, -- Windwalker
+			spellID = 128939, -- Elusive brew
 			filter = "HELPFUL",
-			count = 20,
+			count = 15,
 			anchor = { "TOPLEFT", "CM_RESOURCE", "BOTTOMLEFT", 0, -3 },
 			width = 262,
 			height = 15,
 			color = {0.5, 0.9, 0.7, 1},
+			filled = false,
 			bar = true,
 			text = true,
 			duration = true,
-		},
+		}
 	},
 }
