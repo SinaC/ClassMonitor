@@ -5,7 +5,7 @@ local UI = Engine.UI
 local UIConfig = Engine.UIConfig
 
 -- Generic method to create BUFF/DEBUFF monitor
-Engine.CreateAuraMonitor = function(name, unit, spellID, filter, count, anchor, width, height, spacing, colors, filled, specs)
+Engine.CreateAuraMonitor = function(name, autohide, unit, spellID, filter, count, anchor, width, height, spacing, colors, filled, specs)
 	local aura = GetSpellInfo(spellID)
 	local cmAMs = {}
 	for i = 1, count do
@@ -38,13 +38,23 @@ Engine.CreateAuraMonitor = function(name, unit, spellID, filter, count, anchor, 
 
 	local CheckSpec = Engine.CheckSpec
 	cmAMs[1]:RegisterEvent("PLAYER_ENTERING_WORLD")
+	cmAMs[1]:RegisterEvent("PLAYER_REGEN_DISABLED")
+	cmAMs[1]:RegisterEvent("PLAYER_REGEN_ENABLED")
 	cmAMs[1]:RegisterEvent("PLAYER_FOCUS_CHANGED")
 	cmAMs[1]:RegisterEvent("PLAYER_TARGET_CHANGED")
 	cmAMs[1]:RegisterUnitEvent("UNIT_AURA", unit)
 	cmAMs[1]:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
 	cmAMs[1]:SetScript("OnEvent", function(self, event)
+		local visible = true
+		if autohide == true then
+			if event == "PLAYER_REGEN_DISABLED" or InCombatLockdown() then
+				visible = true
+			else
+				visible = false
+			end
+		end
 		local found = false
-		if CheckSpec(specs) then
+		if CheckSpec(specs) and visible then
 			for i = 1, 40, 1 do
 				local name, _, _, stack, _, _, _, unitCaster = UnitAura(unit, i, filter)
 				if not name then break end
@@ -64,7 +74,7 @@ Engine.CreateAuraMonitor = function(name, unit, spellID, filter, count, anchor, 
 	return cmAMs[1]
 end
 
-Engine.CreateBarAuraMonitor = function(name, unit, spellID, filter, count, anchor, width, height, color, text, duration, specs)
+Engine.CreateBarAuraMonitor = function(name, autohide, unit, spellID, filter, count, anchor, width, height, color, text, duration, specs)
 	local aura = GetSpellInfo(spellID)
 	local cmAM = CreateFrame("Frame", name, UI.BattlerHider)
 	cmAM:SetTemplate()
@@ -109,13 +119,23 @@ Engine.CreateBarAuraMonitor = function(name, unit, spellID, filter, count, ancho
 
 	local CheckSpec = Engine.CheckSpec
 	cmAM:RegisterEvent("PLAYER_ENTERING_WORLD")
+	cmAM:RegisterEvent("PLAYER_REGEN_DISABLED")
+	cmAM:RegisterEvent("PLAYER_REGEN_ENABLED")
 	cmAM:RegisterUnitEvent("UNIT_AURA", unit)
 	cmAM:RegisterEvent("PLAYER_FOCUS_CHANGED")
 	cmAM:RegisterEvent("PLAYER_TARGET_CHANGED")
 	cmAM:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
 	cmAM:SetScript("OnEvent", function(self, event)
+		local visible = true
+		if autohide == true then
+			if event == "PLAYER_REGEN_DISABLED" or InCombatLockdown() then
+				visible = true
+			else
+				visible = false
+			end
+		end
 		local found = false
-		if CheckSpec(specs) then
+		if CheckSpec(specs) and visible then
 			for i = 1, 40, 1 do
 				local name, _, _, stack, _, _, expirationTime, unitCaster = UnitAura(unit, i, filter)
 				if not name then break end
@@ -143,6 +163,15 @@ Engine.CreateBarAuraMonitor = function(name, unit, spellID, filter, count, ancho
 	cmAM:SetScript("OnHide", function (self)
 		self:SetScript("OnUpdate", nil)
 	end)
+
+	-- If autohide is not set, show frame
+	if autohide ~= true then
+		if cmAM:IsShown() then
+			cmAM:SetScript("OnUpdate", OnUpdate)
+		else
+			cmAM:Show()
+		end
+	end
 
 	return cmAM
 end

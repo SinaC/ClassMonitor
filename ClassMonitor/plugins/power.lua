@@ -4,7 +4,7 @@ if not Engine.Enabled then return end
 local UI = Engine.UI
 local UIConfig = Engine.UIConfig
 
-Engine.CreatePowerMonitor = function(name, powerType, count, anchor, width, height, spacing, colors, filled, specs)
+Engine.CreatePowerMonitor = function(name, autohide, powerType, count, anchor, width, height, spacing, colors, filled, specs)
 	local cmPMs = {}
 
 	for i = 1, count do
@@ -40,11 +40,21 @@ print("SHADOW")
 
 	local CheckSpec = Engine.CheckSpec
 	cmPMs[1]:RegisterEvent("PLAYER_ENTERING_WORLD")
+	cmPMs[1]:RegisterEvent("PLAYER_REGEN_DISABLED")
+	cmPMs[1]:RegisterEvent("PLAYER_REGEN_ENABLED")
 	cmPMs[1]:RegisterUnitEvent("UNIT_POWER", "player")
 	cmPMs[1]:RegisterUnitEvent("UNIT_MAXPOWER", "player")
 	cmPMs[1]:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
 	cmPMs[1]:SetScript("OnEvent", function(self, event)
-		if not CheckSpec(specs) then
+		local visible = true
+		if autohide == true then
+			if event == "PLAYER_REGEN_DISABLED" or InCombatLockdown() then
+				visible = true
+			else
+				visible = false
+			end
+		end
+		if not CheckSpec(specs) or not visible then
 			for i = 1, count do cmPMs[i]:Hide() end
 			return
 		end

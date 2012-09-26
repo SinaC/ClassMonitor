@@ -1,3 +1,9 @@
+3.2.4
+Engine.GetConfig function added, it makes easier to edit profiles.lua
+profiles_template.lua modified
+Bug fixed with Eclipse, power max was set to 0 while connecting (and not after /console reloadui)
+autohide added for each plugin
+
 3.2.3
 Shadow can be disabled by setting Engine.UIConfig.shadow = false in your profiles.lua
 Elusive brew and Tigereye brew added for monk (thanks Soulshard)

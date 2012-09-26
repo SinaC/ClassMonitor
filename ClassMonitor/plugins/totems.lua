@@ -4,7 +4,7 @@ if not Engine.Enabled then return end
 local UI = Engine.UI
 
 -- Generic method to create totem monitor
-Engine.CreateTotemMonitor = function(name, count, anchor, width, height, spacing, colors, text, map, specs)
+Engine.CreateTotemMonitor = function(name, autohide, count, anchor, width, height, spacing, colors, text, map, specs)
 	local cmTotems = {}
 	for i = 1, count do
 		local cmTotem = CreateFrame("Frame", name, UI.BattlerHider)
@@ -72,10 +72,20 @@ Engine.CreateTotemMonitor = function(name, count, anchor, width, height, spacing
 
 	local CheckSpec = Engine.CheckSpec
 	cmTotems[1]:RegisterEvent("PLAYER_ENTERING_WORLD")
+	cmTotems[1]:RegisterEvent("PLAYER_REGEN_DISABLED")
+	cmTotems[1]:RegisterEvent("PLAYER_REGEN_ENABLED")
 	cmTotems[1]:RegisterEvent("PLAYER_TOTEM_UPDATE")
 	cmTotems[1]:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
 	cmTotems[1]:SetScript("OnEvent", function(self, event)
-		if CheckSpec(specs) then
+		local visible = true
+		if autohide == true then
+			if event == "PLAYER_REGEN_DISABLED" or InCombatLockdown() then
+				visible = true
+			else
+				visible = false
+			end
+		end
+		if CheckSpec(specs) and visible then
 			for i = 1, count do
 				local cmTotem = cmTotems[i]
 				local up, name, start, duration, icon = GetTotemInfo(i)

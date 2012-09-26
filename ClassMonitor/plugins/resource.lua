@@ -62,11 +62,19 @@ Engine.CreateResourceMonitor = function(name, text, autohide, anchor, width, hei
 	cmResource:RegisterUnitEvent("UNIT_DISPLAYPOWER", "player")
 	cmResource:RegisterEvent("PLAYER_REGEN_DISABLED")
 	cmResource:RegisterEvent("PLAYER_REGEN_ENABLED")
-	cmResource:RegisterUnitEvent("UNIT_POWER", "player")
+	--cmResource:RegisterUnitEvent("UNIT_POWER", "player")
 	cmResource:RegisterUnitEvent("UNIT_MAXPOWER", "player")
 	cmResource:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
 	cmResource:SetScript("OnEvent", function(self, event)
-		if not CheckSpec(specs) then
+		local visible = true
+		if autohide == true then
+			if event == "PLAYER_REGEN_DISABLED" or InCombatLockdown() then
+				visible = true
+			else
+				visible = false
+			end
+		end
+		if not CheckSpec(specs) or not visible then
 			cmResource:Hide()
 			return
 		end
@@ -80,17 +88,17 @@ Engine.CreateResourceMonitor = function(name, text, autohide, anchor, width, hei
 			cmResource.status:SetMinMaxValues(0, valueMax)
 			cmResource:Show()
 		end
-		if autohide == true then
-			if event == "PLAYER_REGEN_DISABLED" then
-				cmResource:Show()
-			elseif event == "UNIT_POWER" then
-				if InCombatLockdown() then
-					cmResource:Show()
-				end
-			else
-				cmResource:Hide()
-			end
-		end
+		-- if autohide == true then
+			-- if event == "PLAYER_REGEN_DISABLED" then
+				-- cmResource:Show()
+			-- elseif event == "UNIT_POWER" or event == "UNIT_DISPLAYPOWER" or event == "UNIT_MAXPOWER" then
+				-- if InCombatLockdown() then
+					-- cmResource:Show()
+				-- end
+			-- else
+				-- cmResource:Hide()
+			-- end
+		-- end
 	end)
 
 	-- This is what stops constant OnUpdate

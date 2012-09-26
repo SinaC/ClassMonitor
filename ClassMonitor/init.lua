@@ -11,3 +11,4 @@ Engine.UI = {}
 -- unit option on AURA
 -- disable old version Tukui_ClassMonitor and Tukui_ElvUI_ClassMonitor on ADDON_LOADED or PLAYER ENTERING_WORLD
 -- [DONE]move UI functions to Engine.UI or Private instead of Engine
+-- autohide on each plugin

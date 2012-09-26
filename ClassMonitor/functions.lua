@@ -27,3 +27,26 @@ Engine.CheckSpec = function(specs)
 	end
 	return false
 end
+
+Engine.GetConfig = function(c, n)
+	local class = string.upper(c)
+	local name = string.upper(n)
+	local alternativeName = "CM_" .. name
+	local classEntry = Engine.Config[class]
+	if classEntry then
+		for _, v in pairs(classEntry) do
+			if v.name == name or v.name == alternativeName or v.kind == name then
+				return v
+			end
+		end
+	end
+	return nil
+end
+
+Engine.AddConfig = function(c, config)
+	local class = string.upper(c)
+	local classEntry = Engine.Config[class]
+	if classEntry then
+		table.insert(classEntry, config)
+	end
+end

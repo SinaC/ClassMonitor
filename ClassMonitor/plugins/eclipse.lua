@@ -3,7 +3,7 @@ local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
 local UI = Engine.UI
 
-Engine.CreateEclipseMonitor = function(name, text, anchor, width, height, colors)
+Engine.CreateEclipseMonitor = function(name, autohide, text, anchor, width, height, colors)
 	local cmEclipse = CreateFrame("Frame", name, UI.BattlerHider)
 	cmEclipse:SetTemplate()
 	cmEclipse:SetFrameStrata("BACKGROUND")
@@ -35,16 +35,26 @@ Engine.CreateEclipseMonitor = function(name, text, anchor, width, height, colors
 	--
 	local BorderColor = UI.BorderColor
 	cmEclipse:RegisterEvent("PLAYER_ENTERING_WORLD")
+	cmEclipse:RegisterEvent("PLAYER_REGEN_DISABLED")
+	cmEclipse:RegisterEvent("PLAYER_REGEN_ENABLED")
 	cmEclipse:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 	cmEclipse:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
 	cmEclipse:RegisterUnitEvent("UNIT_POWER", "player")
 	cmEclipse:RegisterUnitEvent("UNIT_AURA", "player")
 	cmEclipse:SetScript("OnEvent", function(self, event, arg1, arg2)
-		if GetShapeshiftFormID() ~= MOONKIN_FORM and GetSpecialization() ~= 1 then -- visible if moonkin or balance
+		local visible = true
+		if autohide == true then
+			if event == "PLAYER_REGEN_DISABLED" or InCombatLockdown() then
+				visible = true
+			else
+				visible = false
+			end
+		end
+		-- update visibility
+		if (GetShapeshiftFormID() ~= MOONKIN_FORM and GetSpecialization() ~= 1) or not visible then -- visible if moonkin or balance
 			cmEclipse:Hide()
 			return
 		end
-		-- update visibility
 		if event == "PLAYER_ENTERING_WORLD" or event == "PLAYER_SPECIALIZATION_CHANGED" or event == "UPDATE_SHAPESHIFT_FORM"  then
 			cmEclipse:UnregisterEvent("PLAYER_ENTERING_WORLD") -- fire only once
 			cmEclipse:Show()
@@ -53,6 +63,7 @@ Engine.CreateEclipseMonitor = function(name, text, anchor, width, height, colors
 		if (event == "UNIT_POWER" and arg2 == "ECLIPSE") or event == "PLAYER_ENTERING_WORLD" or event == "PLAYER_SPECIALIZATION_CHANGED" or event == "UPDATE_SHAPESHIFT_FORM" then
 			local power = UnitPower("player", SPELL_POWER_ECLIPSE)
 			local maxPower = UnitPowerMax("player", SPELL_POWER_ECLIPSE)
+			if maxPower == 0 then maxPower = 100 end -- when entering world at 1st connection, max power is 0
 			cmEclipse.lunar:SetMinMaxValues(-maxPower, maxPower)
 			cmEclipse.lunar:SetValue(power)
 			cmEclipse.solar:SetMinMaxValues(-maxPower, maxPower)

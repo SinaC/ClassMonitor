@@ -3,8 +3,8 @@ local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
 local UI = Engine.UI
 
-Engine.CreateDotMonitor = function(name, spelltracked, anchor, width, height, colors, threshold, latency, specs)
-print("DOT:"..tostring(name))
+Engine.CreateDotMonitor = function(name, autohide, spelltracked, anchor, width, height, colors, threshold, latency, specs)
+--print("DOT:"..tostring(name))
 	local aura = GetSpellInfo(spelltracked)
 
 	local cmDot = CreateFrame("Frame", name, UI.BattlerHider)
@@ -82,7 +82,15 @@ print("DOT:"..tostring(name))
 
 	local CheckSpec = Engine.CheckSpec
 	local function CombatAuraCheck(self,event)																		-- Aura check
-		if not CheckSpec(specs) then
+		local visible = true
+		if autohide == true then
+			if event == "PLAYER_REGEN_DISABLED" or InCombatLockdown() then
+				visible = true
+			else
+				visible = false
+			end
+		end
+		if not CheckSpec(specs) or not visible then
 			cmDot:Hide()
 			return
 		end
@@ -105,6 +113,8 @@ print("DOT:"..tostring(name))
 	cmDot.auracheck = CreateFrame("Frame", "cmAuraCheck", cmDot)
 	cmDot.auracheck:RegisterEvent("PLAYER_ENTERING_WORLD")
 	cmDot.auracheck:RegisterEvent("UNIT_AURA")
+	cmDot.auracheck:RegisterEvent("PLAYER_REGEN_DISABLED")
+	cmDot.auracheck:RegisterEvent("PLAYER_REGEN_ENABLED")
 	cmDot.auracheck:SetScript("OnEvent", CombatAuraCheck)
 
 	cmDot.targetcheck = CreateFrame("Frame", "cmTargetCheck", cmDot)

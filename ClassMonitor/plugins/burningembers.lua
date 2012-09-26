@@ -3,7 +3,7 @@ local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
 local UI = Engine.UI
 
-Engine.CreateBurningEmbersMonitor = function(name, anchor, width, height, spacing, colors)
+Engine.CreateBurningEmbersMonitor = function(name, autohide, anchor, width, height, spacing, colors)
 	local cmBEMs = {}
 	local count = 4 -- max embers
 	for i = 1, count do
@@ -31,12 +31,22 @@ Engine.CreateBurningEmbersMonitor = function(name, anchor, width, height, spacin
 	cmBEMs.totalWidth = width * count + spacing * (count - 1)
 
 	cmBEMs[1]:RegisterEvent("PLAYER_ENTERING_WORLD")
+	cmBEMs[1]:RegisterEvent("PLAYER_REGEN_DISABLED")
+	cmBEMs[1]:RegisterEvent("PLAYER_REGEN_ENABLED")
 	cmBEMs[1]:RegisterUnitEvent("UNIT_POWER", "player")
 	cmBEMs[1]:RegisterUnitEvent("UNIT_MAXPOWER", "player")
 	cmBEMs[1]:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
 	cmBEMs[1]:SetScript("OnEvent", function(self, event)
+		local visible = true
+		if autohide == true then
+			if event == "PLAYER_REGEN_DISABLED" or InCombatLockdown() then
+				visible = true
+			else
+				visible = false
+			end
+		end
 		local spec = GetSpecialization()
-		if spec ~= SPEC_WARLOCK_DESTRUCTION then
+		if spec ~= SPEC_WARLOCK_DESTRUCTION or not visible then
 			for i = 1, count do cmBEMs[i]:Hide() end
 			return
 		end

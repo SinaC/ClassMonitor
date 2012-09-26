@@ -57,17 +57,25 @@ Engine.CreateHealthMonitor = function(name, unit, text, autohide, anchor, width,
 	cmHealth:RegisterEvent("PLAYER_ENTERING_WORLD")
 	cmHealth:RegisterEvent("PLAYER_REGEN_DISABLED")
 	cmHealth:RegisterEvent("PLAYER_REGEN_ENABLED")
-	cmHealth:RegisterUnitEvent("UNIT_HEALTH", unit)
+	--cmHealth:RegisterUnitEvent("UNIT_HEALTH", unit)
 	cmHealth:RegisterUnitEvent("UNIT_MAXHEALTH", unit)
 	cmHealth:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", unit)
 	cmHealth:SetScript("OnEvent", function(self, event)
-		if not CheckSpec(specs) then
+		local class = select(2, UnitClass(unit))
+		if autohide == true then
+			if class and (event == "PLAYER_REGEN_DISABLED" or InCombatLockdown()) then
+				visible = true
+			else
+				visible = false
+			end
+		end
+		if not CheckSpec(specs) or not visible then
 			cmHealth:Hide()
 			return
 		end
-		-- TODO: problem while in combat with a target and pressing escape, code in comment un next if helps but show a null bar when no target and in combat
+		-- TODO: problem while in combat with a target and pressing escape
+		-- code in comment in next if helps but show a null bar when no target and in combat
 		if event == "PLAYER_ENTERING_WORLD" or event == "UNIT_MAXHEALTH" or event == "PLAYER_SPECIALIZATION_CHANGED" or event == "PLAYER_TARGET_CHANGED" or event == "PLAYER_FOCUS_CHANGED" then
-			local class = select(2, UnitClass(unit))
 			if class then
 				local valueMax = UnitHealthMax(unit)
 				local healthColor = color or HealthColor(unit) or {1, 1, 1, 1}
@@ -78,17 +86,18 @@ Engine.CreateHealthMonitor = function(name, unit, text, autohide, anchor, width,
 				cmHealth:Hide()
 			end
 		end
-		if autohide == true then
-			if event == "PLAYER_REGEN_DISABLED" then
-				cmHealth:Show()
-			elseif event == "UNIT_HEALTH" or event == "UNIT_MAXHEALTH" --[[ or event == "PLAYER_TARGET_CHANGED" or event == "PLAYER_FOCUS_CHANGED"--]] then
-				if InCombatLockdown() then
-					cmHealth:Show()
-				end
-			else
-				cmHealth:Hide()
-			end
-		end
+		-- if autohide == true then
+			-- if event == "PLAYER_REGEN_DISABLED" then
+				-- cmHealth:Show()
+			-- elseif event == "UNIT_HEALTH" or event == "UNIT_MAXHEALTH" or event == "PLAYER_TARGET_CHANGED" or event == "PLAYER_FOCUS_CHANGED" then
+				-- if InCombatLockdown() and class then
+					-- cmHealth:Show()
+				-- end
+			-- else
+				-- cmHealth:Hide()
+			-- end
+		-- end
+--print("IN COMBAT:"..tostring(InCombatLockdown()).."  "..tostring(event).."  "..tostring(class))
 	end)
 
 	-- This is what stops constant OnUpdate

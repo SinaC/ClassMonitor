@@ -4,7 +4,7 @@ if not Engine.Enabled then return end
 local UI = Engine.UI
 local UIConfig = Engine.UIConfig
 
-Engine.CreateComboMonitor = function(name, anchor, width, height, spacing, colors, filled, specs)
+Engine.CreateComboMonitor = function(name, autohide, anchor, width, height, spacing, colors, filled, specs)
 	local cmCombos = {}
 	for i = 1, 5 do
 		local cmCombo = CreateFrame("Frame", name, UI.BattlerHider)
@@ -39,9 +39,19 @@ Engine.CreateComboMonitor = function(name, anchor, width, height, spacing, color
 	cmCombos[1]:RegisterUnitEvent("UNIT_COMBO_POINTS", "player")
 	cmCombos[1]:RegisterEvent("PLAYER_TARGET_CHANGED")
 	cmCombos[1]:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
+	cmCombos[1]:RegisterEvent("PLAYER_REGEN_DISABLED")
+	cmCombos[1]:RegisterEvent("PLAYER_REGEN_ENABLED")
 	cmCombos[1]:SetScript("OnEvent", function(self, event)
+		local visible = true
+		if autohide == true then
+			if event == "PLAYER_REGEN_DISABLED" or InCombatLockdown() then
+				visible = true
+			else
+				visible = false
+			end
+		end
 		local points = GetComboPoints("player", "target")
-		if points and points > 0 and CheckSpec(specs) then
+		if visible and points and points > 0 and CheckSpec(specs) then
 			for i = 1, points do cmCombos[i]:Show() end
 			for i = points+1, 5 do cmCombos[i]:Hide() end
 		else

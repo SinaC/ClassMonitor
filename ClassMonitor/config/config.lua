@@ -27,6 +27,7 @@ Engine.Config = {
 	spec|specs = 													see note below [default: any]
 
 	COMBO:
+	autohide = true|false											hide or not while out of combat [default: true]
 	anchor|anchors =												see note below
 	width = number													width of combo point [default: 85]
 	height = number													height of combo point [default: 15]
@@ -36,6 +37,7 @@ Engine.Config = {
 	spec|specs = 													see note below [default: any]
 
 	POWER (holy power/soul shard/light force, ...):
+	autohide = true|false											hide or not while out of combat [default: false]
 	powerType = SPELL_POWER_HOLY_POWER|SPELL_POWER_SOUL_SHARDS|SPELL_POWER_LIGHT_FORCE|SPELL_POWER_BURNING_EMBERS|SPELL_POWER_DEMONIC_FURY|SPELL_POWER_SHADOW_ORBS	power to monitor (can be any power type (http://www.wowwiki.com/PowerType)
 	count = number													max number of points to display
 	anchor|anchors =												see note below
@@ -47,6 +49,7 @@ Engine.Config = {
 	spec|specs = 													see note below [default: any], not available for SPELL_POWER_BURNING_EMBERS|SPELL_POWER_DEMONIC_FURY
 
 	AURA (buff/debuff):
+	autohide = true|false											hide or not while out of combat [default: true]
 	unit = "player"|"target"|"focus"								check aura on this unit [default:"player"]
 	spellID = number												spell id of buff/debuff to monitor
 	filter = "HELPFUL" | "HARMFUL"									BUFF or DEBUFF
@@ -74,6 +77,7 @@ Engine.Config = {
 	runemap = { 1, 2, 3, 4, 5, 6 }									see instruction in DEATHKNIGHT section
 
 	ECLIPSE
+	autohide = true|false											hide or not while out of combat [default: false]
 	text = true|false												display eclipse direction [default: true]
 	anchor|anchors=													see note below
 	width = number													width of eclipse bar [default: 85]
@@ -98,6 +102,7 @@ Engine.Config = {
 	spec|specs = 													see note below [default: any]
 
 	DOT
+	autohide = true|false											hide or not while out of combat [default: true]
 	anchor = 														see note below
 	width = number													width of dot bar [default: 85]
 	height = number													height of dot bar [default: 15]
@@ -114,6 +119,7 @@ Engine.Config = {
 	spec|specs = 													see note below [default: any]
 
 	TOTEM (totems or wildmushrooms):
+	autohide = true|false											hide or not while out of combat [default: false]
 	anchor = 														see note below
 	width = number													width of totem bar [default: 85]
 	height = number													height of totem bar [default: 15]
