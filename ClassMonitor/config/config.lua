@@ -708,38 +708,38 @@ Engine.Config = {
 			},
 			filled = false,
 		},
-		-- {
-			-- name = "CM_MANATEA",
-			-- kind = "AURA",
-			-- spec = 2,  -- Mistweaver
-			-- spellID = 115867, -- Mana tea
-			-- filter = "HELPFUL",
-			-- count = 20,
-			-- anchor = { "TOPLEFT", "CM_RESOURCE", "BOTTOMLEFT", 0, -3 },
-			-- width = 262,
-			-- height = 15,
-			-- color = {0.5, 0.9, 0.7, 1},
-			-- filled = false,
-			-- bar = true,
-			-- text = true,
-			-- duration = true,
-		-- },
-		-- {
-			-- name = "CM_TIGEREYEBREW",
-			-- kind = "AURA",
-			-- spec = 3, -- Windwalker
-			-- spellID = 125195, -- Tigereye brew
-			-- filter = "HELPFUL",
-			-- count = 10,
-			-- anchor = { "TOPLEFT", "CM_RESOURCE", "BOTTOMLEFT", 0, -3 },
-			-- width = 262,
-			-- height = 15,
-			-- color = {0.5, 0.9, 0.7, 1},
-			-- filled = false,
-			-- bar = true,
-			-- text = true,
-			-- duration = true,
-		-- },
+		{
+			name = "CM_MANATEA",
+			kind = "AURA",
+			spec = 2,  -- Mistweaver
+			spellID = 115867, -- Mana tea
+			filter = "HELPFUL",
+			count = 20,
+			anchor = { "TOPLEFT", "CM_RESOURCE", "BOTTOMLEFT", 0, -3 },
+			width = 262,
+			height = 15,
+			color = {0.5, 0.9, 0.7, 1},
+			filled = false,
+			bar = true,
+			text = true,
+			duration = true,
+		},
+		{
+			name = "CM_TIGEREYEBREW",
+			kind = "AURA",
+			spec = 3, -- Windwalker
+			spellID = 125195, -- Tigereye brew
+			filter = "HELPFUL",
+			count = 10,
+			anchor = { "TOPLEFT", "CM_RESOURCE", "BOTTOMLEFT", 0, -3 },
+			width = 262,
+			height = 15,
+			color = {0.5, 0.9, 0.7, 1},
+			filled = false,
+			bar = true,
+			text = true,
+			duration = true,
+		},
 		{
 			name = "CM_ELUSIVEBREW",
 			kind = "AURA",
