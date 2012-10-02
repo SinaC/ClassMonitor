@@ -57,6 +57,7 @@ Engine.CreateHealthMonitor = function(name, unit, text, autohide, anchor, width,
 	cmHealth:RegisterEvent("PLAYER_ENTERING_WORLD")
 	cmHealth:RegisterEvent("PLAYER_REGEN_DISABLED")
 	cmHealth:RegisterEvent("PLAYER_REGEN_ENABLED")
+	if unit == "pet" then cmHealth:RegisterUnitEvent("UNIT_PET", "player") end
 	--cmHealth:RegisterUnitEvent("UNIT_HEALTH", unit)
 	cmHealth:RegisterUnitEvent("UNIT_MAXHEALTH", unit)
 	cmHealth:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", unit)
@@ -75,7 +76,7 @@ Engine.CreateHealthMonitor = function(name, unit, text, autohide, anchor, width,
 		end
 		-- TODO: problem while in combat with a target and pressing escape
 		-- code in comment in next if helps but show a null bar when no target and in combat
-		if event == "PLAYER_ENTERING_WORLD" or event == "UNIT_MAXHEALTH" or event == "PLAYER_SPECIALIZATION_CHANGED" or event == "PLAYER_TARGET_CHANGED" or event == "PLAYER_FOCUS_CHANGED" then
+		if event == "PLAYER_ENTERING_WORLD" or event == "UNIT_MAXHEALTH" or event == "PLAYER_SPECIALIZATION_CHANGED" or event == "PLAYER_TARGET_CHANGED" or event == "PLAYER_FOCUS_CHANGED" or event == "PLAYER_REGEN_DISABLED" then
 			if class then
 				local valueMax = UnitHealthMax(unit)
 				local healthColor = color or HealthColor(unit) or {1, 1, 1, 1}

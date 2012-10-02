@@ -10,7 +10,7 @@ Engine.UIConfig = {
 Engine.Config = {
 --[[
 	name = frame name (can be used in anchor)
-	kind = MOVER | RESOURCE(mana/runic/energy/focus/rage) | COMBO | POWER | AURA | RUNES | ECLIPSE | REGEN | HEALTH  | DOT| TOTEM
+	kind = MOVER | RESOURCE(mana/runic/energy/focus/rage) | COMBO | POWER | AURA | RUNES | ECLIPSE | REGEN | HEALTH  | DOT | TOTEM | BANDITSGUILE
 
 	MOVER	create a mover in Tukui/ElvUI to be able to move bars via /moveui
 	text = string													text to display in config mode
@@ -50,7 +50,7 @@ Engine.Config = {
 
 	AURA (buff/debuff):
 	autohide = true|false											hide or not while out of combat [default: true]
-	unit = "player"|"target"|"focus"								check aura on this unit [default:"player"]
+	unit = "player"|"target"|"focus"|"pet"							check aura on this unit [default:"player"]
 	spellID = number												spell id of buff/debuff to monitor
 	filter = "HELPFUL" | "HARMFUL"									BUFF or DEBUFF
 	count = number													max number of stack to display
@@ -93,7 +93,7 @@ Engine.Config = {
 	color =															see note below [default: class color]
 
 	HEALTH
-	unit = "player"|"target"|"focus"								check aura on this unit [default:"player"]
+	unit = "player"|"target"|"focus"|"pet"							check aura on this unit [default:"player"]
 	anchor = 														see note below
 	autohide = true|false											hide or not while out of combat [default: true]
 	width = number													width of health bar [default: 85]
@@ -130,6 +130,15 @@ Engine.Config = {
 	text = true|false												display totem duration left [default:false]
 	map = array of number											totem remapping
 		{ 2, 1, 3, 4 }												display second totem, followed by first totem, then third and fourth
+
+	BANDITSGUILE:
+	autohide = true|false											hide or not while out of combat [default: true]
+	anchor|anchors =												see note below
+	width = number													width of bandit's guilde charge [default: 85]
+	height = number													height of bandit's guilde charge [default: 15]
+	spacing = number												space between bandit's guilde charge [default: 3]
+	color|colors =													see note below [default: class color]
+	filled = true|false												is bandit's guilde charge filled or not [default: false]
 
 
 	Notes about anchor
@@ -339,6 +348,7 @@ Engine.Config = {
 				{0.33, 0.63, 0.33, 1}, -- 5
 			},
 			filled = false,
+			autohide = false,
 		},
 		{
 			name = "CM_ANTICIPATION",
@@ -351,6 +361,20 @@ Engine.Config = {
 			height = 15,
 			spacing = 3,
 			color = {0.33, 0.63, 0.33, 1},
+			filled = false,
+		},
+		{
+			name = "CM_BANDITSGUILE",
+			kind = "BANDITSGUILE",
+			anchor = { "TOPLEFT", "CM_ENERGY", "BOTTOMLEFT", 0, -3},
+			width = 86,
+			height = 15,
+			spacing = 2,
+			colors = {
+				{0.33, 0.63, 0.33, 1}, -- shallow
+				{0.65, 0.63, 0.35, 1}, -- moderate
+				{0.69, 0.31, 0.31, 1}, -- Deep
+			},
 			filled = false,
 		},
 	},
@@ -509,7 +533,21 @@ Engine.Config = {
 			filter = "HELPFUL",
 			count = 5,
 			anchor = { "TOPLEFT", "CM_RUNIC_POWER", "BOTTOMLEFT", 0, -3 },
-			width = 50,
+			width = 49,
+			height = 15,
+			spacing = 4,
+			color = { 0.33, 0.59, 0.33, 1 },
+			filled = true,
+		},
+		{
+			name = "CM_BONESHIELD",
+			kind = "AURA",
+			spec = 1,
+			spellID = 49222, -- Bone shield
+			filter = "HELPFUL",
+			count = 6,
+			anchor = { "TOPLEFT", "CM_RUNIC_POWER", "BOTTOMLEFT", 0, -3 },
+			width = 41,
 			height = 15,
 			spacing = 3,
 			color = { 0.33, 0.59, 0.33, 1 },
@@ -534,19 +572,20 @@ Engine.Config = {
 			width = 262,
 			height = 15,
 		},
-		-- { -- useless with MoP, when 3rd charge is reached, RSA is replaced with another buff
-			-- name = "CM_RSA",
-			-- kind = "AURA",
-			-- spellID = 82925,
-			-- filter = "HELPFUL",
-			-- count = 5,
-			-- anchor = { "BOTTOMLEFT", "CM_FOCUS", "TOPLEFT", 0, 3},
-			-- width = 50,
-			-- height = 15,
-			-- spacing = 3,
-			-- color = {0.5, 0, 0.7, 1},
-			-- filled = false,
-		-- },
+		{
+			name = "CM_FRENZY",
+			unit = "pet",
+			kind = "AURA",
+			spellID = 19615, -- Frenzy
+			filter = "HELPFUL",
+			count = 5,
+			anchor = { "TOPLEFT", "CM_FOCUS", "BOTTOMLEFT", 0, -3 },
+			width = 50,
+			height = 15,
+			spacing = 3,
+			color = { 0.59, 0.63, 0.1, 1},
+			filled = true,
+		},
 	},
 	["WARRIOR"] = {
 		{

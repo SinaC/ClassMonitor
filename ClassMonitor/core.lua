@@ -205,6 +205,13 @@ for i, section in ipairs(settings) do
 			else
 				WARNING("section:"..name..": missing count") -- TODO: locales
 			end
+		elseif kind == "BANDITSGUILE" then
+			local spacing = section.spacing or 3
+			local color = section.color or UI.ClassColor()
+			local colors = section.colors or CreateColorArray(color, 3)
+			local autohide = DefaultBoolean(section.autohide, true)
+
+			frame = Engine.CreateBanditsGuileMonitor(name, autohide, anchor, width, height, spacing, colors, filled)
 		else
 			WARNING("section:"..name..": invalid kind:"..kind) -- TODO: locales
 		end

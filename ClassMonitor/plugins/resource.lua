@@ -79,7 +79,7 @@ Engine.CreateResourceMonitor = function(name, text, autohide, anchor, width, hei
 			return
 		end
 
-		if event == "PLAYER_ENTERING_WORLD" or event == "UNIT_DISPLAYPOWER" or event == "UNIT_MAXPOWER" or event == "PLAYER_SPECIALIZATION_CHANGED" then
+		if event == "PLAYER_ENTERING_WORLD" or event == "UNIT_DISPLAYPOWER" or event == "UNIT_MAXPOWER" or event == "PLAYER_SPECIALIZATION_CHANGED" or event == "PLAYER_REGEN_DISABLED" then
 			local resource, resourceName = UnitPowerType("player")
 			local valueMax = UnitPowerMax("player", resource)
 			-- use colors[resourceName] if defined, else use default resource color or class color

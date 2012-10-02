@@ -41,7 +41,7 @@ Engine.CreateDemonicFuryMonitor = function(name, text, autohide, anchor, width, 
 	cmDFM:RegisterUnitEvent("UNIT_DISPLAYPOWER", "player")
 	cmDFM:RegisterEvent("PLAYER_REGEN_DISABLED")
 	cmDFM:RegisterEvent("PLAYER_REGEN_ENABLED")
-	cmDFM:RegisterUnitEvent("UNIT_POWER", "player")
+	--cmDFM:RegisterUnitEvent("UNIT_POWER", "player")
 	cmDFM:RegisterUnitEvent("UNIT_MAXPOWER", "player")
 	cmDFM:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
 	cmDFM:SetScript("OnEvent", function(self, event)
@@ -50,8 +50,21 @@ Engine.CreateDemonicFuryMonitor = function(name, text, autohide, anchor, width, 
 			cmDFM:Hide()
 			return
 		end
+		local visible = true
+		if autohide == true then
+			if event == "PLAYER_REGEN_DISABLED" or InCombatLockdown() then
+				visible = true
+			else
+				visible = false
+			end
+		end
 
-		if event == "PLAYER_ENTERING_WORLD" or event == "UNIT_DISPLAYPOWER" or event == "UNIT_MAXPOWER" or event == "PLAYER_SPECIALIZATION_CHANGED" then
+		if not visible then
+			cmDFM:Hide()
+			return
+		end
+
+		if event == "PLAYER_ENTERING_WORLD" or event == "UNIT_DISPLAYPOWER" or event == "UNIT_MAXPOWER" or event == "PLAYER_SPECIALIZATION_CHANGED" or event == "PLAYER_REGEN_DISABLED" then
 			local valueMax = UnitPowerMax("player", SPELL_POWER_DEMONIC_FURY)
 			-- use colors[SPELL_POWER_DEMONIC_FURY] if defined, else use default resource color or class color
 			local color = (colors and (colors[SPELL_POWER_DEMONIC_FURY] or colors[1])) or PowerColor(SPELL_POWER_DEMONIC_FURY) or ClassColor()
@@ -59,17 +72,17 @@ Engine.CreateDemonicFuryMonitor = function(name, text, autohide, anchor, width, 
 			cmDFM.status:SetMinMaxValues(0, valueMax)
 			cmDFM:Show()
 		end
-		if autohide == true then
-			if event == "PLAYER_REGEN_DISABLED" then
-				cmDFM:Show()
-			elseif event == "UNIT_POWER" or event == "UNIT_MAXPOWER" then
-				if InCombatLockdown() then
-					cmDFM:Show()
-				end
-			else
-				cmDFM:Hide()
-			end
-		end
+		-- if autohide == true then
+			-- if event == "PLAYER_REGEN_DISABLED" then
+				-- cmDFM:Show()
+			-- elseif event == "UNIT_POWER" or event == "UNIT_MAXPOWER" then
+				-- if InCombatLockdown() then
+					-- cmDFM:Show()
+				-- end
+			-- else
+				-- cmDFM:Hide()
+			-- end
+		-- end
 	end)
 
 	-- This is what stops constant OnUpdate

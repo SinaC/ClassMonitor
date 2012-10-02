@@ -1,3 +1,10 @@
+3.2.5
+Bug fixed with autohide on resource/eclipse/demonic fury/health
+New plugin: Bandit's Guile (Rogue combat)
+Bone shield added in DK config
+Frenzy added to Hunter config
+Add event to handle unit = "pet"
+
 3.2.4
 Engine.GetConfig function added, it makes easier to edit profiles.lua
 profiles_template.lua modified

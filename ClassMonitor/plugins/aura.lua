@@ -42,6 +42,7 @@ Engine.CreateAuraMonitor = function(name, autohide, unit, spellID, filter, count
 	cmAMs[1]:RegisterEvent("PLAYER_REGEN_ENABLED")
 	cmAMs[1]:RegisterEvent("PLAYER_FOCUS_CHANGED")
 	cmAMs[1]:RegisterEvent("PLAYER_TARGET_CHANGED")
+	if unit == "pet" then cmAMs[1]:RegisterUnitEvent("UNIT_PET", "player") end
 	cmAMs[1]:RegisterUnitEvent("UNIT_AURA", unit)
 	cmAMs[1]:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
 	cmAMs[1]:SetScript("OnEvent", function(self, event)
@@ -58,7 +59,7 @@ Engine.CreateAuraMonitor = function(name, autohide, unit, spellID, filter, count
 			for i = 1, 40, 1 do
 				local name, _, _, stack, _, _, _, unitCaster = UnitAura(unit, i, filter)
 				if not name then break end
-				if name == aura and unitCaster == "player" and stack > 0 then
+				if name == aura and (unitCaster == "player" or (unit == "pet" and unitCaster == "pet")) and stack > 0 then
 					for i = 1, stack do cmAMs[i]:Show() end
 					for i = stack+1, count do cmAMs[i]:Hide() end
 					found = true
@@ -121,6 +122,7 @@ Engine.CreateBarAuraMonitor = function(name, autohide, unit, spellID, filter, co
 	cmAM:RegisterEvent("PLAYER_ENTERING_WORLD")
 	cmAM:RegisterEvent("PLAYER_REGEN_DISABLED")
 	cmAM:RegisterEvent("PLAYER_REGEN_ENABLED")
+	if unit == "pet" then cmAM:RegisterUnitEvent("UNIT_PET", "player") end
 	cmAM:RegisterUnitEvent("UNIT_AURA", unit)
 	cmAM:RegisterEvent("PLAYER_FOCUS_CHANGED")
 	cmAM:RegisterEvent("PLAYER_TARGET_CHANGED")

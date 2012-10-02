@@ -55,12 +55,12 @@ Engine.CreateEclipseMonitor = function(name, autohide, text, anchor, width, heig
 			cmEclipse:Hide()
 			return
 		end
-		if event == "PLAYER_ENTERING_WORLD" or event == "PLAYER_SPECIALIZATION_CHANGED" or event == "UPDATE_SHAPESHIFT_FORM"  then
+		if event == "PLAYER_ENTERING_WORLD" or event == "PLAYER_SPECIALIZATION_CHANGED" or event == "UPDATE_SHAPESHIFT_FORM" or event == "PLAYER_REGEN_DISABLED"  then
 			cmEclipse:UnregisterEvent("PLAYER_ENTERING_WORLD") -- fire only once
 			cmEclipse:Show()
 		end
 		-- update lunar/solar power
-		if (event == "UNIT_POWER" and arg2 == "ECLIPSE") or event == "PLAYER_ENTERING_WORLD" or event == "PLAYER_SPECIALIZATION_CHANGED" or event == "UPDATE_SHAPESHIFT_FORM" then
+		if (event == "UNIT_POWER" and arg2 == "ECLIPSE") or event == "PLAYER_ENTERING_WORLD" or event == "PLAYER_SPECIALIZATION_CHANGED" or event == "UPDATE_SHAPESHIFT_FORM" or event == "PLAYER_REGEN_DISABLED" then
 			local power = UnitPower("player", SPELL_POWER_ECLIPSE)
 			local maxPower = UnitPowerMax("player", SPELL_POWER_ECLIPSE)
 			if maxPower == 0 then maxPower = 100 end -- when entering world at 1st connection, max power is 0
