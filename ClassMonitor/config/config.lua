@@ -10,7 +10,7 @@ Engine.UIConfig = {
 Engine.Config = {
 --[[
 	name = frame name (can be used in anchor)
-	kind = MOVER | RESOURCE(mana/runic/energy/focus/rage) | COMBO | POWER | AURA | RUNES | ECLIPSE | REGEN | HEALTH  | DOT | TOTEM | BANDITSGUILE
+	kind = MOVER | RESOURCE(mana/runic/energy/focus/rage) | COMBO | POWER | AURA | RUNES | ECLIPSE | ENERGIZE | HEALTH  | DOT | TOTEM | BANDITSGUILE | STAGGER
 
 	MOVER	create a mover in Tukui/ElvUI to be able to move bars via /moveui
 	text = string													text to display in config mode
@@ -84,12 +84,12 @@ Engine.Config = {
 	height = number													height of eclipse bar [default: 15]
 	colors = { lunar, solar }										color of lunar and solar bar
 
-	REGEN
+	ENERGIZE
 	anchor = 														see note below
-	text = true|false												display regen value (% for mana) [default: true]
+	text = true|false												display energize value (% for mana) [default: true]
 	autohide = true|false											hide or not while out of combat [default: false]
-	width = number													width of regen bar [default: 85]
-	height = number													height of regen bar [default: 15]
+	width = number													width of energize bar [default: 85]
+	height = number													height of energize bar [default: 15]
 	color =															see note below [default: class color]
 
 	HEALTH
@@ -140,6 +140,14 @@ Engine.Config = {
 	color|colors =													see note below [default: class color]
 	filled = true|false												is bandit's guilde charge filled or not [default: false]
 
+	STAGGER
+	autohide = true|false											hide or not while out of combat [default: true]
+	anchor|anchors =												see note below
+	width = number													width of stagger bar [default: 85]
+	height = number													height of stagger bar [default: 15]
+	text = true|false												display value and % [default:true]
+	colors =														colors of 3 states (light, moderate and heavy)
+	threshold = number (%)											above this value, bar state is meaningless, below this value, bar state is meaningful [default: 100]
 
 	Notes about anchor
 	anchor = { "POSITION", parent, "POSITION", offsetX, offsetY }
@@ -411,12 +419,12 @@ Engine.Config = {
 		},
 		{
 			name = "CM_RAPTURE",
-			kind = "REGEN",
+			kind = "ENERGIZE",
 			spec = 1, -- Discipline
+			spellID = 47755, -- Rapture
 			anchor = { "TOPLEFT", "CM_MANA", "BOTTOMLEFT", 0, -2 },
 			width = 261,
 			height = 3,
-			spellID = 47755, -- Rapture
 			filling = false,
 			duration = 12,
 		},
@@ -743,7 +751,7 @@ Engine.Config = {
 		{
 			name = "CM_ELUSIVEBREW",
 			kind = "AURA",
-			spec = 1, -- Windwalker
+			spec = 1, -- Brewmaster
 			spellID = 128939, -- Elusive brew
 			filter = "HELPFUL",
 			count = 15,
@@ -755,6 +763,21 @@ Engine.Config = {
 			bar = true,
 			text = true,
 			duration = true,
-		}
+		},
+		{ -- only available is Brewmaster spec
+			name = "CM_STAGGER",
+			kind = "STAGGER",
+			text = true,
+			autohide = true,
+			threshold = 20,
+			anchor = { "TOPLEFT", "CM_ELUSIVEBREW", "BOTTOMLEFT", 0, -3 },
+			width = 262,
+			height = 15,
+			colors = {
+				[1] = {0, .4, 0, 1},
+				[2] = {.7, .7, .2, 1},
+				[3] = {.9, .2, .2, 1},
+			},
+		},
 	},
 }

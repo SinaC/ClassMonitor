@@ -92,14 +92,14 @@ for i, section in ipairs(settings) do
 			local color = section.color
 
 			frame = Engine.CreateHealthMonitor(name, unit, text, autohide, anchor, width, height, color, specs)
-		elseif kind == "REGEN" then
+		elseif kind == "ENERGIZE" then
 			local spellID = section.spellID
 			local filling = DefaultBoolean(section.filling, false)
 			local duration = section.duration
 			local color = section.color or UI.ClassColor()
 
 			if spellID and duration then
-				frame = Engine.CreateRegenMonitor(name, spellID, anchor, width, height, color, duration, filling)
+				frame = Engine.CreateEnergizeMonitor(name, spellID, anchor, width, height, color, duration, filling)
 			else
 				WARNING("section:"..name..":"..(spellID and "" or " missing spellID")..(duration and "" or " missing duration")) -- TODO: locales
 			end
@@ -210,8 +210,20 @@ for i, section in ipairs(settings) do
 			local color = section.color or UI.ClassColor()
 			local colors = section.colors or CreateColorArray(color, 3)
 			local autohide = DefaultBoolean(section.autohide, true)
+			local filled = DefaultBoolean(section.filled, false)
 
 			frame = Engine.CreateBanditsGuileMonitor(name, autohide, anchor, width, height, spacing, colors, filled)
+		elseif kind == "STAGGER" then
+			local threshold = section.threshold or 100
+			local text = DefaultBoolean(section.text, true)
+			local autohide = DefaultBoolean(section.autohide, true)
+			local colors = section.colors
+
+			if colors then
+				frame = Engine.CreateStaggerMonitor(name, threshold, text, autohide, anchor, width, height, colors)
+			else
+				WARNING("section:"..name..":"..(colors or " missing colors")) -- TODO: locales
+			end
 		else
 			WARNING("section:"..name..": invalid kind:"..kind) -- TODO: locales
 		end

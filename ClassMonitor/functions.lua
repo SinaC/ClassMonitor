@@ -3,6 +3,16 @@ if not Engine.Enabled then return end
 
 -- functions used in multiple plugins
 
+Engine.FormatHealth = function(hp)
+	local out = ""
+	if hp >= 10000 then
+		out = floor(hp / 100) / 10 .. "k"
+	else
+		out = tostring(hp)
+	end
+	return out
+end
+
 Engine.ToClock = function(seconds)
 	seconds = ceil(tonumber(seconds))
 	if seconds <= 0 then
