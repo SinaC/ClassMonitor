@@ -2,9 +2,10 @@
 local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
 local UI = Engine.UI
-local UIConfig = Engine.UIConfig
 
-Engine.CreateComboMonitor = function(name, autohide, anchor, width, height, spacing, colors, filled, specs)
+local CheckSpec = Engine.CheckSpec
+
+Engine.CreateComboMonitor = function(name, enable, autohide, anchor, width, height, spacing, colors, filled, specs)
 	local cmCombos = {}
 	for i = 1, 5 do
 		local cmCombo = CreateFrame("Frame", name, UI.BattlerHider)
@@ -24,9 +25,6 @@ Engine.CreateComboMonitor = function(name, autohide, anchor, width, height, spac
 			cmCombo.status:Point("BOTTOMRIGHT", cmCombo, "BOTTOMRIGHT", -2, 2)
 			cmCombo.status:SetStatusBarColor(unpack(colors[i]))
 		else
-			if UIConfig.shadow then
-				cmCombo:CreateShadow("Default")
-			end
 			cmCombo:SetBackdropBorderColor(unpack(colors[i]))
 		end
 		cmCombo:Hide()
@@ -34,13 +32,18 @@ Engine.CreateComboMonitor = function(name, autohide, anchor, width, height, spac
 		tinsert(cmCombos, cmCombo)
 	end
 
-	local CheckSpec = Engine.CheckSpec
+	if not enable then
+		for i = 1, 5 do cmCombos[i]:Hide() end
+		return
+	end
+
+
 	cmCombos[1]:RegisterEvent("PLAYER_ENTERING_WORLD")
-	cmCombos[1]:RegisterUnitEvent("UNIT_COMBO_POINTS", "player")
-	cmCombos[1]:RegisterEvent("PLAYER_TARGET_CHANGED")
-	cmCombos[1]:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
 	cmCombos[1]:RegisterEvent("PLAYER_REGEN_DISABLED")
 	cmCombos[1]:RegisterEvent("PLAYER_REGEN_ENABLED")
+	cmCombos[1]:RegisterEvent("PLAYER_TARGET_CHANGED")
+	cmCombos[1]:RegisterUnitEvent("UNIT_COMBO_POINTS", "player")
+	cmCombos[1]:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
 	cmCombos[1]:SetScript("OnEvent", function(self, event)
 		local visible = true
 		if autohide == true then

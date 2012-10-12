@@ -3,7 +3,11 @@ local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
 local UI = Engine.UI
 
-Engine.CreateResourceMonitor = function(name, text, autohide, anchor, width, height, colors, specs)
+local CheckSpec = Engine.CheckSpec
+local PowerColor = UI.PowerColor
+local ClassColor = UI.ClassColor
+
+Engine.CreateResourceMonitor = function(name, enable, text, autohide, anchor, width, height, colors, specs)
 	local cmResource = CreateFrame("Frame", name, UI.BattlerHider)
 	cmResource:SetTemplate()
 	cmResource:SetFrameStrata("BACKGROUND")
@@ -20,6 +24,11 @@ Engine.CreateResourceMonitor = function(name, text, autohide, anchor, width, hei
 	if text == true then
 		cmResource.valueText = UI.SetFontString(cmResource.status, 12)
 		cmResource.valueText:Point("CENTER", cmResource.status)
+	end
+
+	if not enable then
+		cmResource:Hide()
+		return
 	end
 
 	cmResource.timeSinceLastUpdate = GetTime()
@@ -55,14 +64,11 @@ Engine.CreateResourceMonitor = function(name, text, autohide, anchor, width, hei
 		end
 	end
 
-	local CheckSpec = Engine.CheckSpec
-	local PowerColor = UI.PowerColor
-	local ClassColor = UI.ClassColor
 	cmResource:RegisterEvent("PLAYER_ENTERING_WORLD")
-	cmResource:RegisterUnitEvent("UNIT_DISPLAYPOWER", "player")
 	cmResource:RegisterEvent("PLAYER_REGEN_DISABLED")
 	cmResource:RegisterEvent("PLAYER_REGEN_ENABLED")
 	--cmResource:RegisterUnitEvent("UNIT_POWER", "player")
+	cmResource:RegisterUnitEvent("UNIT_DISPLAYPOWER", "player")
 	cmResource:RegisterUnitEvent("UNIT_MAXPOWER", "player")
 	cmResource:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
 	cmResource:SetScript("OnEvent", function(self, event)

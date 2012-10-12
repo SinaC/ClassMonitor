@@ -3,6 +3,8 @@ local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
 local UI = Engine.UI
 
+local CheckSpec = Engine.CheckSpec
+
 -- TODO: OnUpdate
 local FormatHealth = Engine.FormatHealth
 
@@ -11,7 +13,7 @@ local moderateStagger = GetSpellInfo(124274)
 local heavyStagger = GetSpellInfo(124273)
 
 -- Generic method to create STAGGER monitor
-Engine.CreateStaggerMonitor = function(name, threshold, text, autohide, anchor, width, height, colors)
+Engine.CreateStaggerMonitor = function(name, enable, threshold, text, autohide, anchor, width, height, colors)
 	local cmSM = CreateFrame("Frame", name, UI.BattlerHider)
 	cmSM:SetTemplate()
 	cmSM:SetFrameStrata("BACKGROUND")
@@ -31,7 +33,11 @@ Engine.CreateStaggerMonitor = function(name, threshold, text, autohide, anchor, 
 		cmSM.valueText:Point("CENTER", cmSM.status)
 	end
 
-	local CheckSpec = Engine.CheckSpec
+	if not enable then
+		cmSM:Hide()
+		return
+	end
+
 	cmSM:RegisterEvent("PLAYER_ENTERING_WORLD")
 	cmSM:RegisterEvent("PLAYER_REGEN_DISABLED")
 	cmSM:RegisterEvent("PLAYER_REGEN_ENABLED")
@@ -48,7 +54,7 @@ Engine.CreateStaggerMonitor = function(name, threshold, text, autohide, anchor, 
 		end
 		local found = false
 		if GetSpecialization() ~= 1 and visible then
-			local spellName, duration, value1
+			local spellName, duration, value1, _
 			spellName, _, _, _, _, duration, _, _, _, _, _, _, _, value1 = UnitAura("player", lightStagger, "", "HARMFUL")
 			if (not spellName) then spellName, _, _, _, _, duration, _, _, _, _, _, _, _, value1 = UnitAura("player", moderateStagger, "", "HARMFUL") end
 			if (not spellName) then spellName, _, _, _, _, duration, _, _, _, _, _, _, _, value1 = UnitAura("player", heavyStagger, "", "HARMFUL") end

@@ -17,6 +17,8 @@ UI.BorderColor = P.general.bordercolor
 UI.NormTex = E["media"].normTex
 UI.MyClass = E.myclass
 UI.MyName = E.myname
+UI.Font = E["media"].normFont
+UI.BlankTex = E["media"].blankTex
 
 -- Hider Secure (mostly used to hide stuff while in pet battle)  ripped from Tukui
 local petBattleHider = CreateFrame("Frame", "ElvUIClassMonitorPetBattleHider", UIParent, "SecureHandlerStateTemplate")
@@ -70,4 +72,35 @@ UI.CreateMover = function(name, width, height, anchor, text)
 
 	--return holder
 	return E.CreatedMovers[name].mover -- we need the mover for multiple anchors
+end
+
+UI.Move = function()
+	-- TODO: call /moveui
+end
+
+-- Skin
+local S = E:GetModule('Skins')
+
+UI.SkinCheckBox = function(frame)
+	S:HandleCheckBox(frame)
+end
+
+UI.SkinSlideBar = function(btn, horizonal)
+	S:HandleSliderFrame(btn)
+end
+
+UI.SkinDropDownBox = function(frame, width)
+	S:HandleDropDownBox(frame)
+end
+
+UI.SkinNextPrevButton = function(frame)
+	S:HandleNextPrevButton(frame)
+end
+
+UI.SkinCloseButton = function(frame, point)
+	S:HandleCloseButton(frame)
+end
+
+UI.SkinScrollBar = function(frame)
+	S:HandleScrollBar(frame)
 end

@@ -3,8 +3,11 @@ local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
 local UI = Engine.UI
 
+local ToClock = Engine.ToClock
+local CheckSpec = Engine.CheckSpec
+
 -- Generic method to create totem monitor
-Engine.CreateTotemMonitor = function(name, autohide, count, anchor, width, height, spacing, colors, text, map, specs)
+Engine.CreateTotemMonitor = function(name, enable, autohide, count, anchor, width, height, spacing, colors, text, map, specs)
 	local cmTotems = {}
 	for i = 1, count do
 		local cmTotem = CreateFrame("Frame", name, UI.BattlerHider)
@@ -51,7 +54,11 @@ Engine.CreateTotemMonitor = function(name, autohide, count, anchor, width, heigh
 		end
 	end
 
-	local ToClock = Engine.ToClock
+	if not enable then
+		for i = 1, count do cmTotems[i]:Hide() end
+		return
+	end
+
 	local function UpdateTotemTimer(self, elapsed)
 		if not self.status.expirationTime then return end
 		self.status.expirationTime = self.status.expirationTime - elapsed
@@ -70,7 +77,6 @@ Engine.CreateTotemMonitor = function(name, autohide, count, anchor, width, heigh
 		end
 	end
 
-	local CheckSpec = Engine.CheckSpec
 	cmTotems[1]:RegisterEvent("PLAYER_ENTERING_WORLD")
 	cmTotems[1]:RegisterEvent("PLAYER_REGEN_DISABLED")
 	cmTotems[1]:RegisterEvent("PLAYER_REGEN_ENABLED")

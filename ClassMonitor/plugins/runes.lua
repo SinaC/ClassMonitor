@@ -3,7 +3,7 @@ local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
 local UI = Engine.UI
 
-Engine.CreateRunesMonitor = function(name, updatethreshold, autohide, orientation, anchor, width, height, spacing, colors, runemap)
+Engine.CreateRunesMonitor = function(name, enable, updatethreshold, autohide, orientation, anchor, width, height, spacing, colors, runemap)
 	-- Create the frame
 	local cmRunes = CreateFrame("Frame", "Frame_"..name)
 	-- Create the runes
@@ -28,6 +28,12 @@ Engine.CreateRunesMonitor = function(name, updatethreshold, autohide, orientatio
 		rune.status:SetOrientation(orientation)
 
 		tinsert(runes, rune)
+	end
+
+	if not enable then
+		for i = 1, 6 do runes[i]:Hide() end
+		cmRunes:Hide()
+		return
 	end
 
 	-- Function to update runes

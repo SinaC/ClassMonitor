@@ -3,7 +3,7 @@ local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
 local UI = Engine.UI
 
-Engine.CreateEnergizeMonitor = function(name, spelltracked, anchor, width, height, color, duration, filling)
+Engine.CreateEnergizeMonitor = function(name, enable, spelltracked, anchor, width, height, color, duration, filling)
 	local cmEnergize = CreateFrame("Frame", name, UI.BattlerHider)
 	cmEnergize:SetTemplate()
 	cmEnergize:SetFrameStrata("BACKGROUND")
@@ -18,6 +18,11 @@ Engine.CreateEnergizeMonitor = function(name, spelltracked, anchor, width, heigh
 	cmEnergize.status:SetMinMaxValues(0, duration)
 	cmEnergize.status:SetStatusBarColor(unpack(color))
 	cmEnergize:Hide()
+
+	if not enable then
+		cmEnergize:Hide()
+		return
+	end
 
 	cmEnergize.timeSinceLastUpdate = GetTime()
 	local function OnUpdate(self, elapsed)

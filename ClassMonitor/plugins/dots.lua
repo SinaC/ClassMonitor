@@ -3,7 +3,9 @@ local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
 local UI = Engine.UI
 
-Engine.CreateDotMonitor = function(name, autohide, spelltracked, anchor, width, height, colors, threshold, latency, specs)
+local CheckSpec = Engine.CheckSpec
+
+Engine.CreateDotMonitor = function(name, enable, autohide, spelltracked, anchor, width, height, colors, threshold, latency, specs)
 --print("DOT:"..tostring(name))
 	local aura = GetSpellInfo(spelltracked)
 
@@ -22,6 +24,11 @@ Engine.CreateDotMonitor = function(name, autohide, spelltracked, anchor, width, 
 
 	cmDot.text = UI.SetFontString(cmDot.status, 12)
 	cmDot.text:Point("CENTER", cmDot.status)
+
+	if not enable then
+		cmDot:Hide()
+		return
+	end
 
 	cmDot.dmg = 0
 	cmDot.timeSinceLastUpdate = GetTime()
@@ -80,7 +87,6 @@ Engine.CreateDotMonitor = function(name, autohide, spelltracked, anchor, width, 
 	cmDot.combatcheck:RegisterEvent("PLAYER_REGEN_ENABLED")
 	cmDot.combatcheck:SetScript("OnEvent", CombatCheck)
 
-	local CheckSpec = Engine.CheckSpec
 	local function CombatAuraCheck(self,event)																		-- Aura check
 		local visible = true
 		if autohide == true then

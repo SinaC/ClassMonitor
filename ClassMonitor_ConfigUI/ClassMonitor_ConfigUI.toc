@@ -1,0 +1,10 @@
+## Interface: 50001
+## Version: 1.0.0
+## Author: SinaC
+## Title: |cFF148587Class|r Monitor Config UI
+## Credits: Pat
+## Notes: Config UI for class monitor compatible with Blizzard UI, Tukui and ElvUI
+## RequiredDeps: ClassMonitor
+## OptionalDeps: Tukui, ElvUI
+
+ClassMonitor_ConfigUI.xml

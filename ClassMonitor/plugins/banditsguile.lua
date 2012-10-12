@@ -2,14 +2,12 @@
 local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
 local UI = Engine.UI
-local UIConfig = Engine.UIConfig
-
 
 local shallowInsight = GetSpellInfo(84745)
 local moderateInsight = GetSpellInfo(84746)
 local deepInsight = GetSpellInfo(84747)
 
-Engine.CreateBanditsGuileMonitor = function(name, autohide, anchor, width, height, spacing, colors, filled)
+Engine.CreateBanditsGuileMonitor = function(name, enable, autohide, anchor, width, height, spacing, colors, filled)
 	local cmBanditsGuiles = {}
 	for i = 1, 3 do
 		local cmBanditGuile = CreateFrame("Frame", name, UI.BattlerHider)
@@ -29,9 +27,6 @@ Engine.CreateBanditsGuileMonitor = function(name, autohide, anchor, width, heigh
 			cmBanditGuile.status:Point("BOTTOMRIGHT", cmBanditGuile, "BOTTOMRIGHT", -2, 2)
 			cmBanditGuile.status:SetStatusBarColor(unpack(colors[i]))
 		else
-			if UIConfig.shadow then
-				cmBanditGuile:CreateShadow("Default")
-			end
 			cmBanditGuile:SetBackdropBorderColor(unpack(colors[i]))
 		end
 		cmBanditGuile:Hide()
@@ -39,12 +34,17 @@ Engine.CreateBanditsGuileMonitor = function(name, autohide, anchor, width, heigh
 		tinsert(cmBanditsGuiles, cmBanditGuile)
 	end
 
+	if not enable then
+		for i = 1, 3 do cmBanditsGuiles[i]:Hide() end
+		return
+	end
+
 	cmBanditsGuiles[1]:RegisterEvent("PLAYER_ENTERING_WORLD")
-	cmBanditsGuiles[1]:RegisterEvent("PLAYER_TARGET_CHANGED")
-	cmBanditsGuiles[1]:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
 	cmBanditsGuiles[1]:RegisterEvent("PLAYER_REGEN_DISABLED")
 	cmBanditsGuiles[1]:RegisterEvent("PLAYER_REGEN_ENABLED")
+	cmBanditsGuiles[1]:RegisterEvent("PLAYER_TARGET_CHANGED")
 	cmBanditsGuiles[1]:RegisterUnitEvent("UNIT_AURA", "player")
+	cmBanditsGuiles[1]:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
 	cmBanditsGuiles[1]:SetScript("OnEvent", function(self, event)
 		local visible = true
 		if autohide == true then

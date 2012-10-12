@@ -18,6 +18,8 @@ UI.BattlerHider = TukuiPetBattleHider
 UI.NormTex = C["media"].normTex
 UI.MyClass = T.myclass
 UI.MyName = T.myname
+UI.Font = C["media"]["uffont"]
+UI.BlankTex = C["media"].blank
 
 UI.SetFontString = function(parent, fontHeight, fontStyle)
 	local fs = parent:CreateFontString(nil, "OVERLAY")
@@ -70,6 +72,35 @@ UI.CreateMover = function(name, width, height, anchor, text)
 	tinsert(T.AllowFrameMoving, mover)
 
 	return mover
+end
+
+UI.Move = function()
+	-- TODO: call /moveui
+end
+
+-- Skin
+UI.SkinCheckBox = function(frame)
+	frame:SkinCheckBox()
+end
+
+UI.SkinSlideBar = function(btn, horizonal)
+	btn:SkinSlideBar(horizontal)
+end
+
+UI.SkinDropDownBox = function(frame, width)
+	frame:SkinDropDownBox(width)
+end
+
+UI.SkinNextPrevButton = function(frame)
+	frame:SkinNextPrevButton()
+end
+
+UI.SkinCloseButton = function(frame, point)
+	frame:SkinCloseButton(point)
+end
+
+UI.SkinScrollBar = function(frame)
+	frame:SkinScrollBar()
 end
 
 -- check old version

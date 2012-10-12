@@ -3,14 +3,11 @@ if not Engine.Enabled then return end
 
 local L = Engine.Locales
 
-Engine.UIConfig = {
-	shadow = false,
-}
-
 Engine.Config = {
 --[[
 	name = frame name (can be used in anchor)
 	kind = MOVER | RESOURCE(mana/runic/energy/focus/rage) | COMBO | POWER | AURA | RUNES | ECLIPSE | ENERGIZE | HEALTH  | DOT | TOTEM | BANDITSGUILE | STAGGER
+	enable = true|false												no need to explain [default: true] (plugin will be created but never displayed, this allow other plugin to anchor it. Temporary easy fix to handle this problem)
 
 	MOVER	create a mover in Tukui/ElvUI to be able to move bars via /moveui
 	text = string													text to display in config mode
@@ -60,7 +57,17 @@ Engine.Config = {
 	spacing = number												space between buff stack if no bar[default: 3]
 	color|colors =													see note below [default: class color]
 	filled = true|false												is buff stack filled or not if no bar[default: false]
-	bar = true|false												status bar instead of stack [default: false]
+
+	AURABAR (buff/debuff):
+	autohide = true|false											hide or not while out of combat [default: true]
+	unit = "player"|"target"|"focus"|"pet"							check aura on this unit [default:"player"]
+	spellID = number												spell id of buff/debuff to monitor
+	filter = "HELPFUL" | "HARMFUL"									BUFF or DEBUFF
+	count = number													max number of stack to display
+	anchor|anchors =												see note below
+	width = number													width of buff stack or bar[default: 85]
+	height = number													height of buff stack or bar [default: 15]
+	color =															see note below [default: class color]
 	text = true|false												display current/max stack in status bar [default:true]
 	duration = true|false											display buff|debuff time left in status bar [default:false]
 	spec|specs = 													see note below [default: any]
@@ -718,7 +725,7 @@ Engine.Config = {
 		},
 		{
 			name = "CM_MANATEA",
-			kind = "AURA",
+			kind = "AURABAR",
 			spec = 2,  -- Mistweaver
 			spellID = 115867, -- Mana tea
 			filter = "HELPFUL",
@@ -727,14 +734,12 @@ Engine.Config = {
 			width = 262,
 			height = 15,
 			color = {0.5, 0.9, 0.7, 1},
-			filled = false,
-			bar = true,
 			text = true,
 			duration = true,
 		},
 		{
 			name = "CM_TIGEREYEBREW",
-			kind = "AURA",
+			kind = "AURABAR",
 			spec = 3, -- Windwalker
 			spellID = 125195, -- Tigereye brew
 			filter = "HELPFUL",
@@ -743,14 +748,12 @@ Engine.Config = {
 			width = 262,
 			height = 15,
 			color = {0.5, 0.9, 0.7, 1},
-			filled = false,
-			bar = true,
 			text = true,
 			duration = true,
 		},
 		{
 			name = "CM_ELUSIVEBREW",
-			kind = "AURA",
+			kind = "AURABAR",
 			spec = 1, -- Brewmaster
 			spellID = 128939, -- Elusive brew
 			filter = "HELPFUL",
@@ -759,8 +762,6 @@ Engine.Config = {
 			width = 262,
 			height = 15,
 			color = {0.5, 0.9, 0.7, 1},
-			filled = false,
-			bar = true,
 			text = true,
 			duration = true,
 		},

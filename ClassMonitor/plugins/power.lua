@@ -2,9 +2,10 @@
 local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
 local UI = Engine.UI
-local UIConfig = Engine.UIConfig
 
-Engine.CreatePowerMonitor = function(name, autohide, powerType, count, anchor, width, height, spacing, colors, filled, specs)
+local CheckSpec = Engine.CheckSpec
+
+Engine.CreatePowerMonitor = function(name, enable, autohide, powerType, count, anchor, width, height, spacing, colors, filled, specs)
 	local cmPMs = {}
 
 	for i = 1, count do
@@ -25,20 +26,20 @@ Engine.CreatePowerMonitor = function(name, autohide, powerType, count, anchor, w
 			cmPM.status:Point("BOTTOMRIGHT", cmPM, "BOTTOMRIGHT", -2, 2)
 			cmPM.status:SetStatusBarColor(unpack(colors[i]))
 		else
-			if UIConfig.shadow then
-print("SHADOW")
-				cmPM:CreateShadow("Default")
-			end
 			cmPM:SetBackdropBorderColor(unpack(colors[i]))
 		end
 		cmPM:Hide()
 		tinsert(cmPMs, cmPM)
 	end
 
+	if not enable then
+		for i = 1, count do cmPMs[i]:Hide() end
+		return
+	end
+
 	cmPMs.maxValue = count
 	cmPMs.totalWidth = width * count + spacing * (count - 1)
 
-	local CheckSpec = Engine.CheckSpec
 	cmPMs[1]:RegisterEvent("PLAYER_ENTERING_WORLD")
 	cmPMs[1]:RegisterEvent("PLAYER_REGEN_DISABLED")
 	cmPMs[1]:RegisterEvent("PLAYER_REGEN_ENABLED")

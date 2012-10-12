@@ -3,7 +3,7 @@ local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
 local UI = Engine.UI
 
-Engine.CreateBurningEmbersMonitor = function(name, autohide, anchor, width, height, spacing, colors)
+Engine.CreateBurningEmbersMonitor = function(name, enable, autohide, anchor, width, height, spacing, colors)
 	local cmBEMs = {}
 	local count = 4 -- max embers
 	for i = 1, count do
@@ -25,6 +25,11 @@ Engine.CreateBurningEmbersMonitor = function(name, autohide, anchor, width, heig
 		cmBEM:Hide()
 
 		tinsert(cmBEMs, cmBEM)
+	end
+
+	if not enable then
+		for i = 1, count do cmBEMs[i]:Hide() end
+		return
 	end
 
 	cmBEMs.numBars = count

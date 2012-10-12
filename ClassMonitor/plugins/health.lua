@@ -3,7 +3,10 @@ local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
 local UI = Engine.UI
 
-Engine.CreateHealthMonitor = function(name, unit, text, autohide, anchor, width, height, color, specs)
+local CheckSpec = Engine.CheckSpec
+local HealthColor = UI.HealthColor
+
+Engine.CreateHealthMonitor = function(name, enable, unit, text, autohide, anchor, width, height, color, specs)
 	local cmHealth = CreateFrame("Frame", name, UI.BattlerHider)
 	cmHealth:SetTemplate()
 	cmHealth:SetFrameStrata("BACKGROUND")
@@ -20,6 +23,11 @@ Engine.CreateHealthMonitor = function(name, unit, text, autohide, anchor, width,
 	if text == true then
 		cmHealth.text = UI.SetFontString(cmHealth.status, 12)
 		cmHealth.text:Point("CENTER", cmHealth.status)
+	end
+
+	if not enable then
+		cmHealth:Hide()
+		return
 	end
 
 	cmHealth.timeSinceLastUpdate = GetTime()
@@ -50,13 +58,11 @@ Engine.CreateHealthMonitor = function(name, unit, text, autohide, anchor, width,
 		end
 	end
 
-	local CheckSpec = Engine.CheckSpec
-	local HealthColor = UI.HealthColor
-	cmHealth:RegisterEvent("PLAYER_FOCUS_CHANGED")
-	cmHealth:RegisterEvent("PLAYER_TARGET_CHANGED")
-	cmHealth:RegisterEvent("PLAYER_ENTERING_WORLD")
 	cmHealth:RegisterEvent("PLAYER_REGEN_DISABLED")
 	cmHealth:RegisterEvent("PLAYER_REGEN_ENABLED")
+	cmHealth:RegisterEvent("PLAYER_ENTERING_WORLD")
+	if unit == "target" then cmHealth:RegisterEvent("PLAYER_TARGET_CHANGED") end
+	if unit == "focus" then cmHealth:RegisterEvent("PLAYER_FOCUS_CHANGED") end
 	if unit == "pet" then cmHealth:RegisterUnitEvent("UNIT_PET", "player") end
 	--cmHealth:RegisterUnitEvent("UNIT_HEALTH", unit)
 	cmHealth:RegisterUnitEvent("UNIT_MAXHEALTH", unit)

@@ -3,7 +3,10 @@ local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
 local UI = Engine.UI
 
-Engine.CreateDemonicFuryMonitor = function(name, text, autohide, anchor, width, height, colors)
+local PowerColor = UI.PowerColor
+local ClassColor = UI.ClassColor
+
+Engine.CreateDemonicFuryMonitor = function(name, enable, text, autohide, anchor, width, height, colors)
 	local cmDFM = CreateFrame("Frame", name, UI.BattlerHider)
 	cmDFM:SetTemplate()
 	cmDFM:SetFrameStrata("BACKGROUND")
@@ -22,6 +25,11 @@ Engine.CreateDemonicFuryMonitor = function(name, text, autohide, anchor, width, 
 		cmDFM.text:Point("CENTER", cmDFM.status)
 	end
 
+	if not enable then
+		cmDFM:Hide()
+		return
+	end
+
 	cmDFM.timeSinceLastUpdate = GetTime()
 	local function OnUpdate(self, elapsed)
 		cmDFM.timeSinceLastUpdate = cmDFM.timeSinceLastUpdate + elapsed
@@ -35,13 +43,11 @@ Engine.CreateDemonicFuryMonitor = function(name, text, autohide, anchor, width, 
 		end
 	end
 
-	local PowerColor = UI.PowerColor
-	local ClassColor = UI.ClassColor
 	cmDFM:RegisterEvent("PLAYER_ENTERING_WORLD")
-	cmDFM:RegisterUnitEvent("UNIT_DISPLAYPOWER", "player")
 	cmDFM:RegisterEvent("PLAYER_REGEN_DISABLED")
 	cmDFM:RegisterEvent("PLAYER_REGEN_ENABLED")
 	--cmDFM:RegisterUnitEvent("UNIT_POWER", "player")
+	cmDFM:RegisterUnitEvent("UNIT_DISPLAYPOWER", "player")
 	cmDFM:RegisterUnitEvent("UNIT_MAXPOWER", "player")
 	cmDFM:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
 	cmDFM:SetScript("OnEvent", function(self, event)

@@ -3,7 +3,9 @@ local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
 local UI = Engine.UI
 
-Engine.CreateEclipseMonitor = function(name, autohide, text, anchor, width, height, colors)
+local BorderColor = UI.BorderColor
+
+Engine.CreateEclipseMonitor = function(name, enable, autohide, text, anchor, width, height, colors)
 	local cmEclipse = CreateFrame("Frame", name, UI.BattlerHider)
 	cmEclipse:SetTemplate()
 	cmEclipse:SetFrameStrata("BACKGROUND")
@@ -30,10 +32,14 @@ Engine.CreateEclipseMonitor = function(name, autohide, text, anchor, width, heig
 		cmEclipse.directionText:Point("CENTER", cmEclipse.lunar)
 	end
 
+	if not enable then
+		cmEclipse:Hide()
+		return
+	end
+
 	cmEclipse.inEclipse = false -- not in eclipse by default
 
 	--
-	local BorderColor = UI.BorderColor
 	cmEclipse:RegisterEvent("PLAYER_ENTERING_WORLD")
 	cmEclipse:RegisterEvent("PLAYER_REGEN_DISABLED")
 	cmEclipse:RegisterEvent("PLAYER_REGEN_ENABLED")

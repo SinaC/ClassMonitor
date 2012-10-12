@@ -16,6 +16,7 @@
 	<Script file="config\profiles.lua"/>
 
 	<Script file="plugins\aura.lua"/>
+	<Script file="plugins\aurabar.lua"/>
 	<Script file="plugins\power.lua"/>
 	<Script file="plugins\combo.lua"/>
 	<Script file="plugins\resource.lua"/>
@@ -31,4 +32,5 @@
 	<Script file="plugins\stagger.lua"/>
 
 	<Script file="core.lua"/>
+	<Script file="commands.lua"/>
 </Ui>
