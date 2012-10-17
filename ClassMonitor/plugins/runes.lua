@@ -3,13 +3,18 @@ local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
 local UI = Engine.UI
 
-Engine.CreateRunesMonitor = function(name, enable, updatethreshold, autohide, orientation, anchor, width, height, spacing, colors, runemap)
+local PixelPerfect = Engine.PixelPerfect
+
+--Engine.CreateRunesMonitor = function(name, enable, updatethreshold, autohide, orientation, anchor, width, height, spacing, colors, runemap)
+Engine.CreateRunesMonitor = function(name, enable, updatethreshold, autohide, orientation, anchor, totalWidth, height, colors, runemap)
+	local count = 6
+	local width, spacing = PixelPerfect(totalWidth, count)
 	-- Create the frame
-	local cmRunes = CreateFrame("Frame", "Frame_"..name)
+	local cmRunes = CreateFrame("Frame", "Frame_"..name, UI.BattlerHider)
 	-- Create the runes
 	local runes = {}
-	for i = 1, 6 do
-		local rune = CreateFrame("Frame", name, UI.BattlerHider)
+	for i = 1, count do
+		local rune = CreateFrame("Frame", name, cmRunes)
 		rune:SetTemplate()
 		rune:SetFrameStrata("BACKGROUND")
 		rune:Size(width, height)
@@ -31,7 +36,7 @@ Engine.CreateRunesMonitor = function(name, enable, updatethreshold, autohide, or
 	end
 
 	if not enable then
-		for i = 1, 6 do runes[i]:Hide() end
+		for i = 1, count do runes[i]:Hide() end
 		cmRunes:Hide()
 		return
 	end
@@ -57,23 +62,39 @@ Engine.CreateRunesMonitor = function(name, enable, updatethreshold, autohide, or
 
 		if self.TimeSinceLastUpdate > updatethreshold then
 			local runesReady = 0
-			for i = 1, 6 do
+			for i = 1, count do
 				local start, duration, finished = GetRuneCooldown(runemap[i])
 				UpdateRune(i, start, duration, finished)
 				if finished then runesReady = runesReady + 1 end
 			end
-			if runesReady == 6 and not InCombatLockdown() then
-				OnUpdate:SetScript("OnUpdate", nil)
-			end
+			-- if runesReady == count and not InCombatLockdown() then
+				-- OnUpdate:SetScript("OnUpdate", nil)
+			-- end
 			self.TimeSinceLastUpdate = 0
 		end
 	end
-	OnUpdate:SetScript("OnUpdate", updateFunc)
+	--OnUpdate:SetScript("OnUpdate", updateFunc)
 
 	cmRunes:RegisterEvent("PLAYER_REGEN_DISABLED")
 	cmRunes:RegisterEvent("PLAYER_REGEN_ENABLED")
 	cmRunes:RegisterEvent("PLAYER_ENTERING_WORLD")
 	cmRunes:SetScript("OnEvent", function(self, event)
+		local visible = true
+		if autohide == true then
+			if event == "PLAYER_REGEN_DISABLED" or InCombatLockdown() then
+				visible = true
+			else
+				visible = false
+			end
+		end
+		if visible then
+			UIFrameFadeIn(self, (0.3 * (1-self:GetAlpha())), self:GetAlpha(), 1)
+			OnUpdate:SetScript("OnUpdate", updateFunc)
+		else
+			UIFrameFadeOut(self, (0.3 * (0+self:GetAlpha())), self:GetAlpha(), 0)
+			OnUpdate:SetScript("OnUpdate", nil)
+		end
+		--[[
 		if event == "PLAYER_REGEN_DISABLED" then
 			if autohide then
 				UIFrameFadeIn(self, (0.3 * (1-self:GetAlpha())), self:GetAlpha(), 1)
@@ -84,7 +105,9 @@ Engine.CreateRunesMonitor = function(name, enable, updatethreshold, autohide, or
 				UIFrameFadeOut(self, (0.3 * (0+self:GetAlpha())), self:GetAlpha(), 0)
 			end
 			--OnUpdate:SetScript("OnUpdate", nil)
-		elseif event == "PLAYER_ENTERING_WORLD" then
+		else
+		--]]
+		if event == "PLAYER_ENTERING_WORLD" then
 			RuneFrame:ClearAllPoints()
 			if not InCombatLockdown() then
 				if autohide then

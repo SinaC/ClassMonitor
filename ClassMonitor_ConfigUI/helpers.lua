@@ -103,6 +103,7 @@ end
 
 local function SliderHandler(self, value)
 	SetValue(tonumber(value), self.option, self.config)
+	self.currentValue:SetText(value)
 end
 
 local function EditboxHandler(self)
@@ -140,7 +141,7 @@ local function ColorPickerHandler(button)
 	ColorPickerFrame.originalFrameLevel = ColorPickerFrame:GetFrameLevel() -- save level
 	ColorPickerFrame:SetFrameStrata(button:GetParent():GetFrameStrata()) -- set strata
 	ColorPickerFrame:SetFrameLevel(button:GetParent():GetFrameLevel()+1) -- set level
-	ColorPickerFrame:SetPoint("TOPLEFT", button, "TOPRIGHT", 0, 0)
+	ColorPickerFrame:Point("TOPLEFT", button, "TOPRIGHT", 0, 0)
 	ColorPickerFrame.button = button -- save button
 	ColorPickerFrame:SetColorRGB(r, g, b)
 	ColorPickerFrame.hasOpacity = (a ~= nil and a < 1)
@@ -223,6 +224,22 @@ local function MultiCheckboxHandler(self)
 	end
 end
 
+local function EditSpellIDHandler(self)
+	local spellID = tonumber(self:GetText()) 
+	local spellName, _, spellIcon = GetSpellInfo(spellID)
+	if not spellName then -- invalid
+		self.spellID = nil
+		self.spellIDEditbox:SetText("") -- reset spellID
+		self.spellName:SetText("") -- reset spell name
+		self.iconFrame.icon:SetTexture(nil)
+	else
+		self.spellID = spellID
+		self.spellName:SetText(spellName) -- set spell name
+		self.iconFrame.icon:SetTexture(spellIcon) -- set icon
+		SetValue(spellID, self.option, self.config)
+	end
+end
+
 --
 function H:CreateCheckbox(parent, name, text, onClick)
 	local checkbox = _G[name]
@@ -231,8 +248,8 @@ function H:CreateCheckbox(parent, name, text, onClick)
 		--checkbox = CreateFrame("CheckButton", name, parent, "OptionsCheckButtonTemplate")
 		checkbox = CreateFrame("CheckButton", name, parent, "UICheckButtonTemplate")
 		--checkbox:SkinCheckBox()
-		checkbox:SetWidth(24)
-		checkbox:SetHeight(24)
+		checkbox:Width(24)
+		checkbox:Height(24)
 		if not ElvUI then -- TODO: why it doesn't work on ElvUI
 			UI.SkinCheckBox(checkbox)
 		end
@@ -252,7 +269,7 @@ function H:CreateCheckbox(parent, name, text, onClick)
 	return checkbox
 end
 
-function H:CreateSlidebar(parent, name, text, min, max, step, onValueChanged)
+function H:CreateSlidebar(parent, name, text, min, max, step, value, onValueChanged)
 	local slidebar = _G[name]
 	if not slidebar then
 		slidebar = CreateFrame("Slider", name, parent, "OptionsSliderTemplate")
@@ -265,6 +282,9 @@ function H:CreateSlidebar(parent, name, text, min, max, step, onValueChanged)
 	_G[slidebar:GetName() .. "Low"]:SetText(tostring(min))
 	_G[slidebar:GetName() .. "High"]:SetText(tostring(max))
 	_G[slidebar:GetName() .. "Text"]:SetText(text)
+	slidebar.currentValue = H:CreateLabel(slidebar, name.."CurrentValue", "", 40, 20)
+	slidebar.currentValue:Point("TOPLEFT", slidebar, "TOPRIGHT", 10, 0) -- TODO: editbox
+	slidebar.currentValue:SetText(value)
 
 	return slidebar
 end
@@ -277,8 +297,8 @@ function H:CreateLabel(parent, name, text, width, height)
 		label:SetFont(UI.Font, 12)
 		label:SetJustifyH("LEFT")
 	end
-	if width then label:SetWidth(width) end
-	if height then label:SetHeight(height) end
+	if width then label:Width(width) end
+	if height then label:Height(height) end
 	label:SetText(text)
 
 	return label
@@ -301,8 +321,8 @@ function H:CreateEditbox(parent, name, width, height, editboxHandler)
 		editbox:SetBackdropBorderColor(0, 0, 0, 1)
 		editbox:SetFontObject(GameFontHighlight)
 	end
-	if width then editbox:SetWidth(width) end
-	if height then editbox:SetHeight(height) end
+	if width then editbox:Width(width) end
+	if height then editbox:Height(height) end
 	editbox:SetTemplate()
 
 	-- ok button
@@ -310,15 +330,15 @@ function H:CreateEditbox(parent, name, width, height, editboxHandler)
 	local button = _G[buttonName]
 	if not button then
 		button = CreateFrame("Button", buttonName, parent)
-		button:SetHeight(editbox:GetHeight())
-		button:SetWidth(editbox:GetHeight())
+		button:Height(editbox:GetHeight())
+		button:Width(editbox:GetHeight())
 		button:SetTemplate("Default")
-		button:SetPoint("LEFT", editbox, "RIGHT", 2, 0)
+		button:Point("LEFT", editbox, "RIGHT", 2, 0)
 		button.text = button:CreateFontString(nil, "OVERLAY", nil)
 		--button.text:SetFont(C.media.font, 12)
 		button.text:SetFont(UI.Font, 12)
 		button.text:SetJustifyH("CENTER")
-		button.text:SetPoint("CENTER", 1, 0)
+		button.text:Point("CENTER", 1, 0)
 		button.text:SetText("OK")
 	end
 	button:Hide()
@@ -362,219 +382,275 @@ function H:CreateButton(parent, name, text, width, height, onMouseDown)
 		button.text = button:CreateFontString(nil, "OVERLAY", nil)
 		button.text:SetFont(UI.Font, 12)
 		button.text:SetJustifyH("CENTER")
-		button.text:SetPoint("CENTER")
+		button.text:Point("CENTER", 0, 0)
 		button.text:SetText(text)
 		button:SetScript("OnMouseDown", onMouseDown)
 	end
-	button:SetWidth(width)
-	button:SetHeight(height or width)
+	button:Width(width)
+	button:Height(height or width)
 
 	return button
 end
 --
-function H:CreateOptionPanel(parent, name, definition, config)
+function H:CreateOptionPanel(parent, name, definition, config, offsetX, getValueFunc, setValueFunc)
 	local frame = _G[name]
 	if not frame then frame = CreateFrame("Frame", name, parent) end
 	frame:Size(parent:GetWidth()-20, 1000)
 
 	local offset = 0
 	for index, option in ipairs(definition) do
---print("CreateOptionPanel:"..tostring(name).."  "..tostring(index).."  "..tostring(option))
+		-- assign default getValue or setValue if defined
+		if getValueFunc and not option.get then option.get = getValueFunc end
+		if setValueFunc and not option.set then option.set = setValueFunc end
 		-- current value
-		local value = GetValue(option, config)
-		assert(value ~= nil or option.optional or option.type == "custom", "No value found for option:"..tostring(index).." "..tostring(option.name))
-		if option.readonly then
-			-- readonly: label with name and label with value
-			-- label
-			local label = H:CreateLabel(frame, name.."_LABEL_"..index.."_"..option.name, option.name, frame:GetWidth()-60, 20)
-			label:ClearAllPoints()
-			label:SetPoint("TOPLEFT", 5, -(offset))
+		if option.hidden ~= true then
+			local value = GetValue(option, config)
+			assert(value ~= nil or option.optional or option.type == "custom", "No value found for option:"..tostring(index).." "..tostring(option.name))
+--print("CreateOptionPanel:"..tostring(name).."  "..tostring(index).."  "..tostring(option).."  "..tostring(value))
+			if option.readonly then
+				-- readonly: label with name and label with value
+				-- label
+				local label = H:CreateLabel(frame, name.."_LABEL_"..index.."_"..option.name, option.name, frame:GetWidth()-60, 20)
+				label:ClearAllPoints()
+				label:Point("TOPLEFT", offsetX, -(offset))
 
-			local labelValue = H:CreateLabel(frame, name.."_LABEL_"..index.."_"..option.name, tostring(value), frame:GetWidth()-60, 20) -- TODO: if value is not stringify
-			label:ClearAllPoints()
-			label:SetPoint("TOPLEFT", 5, -(offset))
+				local labelValue = H:CreateLabel(frame, name.."_LABEL_"..index.."_"..option.name, tostring(value), frame:GetWidth()-60, 20) -- TODO: if value is not stringify
+				label:ClearAllPoints()
+				label:Point("TOPLEFT", offsetX, -(offset))
 
-			offset = offset + 25
-		elseif option.type == "toggle" then
-			-- toggle: checkbox
-			local checkbox = H:CreateCheckbox(frame, name.."_CHECKBOX_"..index.."_"..option.name, option.name, CheckboxHandler)
-			checkbox:ClearAllPoints()
-			checkbox:SetPoint("TOPLEFT", 5, -(offset))
-
-			checkbox.config = config
-			checkbox.option = option
-			checkbox:SetChecked(value)
-
-			offset = offset + 25
-		elseif option.type == "number" then
-			assert(option.min ~= nil and option.max ~= nil, "Min or max is missing for option:"..tostring(index).." "..tostring(option.name))
-			-- number: slidebar
-			local slidebar = H:CreateSlidebar(frame, name.."_SLIDEBAR_"..index.."_"..option.name, option.name, option.min, option.max, option.step, SliderHandler)
-			slidebar:ClearAllPoints()
-			slidebar:SetPoint("TOPLEFT", 5, -(15+offset))
-
-			slidebar.config = config
-			slidebar.option = option
-			slidebar:SetValue(value)
--- TODO: display current value in SliderHandler
-
-			offset = offset + 40
-		elseif option.type == "string" then
-			-- string: label + editbox + button ok
-			-- label
-			local label = H:CreateLabel(frame, name.."_LABEL_"..index.."_"..option.name, option.name, frame:GetWidth()-60, 20)
-			label:ClearAllPoints()
-			label:SetPoint("TOPLEFT", 5, -(offset))
-
-			-- editbox
-			local editbox = H:CreateEditbox(frame, name.."_EDITBOX_"..index.."_"..option.name, frame:GetWidth()-60, 20, EditboxHandler)
-			editbox:ClearAllPoints()
-			editbox:SetPoint("TOPLEFT", 5, -(offset+20))
-
-			editbox.config = config
-			editbox.option = option
-			editbox.previousValue = value
-			editbox:SetText(value)
-
-			offset = offset + 45
-		elseif option.type == "select" then
-			assert(option.values, "Values not found for option:"..tostring(index).." "..tostring(option.name))
-			-- select: label + dropdown
-			-- label
-			local label = H:CreateLabel(frame, name.."_LABEL_"..index.."_"..option.name, option.name, nil, 20)
-			label:ClearAllPoints()
-			label:SetPoint("TOPLEFT", 5, -(offset))
-
-			-- dropdown
---print("DROPDOWN:"..tostring(option.name))
-			local dropdownName = name.."_DROPDOWN_"..index.."_"..option.name
-			local dropdown = _G[dropdownName]
-			if not dropdown then
-				dropdown = CreateFrame("Button", dropdownName, frame, "UIDropDownMenuTemplate")
-				UIDropDownMenu_JustifyText(dropdown, "LEFT")
-				--UIDropDownMenu_SetWidth(dropdown, 100)
-				--UIDropDownMenu_SetButtonWidth(dropdown, 124)
-			end
-			dropdown:ClearAllPoints()
-			dropdown:SetPoint("TOPLEFT", 80, -offset)
-
-			--dropdown:SetFrameLevel(parent:GetFrameLevel()+1)
-
-			-- --dropdown:SkinDropDownBox(200) -- TODO: why this doesn't work with ElvUI and Tukui
-			-- UI.SkinDropDownBox(dropdown, 200)
-			-- dropdown.backdrop:Kill()
-
-			-- local width = 200
-			-- local button = _G[dropdown:GetName().."Button"]
-			-- if not width then width = 155 end
-
-			-- dropdown:StripTextures()
-			-- dropdown:Width(width)
-
-			-- local text = _G[dropdown:GetName().."Text"]
-			-- text:ClearAllPoints()
-			-- text:SetPoint("RIGHT", button, "LEFT", -2, 0)
-
-			-- button:ClearAllPoints()
-			-- button:SetPoint("RIGHT", dropdown, "RIGHT", -10, 3)
-			-- --button.SetPoint = T.dummy
-
-			-- --button:SkinNextPrevButton(true)
-			--UI.SkinNextPrevButton(button, true)
-
-			-- -- dropdown:CreateBackdrop("Default")
-			-- -- dropdown.backdrop:ClearAllPoints()
-			-- -- dropdown.backdrop:SetPoint("TOPLEFT", 20, -2)
-			-- -- dropdown.backdrop:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 2, -2)
-
-			dropdown.config = config
-			dropdown.option = option
-
---print(button:GetFrameStrata().."  "..button:GetFrameLevel().."  "..dropdown.backdrop:GetFrameStrata().."  "..dropdown.backdrop:GetFrameLevel().."  "..dropdown:GetFrameStrata().."  "..dropdown:GetFrameLevel())
-
-			UIDropDownMenu_Initialize(dropdown, DropdownInitialize)
-
-			offset = offset + 25
-		elseif option.type == "multiselect" then
-			assert(option.values and (value == nil or type(value) == "table"), "Values not found for option:"..tostring(index).." "..tostring(option.name))
-			-- multiselect: label + multiple checkboxes
-			-- label
-			local label = H:CreateLabel(frame, name.."_LABEL_"..index.."_"..option.name, option.name)
-			label:ClearAllPoints()
-			label:SetPoint("TOPLEFT", 5, -(offset))
-			offset = offset + 25
-			-- multiple checkboxes
-			local values = type(option.values) == "function" and option.values() or option.values
-
-			local xOffset = 0
-			local checkboxes = {}
-			for i, entry in ipairs(values) do
-				local checkbox = H:CreateCheckbox(frame, name.."_MULTICHECKBOX_"..index.."_"..option.name.."_"..i, entry.text, MultiCheckboxHandler)
+				offset = offset + 25
+			elseif option.type == "toggle" then
+				-- toggle: checkbox
+				local checkbox = H:CreateCheckbox(frame, name.."_CHECKBOX_"..index.."_"..option.name, option.name, CheckboxHandler)
 				checkbox:ClearAllPoints()
-				if 1 == (i % 3) then
-					checkbox:SetPoint("TOPLEFT", 5, -(offset))
-				else
-					checkbox:SetPoint("TOPLEFT", 5 + xOffset, -(offset))
-				end
-				if 0 == (i % 3) then
-					offset = offset + 25
-					xOffset = 0
-				else
-					xOffset = xOffset + 150
-				end
+				checkbox:Point("TOPLEFT", offsetX, -(offset))
 
-				checkbox.value = entry.value
 				checkbox.config = config
 				checkbox.option = option
+				checkbox:SetChecked(value)
 
-				checkbox:SetChecked(false) -- default: unselected
-				if value ~= nil then
-					for _, v in pairs(value) do
-						if v == entry.value then
-							checkbox:SetChecked(true) -- select if found in value
+				offset = offset + 25
+			elseif option.type == "number" then
+				assert(option.min ~= nil and option.max ~= nil, "Min or max is missing for option:"..tostring(index).." "..tostring(option.name))
+				-- number: slidebar
+				local slidebar = H:CreateSlidebar(frame, name.."_SLIDEBAR_"..index.."_"..option.name, option.name, option.min, option.max, option.step, value, SliderHandler)
+				slidebar:ClearAllPoints()
+				slidebar:Point("TOPLEFT", offsetX, -(15+offset))
+
+				slidebar.config = config
+				slidebar.option = option
+				slidebar:SetValue(value)
+	-- TODO: display current value in SliderHandler
+
+				offset = offset + 40
+			elseif option.type == "string" then
+				-- string: label + editbox + button ok
+				-- label
+				local label = H:CreateLabel(frame, name.."_LABEL_"..index.."_"..option.name, option.name, frame:GetWidth()-60, 20)
+				label:ClearAllPoints()
+				label:Point("TOPLEFT", offsetX, -(offset))
+
+				-- editbox
+				local editbox = H:CreateEditbox(frame, name.."_EDITBOX_"..index.."_"..option.name, 100, 20, EditboxHandler)
+				editbox:ClearAllPoints()
+				editbox:Point("TOPLEFT", offsetX, -(offset+20))
+
+				editbox.config = config
+				editbox.option = option
+				editbox.previousValue = value
+				editbox:SetText(value)
+
+				offset = offset + 45
+			elseif option.type == "select" then
+				assert(option.values, "Values not found for option:"..tostring(index).." "..tostring(option.name))
+				-- select: label + dropdown
+				-- label
+				local label = H:CreateLabel(frame, name.."_LABEL_"..index.."_"..option.name, option.name, nil, 20)
+				label:ClearAllPoints()
+				label:Point("TOPLEFT", offsetX, -(offset))
+
+				-- dropdown
+	--print("DROPDOWN:"..tostring(option.name))
+				local dropdownName = name.."_DROPDOWN_"..index.."_"..option.name
+				local dropdown = _G[dropdownName]
+				if not dropdown then
+					dropdown = CreateFrame("Button", dropdownName, frame, "UIDropDownMenuTemplate")
+					UIDropDownMenu_JustifyText(dropdown, "LEFT")
+					--UIDropDownMenu_SetWidth(dropdown, 100)
+					--UIDropDownMenu_SetButtonWidth(dropdown, 124)
+				end
+				dropdown:ClearAllPoints()
+				dropdown:Point("TOPLEFT", offsetX+75, -offset)
+
+				--dropdown:SetFrameLevel(parent:GetFrameLevel()+1)
+
+				-- --dropdown:SkinDropDownBox(200) -- TODO: why this doesn't work with ElvUI and Tukui
+				-- UI.SkinDropDownBox(dropdown, 200)
+				-- dropdown.backdrop:Kill()
+
+				-- local width = 200
+				-- local button = _G[dropdown:GetName().."Button"]
+				-- if not width then width = 155 end
+
+				-- dropdown:StripTextures()
+				-- dropdown:Width(width)
+
+				-- local text = _G[dropdown:GetName().."Text"]
+				-- text:ClearAllPoints()
+				-- text:Point("RIGHT", button, "LEFT", -2, 0)
+
+				-- button:ClearAllPoints()
+				-- button:Point("RIGHT", dropdown, "RIGHT", -10, 3)
+				-- --button.SetPoint = T.dummy
+
+				-- --button:SkinNextPrevButton(true)
+				--UI.SkinNextPrevButton(button, true)
+
+				-- -- dropdown:CreateBackdrop("Default")
+				-- -- dropdown.backdrop:ClearAllPoints()
+				-- -- dropdown.backdrop:Point("TOPLEFT", 20, -2)
+				-- -- dropdown.backdrop:Point("BOTTOMRIGHT", button, "BOTTOMRIGHT", 2, -2)
+
+				dropdown.config = config
+				dropdown.option = option
+
+	--print(button:GetFrameStrata().."  "..button:GetFrameLevel().."  "..dropdown.backdrop:GetFrameStrata().."  "..dropdown.backdrop:GetFrameLevel().."  "..dropdown:GetFrameStrata().."  "..dropdown:GetFrameLevel())
+
+				UIDropDownMenu_Initialize(dropdown, DropdownInitialize)
+
+				offset = offset + 40
+			elseif option.type == "multiselect" then
+				assert(option.values, "Values not found for option:"..tostring(index).." "..tostring(option.name))
+				assert((value == nil or type(value) == "table"), "Invalid value for option:"..tostring(index).." "..tostring(option.name))
+				-- multiselect: label + multiple checkboxes
+				-- label
+				local label = H:CreateLabel(frame, name.."_LABEL_"..index.."_"..option.name, option.name)
+				label:ClearAllPoints()
+				label:Point("TOPLEFT", offsetX, -(offset))
+				offset = offset + 25
+				-- multiple checkboxes
+				local values = type(option.values) == "function" and option.values() or option.values
+				local columns = option.columns or 3
+
+				local xOffset = 0
+				local checkboxes = {}
+				for i, entry in ipairs(values) do
+					local checkbox = H:CreateCheckbox(frame, name.."_MULTICHECKBOX_"..index.."_"..option.name.."_"..i, entry.text, MultiCheckboxHandler)
+					checkbox:ClearAllPoints()
+					if 1 == (i % columns) then
+						checkbox:Point("TOPLEFT", offsetX, -(offset))
+					else
+						checkbox:Point("TOPLEFT", offsetX + xOffset, -(offset))
+					end
+					if 0 == (i % columns) then
+						offset = offset + 25
+						xOffset = 0
+					else
+						xOffset = xOffset + 150
+					end
+
+					checkbox.value = entry.value
+					checkbox.config = config
+					checkbox.option = option
+
+					checkbox:SetChecked(false) -- default: unselected
+					if value ~= nil then
+						for _, v in pairs(value) do
+							if v == entry.value then
+								checkbox:SetChecked(true) -- select if found in value
+							end
 						end
 					end
+
+					checkbox.checkboxes = checkboxes -- keep a pointer to checkbox list
+					tinsert(checkboxes, checkbox)
 				end
+				if 0 ~= (getn(checkboxes) % columns) then
+					offset = offset + 25
+				end
+			elseif option.type == "color" then
+				assert(type(value) == "table", "Color is not a table for option:"..tostring(index).." "..tostring(option.name))
+				-- color: label + button + color picker
+				-- label
+				local label = H:CreateLabel(frame, name.."_LABEL_"..index.."_"..option.name, option.name, 100, 20)
+				label:ClearAllPoints()
+				label:Point("TOPLEFT", offsetX, -(offset))
 
-				checkbox.checkboxes = checkboxes -- keep a pointer to checkbox list
-				tinsert(checkboxes, checkbox)
-			end
-			if 0 ~= (getn(checkboxes) % 3) then
+				-- button
+				local button = H:CreateButton(frame, name.."_BUTTON_"..index.."_"..option.name, "Set Color", 50, 20, ColorPickerHandler)
+				button:ClearAllPoints()
+				button:Point("LEFT", label, "RIGHT", 2, 0)
+				button:SetBackdropBorderColor(unpack(value))
+
+				button.config = config
+				button.option = option
+				button.previousValue = value
+
 				offset = offset + 25
+			elseif option.type == "spell" then
+				-- spell: label + editbox + label + icon
+				-- label
+				local label = H:CreateLabel(frame, name.."_LABEL_"..index.."_"..option.name, option.name, 100, 20)
+				label:ClearAllPoints()
+				label:Point("TOPLEFT", offsetX, -(offset))
+				-- editbox
+				local spellIDEditbox = H:CreateEditbox(frame, name.."_EDITPANEL_SPELLIDEDITBOX".."_"..index.."_"..option.name, 100, 25, EditSpellIDHandler)
+				-- spellIDEditbox:ClearAllPoints()
+				-- spellIDEditbox:SetPoint("TOPLEFT", label, "TOPRIGHT", 2, -2)
+				-- icon (stored in editBox)
+				local iconFrameName = name.."_EDITPANEL_ICONFRAME"
+				spellIDEditbox.iconFrame = _G[iconFrameName]
+				if not spellIDEditbox.iconFrame then
+					spellIDEditbox.iconFrame = CreateFrame("Frame", iconFrameName, spellIDEditbox)
+					spellIDEditbox.iconFrame:SetTemplate()
+					spellIDEditbox.iconFrame:Size(50, 50)
+					spellIDEditbox.iconFrame.icon = spellIDEditbox.iconFrame:CreateTexture(iconFrameName.."_ICON", "ARTWORK")
+					spellIDEditbox.iconFrame.icon:Point("TOPLEFT", 2, -2)
+					spellIDEditbox.iconFrame.icon:Point("BOTTOMRIGHT", -2, 2)
+					spellIDEditbox.iconFrame.icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+					-- set tooltip
+					spellIDEditbox.iconFrame:SetScript("OnEnter", function(self)
+						local spellID = self:GetParent().spellID
+						if not spellID or spellID == "" then return end
+						GameTooltip:ClearLines()
+						GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT", 0, 7)
+						GameTooltip:SetHyperlink(format("spell:%s", spellID))
+						GameTooltip:Show()
+					end)
+					spellIDEditbox.iconFrame:SetScript("OnLeave", function(self) GameTooltip:Hide() end)
+				end
+				spellIDEditbox.iconFrame:ClearAllPoints()
+				spellIDEditbox.iconFrame:SetPoint("TOPLEFT", label, "BOTTOMLEFT", 0, -10)
+				-- reanchor editbox
+				spellIDEditbox:ClearAllPoints()
+				spellIDEditbox:SetPoint("TOPLEFT", spellIDEditbox.iconFrame, "TOPRIGHT", 2, 0)
+				-- label (stored in editBox)
+				spellIDEditbox.spellName = H:CreateLabel(frame, name.."_EDITPANEL_SPELLNAME", "", 200, 25)
+				spellIDEditbox.spellName:SetFont(UI.Font, 14)
+				spellIDEditbox.spellName:ClearAllPoints()
+				spellIDEditbox.spellName:SetPoint("BOTTOMLEFT", spellIDEditbox.iconFrame, "BOTTOMRIGHT", 2, 0)
+
+				spellIDEditbox.config = config
+				spellIDEditbox.option = option
+				spellIDEditbox:SetText(value)
+				EditSpellIDHandler(spellIDEditbox)
+
+				offset = offset + 80
+			elseif option.type == "anchor" then
+				-- TODO
+				-- selector for point
+				-- button for relativeFrame
+				-- selector for relativePoint
+				-- slider for offset X
+				-- slider for offset Y
+				-- button SHOW to show actual anchor frame (except if UIParent or Hider), display a red rectangle with frame name
+				local point, relativeFrame, relativePoint, offsetX, offsetY = unpack(value)
+			elseif option.type == "custom" then
+				assert(option.build, "Build entry needed for custom option:"..tostring(index).." "..tostring(option.name))
+				offset = offset + option.build(frame, name, offset, offsetX, option, config)
+			else
+				assert(false, "Invalid type for option:"..tostring(index).." "..tostring(option.name))
 			end
-		elseif option.type == "color" then
-			assert(type(value) == "table", "Color is not a table for option:"..tostring(index).." "..tostring(option.name))
-			-- color: label + button + color picker
-			-- label
-			local label = H:CreateLabel(frame, name.."_LABEL_"..index.."_"..option.name, option.name, 100, 20)
-			label:ClearAllPoints()
-			label:SetPoint("TOPLEFT", 5, -(offset))
-
-			-- button
-			local button = H:CreateButton(frame, name.."_BUTTON_"..index.."_"..option.name, "Set Color", 50, 20, ColorPickerHandler)
-			button:ClearAllPoints()
-			button:SetPoint("LEFT", label, "RIGHT", 2, 0)
-			button:SetBackdropBorderColor(unpack(value))
-
-			button.config = config
-			button.option = option
-			button.previousValue = value
-
-			offset = offset + 25
-		elseif option.type == "anchor" then
-			-- TODO
-			-- selector for point
-			-- button for relativeFrame
-			-- selector for relativePoint
-			-- slider for offset X
-			-- slider for offset Y
-			-- button SHOW to show actual anchor frame (except if UIParent or Hider), display a red rectangle with frame name
-			local point, relativeFrame, relativePoint, offsetX, offsetY = unpack(value)
-		elseif option.type == "custom" then
-			assert(option.build, "Build entry needed for custom option:"..tostring(index).." "..tostring(option.name))
-			offset = offset + option.build(frame, name, offset, option, config)
-		else
-			assert(false, "Invalid type for option:"..tostring(index).." "..tostring(option.name))
 		end
 	end
 	frame:Height(offset)

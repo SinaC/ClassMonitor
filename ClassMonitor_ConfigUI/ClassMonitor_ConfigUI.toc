@@ -1,5 +1,5 @@
 ## Interface: 50001
-## Version: 1.0.0
+## Version: 1.0.1
 ## Author: SinaC
 ## Title: |cFF148587Class|r Monitor Config UI
 ## Credits: Pat

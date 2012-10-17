@@ -3,10 +3,11 @@ if not Engine.Enabled then return end
 
 local UI = Engine.UI
 local L = Engine.Locales
+local C = Engine.Config
 
 local CMDebug = false
 
-local settings = Engine.Config[UI.MyClass]
+local settings = C[UI.MyClass]
 if not settings then return end
 
 local function WARNING(line)
@@ -16,30 +17,6 @@ end
 local function DEBUG(line)
 	if not CMDebug or CMDebug == false then return end
 	print("|CFF0000FFClassMonitor|r: DEBUG - "..line)
-end
-
--- Return anchor corresponding to current spec
-local function GetAnchor(anchors)
-	if not anchors then return end
-	local spec = GetSpecialization()
-	if not spec or spec == 0 then spec = 1 end
-	return anchors[spec]
-end
-
--- When multiple anchors are specified, anchor depends on current spec
-local function SetMultipleAnchorHandler(frame, anchors)
-	if not anchors then return end
-	frame:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
-	frame:RegisterEvent("PLAYER_ENTERING_WORLD")
-	frame:HookScript("OnEvent", function(self, event)
-		if event ~= "PLAYER_SPECIALIZATION_CHANGED" and event ~= "PLAYER_ENTERING_WORLD" then return end
-		local anchor = GetAnchor(anchors)
-		if not anchor then return end
-		DEBUG("Anchor:"..tostring(event).." "..tostring(self:GetName()))
-		self:ClearAllPoints()
-		self:Point(unpack(anchor))
---print("SetMultipleAnchorHandler5:"..tostring(self:GetName()))
-	end)
 end
 
 -- Create a color array from one color
@@ -86,6 +63,7 @@ local function __dump(t)
 	end
 end
 
+local DeepCopy = Engine.DeepCopy
 local function MergeConfig(config, saved)
 -- dump config
 --print("BEFORE:")
@@ -105,16 +83,15 @@ local function MergeConfig(config, saved)
 			for key, value in pairs(config_section) do
 				if key ~= "name" and savedEntry[key] ~= nil then
 --print("Overwrite: "..tostring(config_section.name).."."..tostring(key).."  from "..tostring(value).." to "..tostring(savedEntry[key]))
-					local copy = Engine:DeepCopy(savedEntry[key])
 --__dump(copy)
-					config_section[key] = Engine.DeepCopy(savedEntry[key])
+					config_section[key] = DeepCopy(savedEntry[key])
 				end
 			end
 			-- add new entry from saved to config
 			for key, value in pairs(savedEntry) do
 				if config_section[key] == nil then
 --print("Clone: "..tostring(config_section.name).."."..tostring(key).."  "..tostring(value))
-					config_section[key] = Engine.DeepCopy(value)
+					config_section[key] = DeepCopy(value)
 				end
 			end
 		end
@@ -129,7 +106,7 @@ local function MergeConfig(config, saved)
 		end
 		if not found then
 --print("Add new section: "..tostring(saved_key))
-			tinsert(config, Engine.Builder(saved_section))
+			tinsert(config, DeepCopy(saved_section))
 		end
 	end
 
@@ -138,11 +115,28 @@ local function MergeConfig(config, saved)
 --__dump(config)
 end
 
+local CreateResourceMonitor = Engine.CreateResourceMonitor
+local CreateHealthMonitor = Engine.CreateHealthMonitor
+local CreateEnergizeMonitor = Engine.CreateEnergizeMonitor
+local CreateComboMonitor = Engine.CreateComboMonitor
+local CreateBurningEmbersMonitor = Engine.CreateBurningEmbersMonitor
+local CreateDemonicFuryMonitor = Engine.CreateDemonicFuryMonitor
+local CreatePowerMonitor = Engine.CreatePowerMonitor
+local CreateAuraMonitor = Engine.CreateAuraMonitor
+local CreateBarAuraMonitor = Engine.CreateBarAuraMonitor
+local CreateDotMonitor = Engine.CreateDotMonitor
+local CreateRunesMonitor = Engine.CreateRunesMonitor
+local CreateEclipseMonitor = Engine.CreateEclipseMonitor
+local CreateTotemMonitor = Engine.CreateTotemMonitor
+local CreateBanditsGuileMonitor = Engine.CreateBanditsGuileMonitor
+local CreateStaggerMonitor = Engine.CreateStaggerMonitor
+local CreateTankShieldMonitor = Engine.CreateTankShieldMonitor
+
 local function CreatePlugins()
 	-- Remove non-class specific spell-list
-	for class in pairs(Engine.Config) do
+	for class in pairs(C) do
 		if class ~= UI.MyClass then
-			Engine.Config[class] = nil
+			C[class] = nil
 		end
 	end
 
@@ -151,13 +145,11 @@ local function CreatePlugins()
 		local name = section.name
 		local kind = section.kind
 		local enable = DefaultBoolean(section.enable, true)
-		local anchors = section.anchors
-		local anchor = section.anchor or GetAnchor(anchors)
+		local anchor = section.anchor
 		local width = section.width or 85
 		local height = section.height or 15
-		local spec = section.spec or "any"
-		local specs = section.specs or {spec}
-
+		local specs = section.specs or {"any"}
+		local autohide = DefaultBoolean(section.autohide, true)
 		DEBUG("section:"..name)
 		if name and kind and anchor then
 			local frame
@@ -166,17 +158,15 @@ local function CreatePlugins()
 				frame = UI.CreateMover(name, width, height, anchor, text)
 			elseif kind == "RESOURCE" then
 				local text = DefaultBoolean(section.text, true)
-				local autohide = DefaultBoolean(section.autohide, false)
 				local colors = section.colors or (section.color and {section.color})
 
-				frame = Engine.CreateResourceMonitor(name, enable, text, autohide, anchor, width, height, colors, specs)
+				frame = CreateResourceMonitor(name, enable, text, autohide, anchor, width, height, colors, specs)
 			elseif kind == "HEALTH" then
 				local unit = section.unit or "player"
 				local text = DefaultBoolean(section.text, true)
-				local autohide = DefaultBoolean(section.autohide, true)
 				local color = section.color
 
-				frame = Engine.CreateHealthMonitor(name, enable, unit, text, autohide, anchor, width, height, color, specs)
+				frame = CreateHealthMonitor(name, enable, unit, text, autohide, anchor, width, height, color, specs)
 			elseif kind == "ENERGIZE" then
 				local spellID = section.spellID
 				local filling = DefaultBoolean(section.filling, false)
@@ -184,50 +174,53 @@ local function CreatePlugins()
 				local color = section.color or UI.ClassColor()
 
 				if spellID and duration then
-					frame = Engine.CreateEnergizeMonitor(name, enable, spellID, anchor, width, height, color, duration, filling)
+					frame = CreateEnergizeMonitor(name, enable, spellID, anchor, width, height, color, duration, filling)
 				else
 					WARNING("section:"..name..":"..(spellID and "" or " missing spellID")..(duration and "" or " missing duration")) -- TODO: locales
 				end
 			elseif kind == "COMBO" then
-				local spacing = section.spacing or 3
+				--local spacing = section.spacing or 3
 				local color = section.color or UI.ClassColor()
 				local colors = section.colors or CreateColorArray(color, 5)
-				local autohide = DefaultBoolean(section.autohide, true)
+				local filled = DefaultBoolean(section.filled, false)
 
-				frame = Engine.CreateComboMonitor(name, enable, autohide, anchor, width, height, spacing, colors, filled, specs)
+				--frame = Engine.CreateComboMonitor(name, enable, autohide, anchor, width, height, spacing, colors, filled, specs)
+				frame = CreateComboMonitor(name, enable, autohide, anchor, width, height, colors, filled, specs)
 			elseif kind == "POWER" then
 				local powerType = section.powerType
 				local count = section.count
-				local spacing = section.spacing or 3
+				--local spacing = section.spacing or 3
 				local color = section.color or UI.ClassColor()
-				local colors = section.colors or CreateColorArray(color, count)
-				local filled = DefaultBoolean(section.filled, false)
-				local autohide = DefaultBoolean(section.autohide, false)
+				local colors = section.colors or CreateColorArray(color, count or 5)
 
 				if powerType == SPELL_POWER_BURNING_EMBERS then
-					frame = Engine.CreateBurningEmbersMonitor(name, enable, autohide, anchor, width, height, spacing, colors) -- TODO: autohide
+					--frame = Engine.CreateBurningEmbersMonitor(name, enable, autohide, anchor, width, height, spacing, colors) -- TODO: autohide
+					frame = CreateBurningEmbersMonitor(name, enable, autohide, anchor, width, height, colors)
 				elseif powerType == SPELL_POWER_DEMONIC_FURY then
 					local text = DefaultBoolean(section.text, true)
-					frame = Engine.CreateDemonicFuryMonitor(name, enable, text, autohide, anchor, width, height, colors)
+					frame = CreateDemonicFuryMonitor(name, enable, text, autohide, anchor, width, height, colors)
 				elseif powerType and count then
-					frame = Engine.CreatePowerMonitor(name, enable, autohide, powerType, count, anchor, width, height, spacing, colors, filled, specs)
+					local filled = DefaultBoolean(section.filled, false)
+					--frame = Engine.CreatePowerMonitor(name, enable, autohide, powerType, count, anchor, width, height, spacing, colors, filled, specs)
+					frame = CreatePowerMonitor(name, enable, autohide, powerType, count, anchor, width, height, colors, filled, specs)
 				else
 					WARNING("section:"..name..":"..(powerType and "" or " missing powerType")..(count and "" or " missing count")) -- TODO: locales
 				end
+
 			elseif kind == "AURA" then
 				local unit = section.unit or "player"
 				local spellID = section.spellID
 				local filter = section.filter
 				local count = section.count
-				local autohide = DefaultBoolean(section.autohide, true)
 
 				if spellID and filter and count then
-					local spacing = section.spacing or 3
+					--local spacing = section.spacing or 3
 					local color = section.color or UI.ClassColor()
 					local colors = section.colors or CreateColorArray(color, count)
 					local filled = DefaultBoolean(section.filled, false)
 
-					frame = Engine.CreateAuraMonitor(name, enable, autohide, unit, spellID, filter, count, anchor, width, height, spacing, colors, filled, specs)
+					--frame = Engine.CreateAuraMonitor(name, enable, autohide, unit, spellID, filter, count, anchor, width, height, spacing, colors, filled, specs)
+					frame = CreateAuraMonitor(name, enable, autohide, unit, spellID, filter, count, anchor, width, height, colors, filled, specs)
 				else
 					WARNING("section:"..name..":"..(spellID and "" or " missing spellID")..(filter and "" or " missing filter")..(count and "" or " missing count")) -- TODO: locales
 				end
@@ -236,15 +229,14 @@ local function CreatePlugins()
 				local spellID = section.spellID
 				local filter = section.filter
 				local count = section.count
-				local autohide = DefaultBoolean(section.autohide, true)
 
 				if spellID and filter and count then
-					local spacing = section.spacing
+					--local spacing = section.spacing
 					local color = section.color or UI.ClassColor()
-						local text = DefaultBoolean(section.text, true)
-						local duration = DefaultBoolean(section.duration, false)
+					local text = DefaultBoolean(section.text, true)
+					local duration = DefaultBoolean(section.duration, false)
 
-					frame = Engine.CreateBarAuraMonitor(name, enable, autohide, unit, spellID, filter, count, anchor, width, height, color, text, duration, specs)
+					frame = CreateBarAuraMonitor(name, enable, autohide, unit, spellID, filter, count, anchor, width, height, color, text, duration, specs)
 				else
 					WARNING("section:"..name..":"..(spellID and "" or " missing spellID")..(filter and "" or " missing filter")..(count and "" or " missing count")) -- TODO: locales
 				end
@@ -253,41 +245,38 @@ local function CreatePlugins()
 				local colors = section.colors or (section.color and {section.color})
 				local latency = DefaultBoolean(section.latency, false)
 				local threshold = section.threshold or 0
-				local autohide = DefaultBoolean(section.autohide, true)
 
 				if spellID then
-					frame = Engine.CreateDotMonitor(name, enable, autohide, spellID, anchor, width, height, colors, threshold, latency, specs)
+					frame = CreateDotMonitor(name, enable, autohide, spellID, anchor, width, height, colors, threshold, latency, specs)
 				else
 					WARNING("section:"..name..":"..(spellID and "" or " missing spellID")) -- TODO: locales
 				end
 			elseif kind == "RUNES" then
 				local updatethreshold = section.updatethreshold or 0.1
-				local autohide = DefaultBoolean(section.autohide, false)
 				local orientation = section.orientation or "HORIZONTAL"
-				local spacing = section.spacing or 3
+				--local spacing = section.spacing or 3
 				local colors = section.colors
 				local runemap = section.runemap
 
 				if runemap and colors then
-					frame = Engine.CreateRunesMonitor(name, enable, updatethreshold, autohide, orientation, anchor, width, height, spacing, colors, runemap)
+					--frame = Engine.CreateRunesMonitor(name, enable, updatethreshold, autohide, orientation, anchor, width, height, spacing, colors, runemap)
+					frame = CreateRunesMonitor(name, enable, updatethreshold, autohide, orientation, anchor, width, height, colors, runemap)
 				else
 					WARNING("section:"..name..":"..(runemap and "" or " missing runemap")..(colors and "" or " missing colors")) -- TODO: locales
 				end
 			elseif kind == "ECLIPSE" then
 				local colors = section.colors
 				local text = DefaultBoolean(section.text, true)
-				local autohide = DefaultBoolean(section.autohide, false)
 
 				if colors then
-					frame = Engine.CreateEclipseMonitor(name, enable, autohide, text, anchor, width, height, colors)
+					frame = CreateEclipseMonitor(name, enable, autohide, text, anchor, width, height, colors)
 				else
 					WARNING("section:"..name..": missing colors") -- TODO: locales
 				end
-			elseif kind == "TOTEM" then
+			elseif kind == "TOTEMS" then
 				local count = section.count
-				local autohide = DefaultBoolean(section.autohide, false)
 				if count then
-					local spacing = section.spacing or 3
+					--local spacing = section.spacing or 3
 					local color = section.color or UI.ClassColor()
 					local colors = section.colors or CreateColorArray(color, count)
 					local text = DefaultBoolean(section.text, false)
@@ -295,41 +284,42 @@ local function CreatePlugins()
 					if map and #map ~= count then
 						WARNING("section:"..name..": map table's size <> count") -- TODO: locales
 					else
-						frame = Engine.CreateTotemMonitor(name, enable, autohide, count, anchor, width, height, spacing, colors, text, map, specs)
+						--frame = Engine.CreateTotemMonitor(name, enable, autohide, count, anchor, width, height, spacing, colors, text, map, specs)
+						frame = CreateTotemMonitor(name, enable, autohide, count, anchor, width, height, colors, text, map, specs)
 					end
 				else
 					WARNING("section:"..name..": missing count") -- TODO: locales
 				end
 			elseif kind == "BANDITSGUILE" then
-				local spacing = section.spacing or 3
+				--local spacing = section.spacing or 3
 				local color = section.color or UI.ClassColor()
 				local colors = section.colors or CreateColorArray(color, 3)
-				local autohide = DefaultBoolean(section.autohide, true)
 				local filled = DefaultBoolean(section.filled, false)
 
-				frame = Engine.CreateBanditsGuileMonitor(name, enable, autohide, anchor, width, height, spacing, colors, filled)
+				--frame = Engine.CreateBanditsGuileMonitor(name, enable, autohide, anchor, width, height, spacing, colors, filled)
+				frame = CreateBanditsGuileMonitor(name, enable, autohide, anchor, width, height, colors, filled)
 			elseif kind == "STAGGER" then
 				local threshold = section.threshold or 100
 				local text = DefaultBoolean(section.text, true)
-				local autohide = DefaultBoolean(section.autohide, true)
 				local colors = section.colors
 
 				if colors then
-					frame = Engine.CreateStaggerMonitor(name, enable, threshold, text, autohide, anchor, width, height, colors)
+					frame = CreateStaggerMonitor(name, enable, threshold, text, autohide, anchor, width, height, colors)
 				else
 					WARNING("section:"..name..":"..(colors or " missing colors")) -- TODO: locales
 				end
+			elseif kind == "TANKSHIELD" then
+				local color = section.color or UI.ClassColor()
+				local duration = DefaultBoolean(section.duration, false)
+
+				--frame = Engine.CreateTankShieldMonitor(name, enable, autohide, anchor, width, height, duration, color, specs)
+				frame = CreateTankShieldMonitor(name, enable, autohide, anchor, width, height, duration, color, specs)
 			else
 				WARNING("section:"..name..": invalid kind:"..kind) -- TODO: locales
 			end
 
 			-- WARNING if frame not created
 			if not frame then DEBUG("section:"..name.." frame not created") end-- DEBUG -- TODO: locales
-
-			-- Add multiple anchor handler
-			if anchors and frame then
-				SetMultipleAnchorHandler(frame, anchors)
-			end
 		else
 			WARNING((name and "" or " missing name")..(kind and "" or " missing kind")..(anchor and "" or " missing anchor")) -- TODO: locales
 		end
@@ -351,17 +341,26 @@ frame:SetScript("OnEvent", function(self, event, addon)
 			print(string.format(L.classmonitor_greetingnoconfig, tostring(version)))
 		end
 		print(string.format(L.classmonitor_help_use, SLASH_CLASSMONITOR1, SLASH_CLASSMONITOR2))
-
+		-- Merge config and saved variables
 		if not ClassMonitorDataPerChar then
 			ClassMonitorDataPerChar = {}
 		else
-			-- for k, v in pairs(ClassMonitorDataPerChar) do
-				-- print("SAVED VARIABLES:"..tostring(k))
-				-- __dump(v)
-			-- end
 			MergeConfig(settings, ClassMonitorDataPerChar)
 		end
+		-- Create plugins
 		CreatePlugins()
+
+		-- -- TEST
+		-- for width = 200, 300 do
+			-- for count = 3, 10 do
+				-- local w, s = Engine.PixelPerfect(width, count)
+				-- --print("PIXELPERFECT:"..tostring(width/count).."  "..tostring(width).."/"..tostring(count).." => "..tostring(w).."  "..tostring(s).."  "..tostring((w and s) and (w * count + s * (count-1)) or ""))
+				-- if not w or not s then
+					-- print("PROBLEM:"..tostring(width).."  "..tostring(count))
+				-- end
+			-- end
+		-- end
+
 	end
 end)
 

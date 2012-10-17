@@ -38,7 +38,7 @@ end
 
 UI.ClassColor = function(className)
 	local class = className or E.myclass
-	local color = RAID_CLASS_COLORS[E.myclass]
+	local color = RAID_CLASS_COLORS[class]
 	return ConvertColor(color)
 end
 
@@ -76,6 +76,7 @@ end
 
 UI.Move = function()
 	-- TODO: call /moveui
+	return true
 end
 
 -- Skin

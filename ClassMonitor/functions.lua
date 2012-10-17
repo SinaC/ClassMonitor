@@ -3,14 +3,33 @@ if not Engine.Enabled then return end
 
 -- functions used in multiple plugins
 
-Engine.FormatHealth = function(hp)
-	local out = ""
-	if hp >= 10000 then
-		out = floor(hp / 100) / 10 .. "k"
-	else
-		out = tostring(hp)
+Engine.PixelPerfect = function(totalWidth, count)
+	local width, spacing = math.floor(totalWidth/count) - (count-1), 1
+	while true do
+		local total = width * count + spacing * (count-1)
+		if total > totalWidth then
+			if width * count >= totalWidth then
+				assert(false, "Problem with PixelPerfect, unable to compute valid width/spacing totalWidth: "..tostring(totalWidth).."  count: "..tostring(count))
+				return nil --width, 1-- error
+			end
+			spacing = 1
+			width = width + 1
+		end
+		if total == totalWidth then
+			return width, spacing
+		end
+		spacing = spacing + 1
 	end
-	return out
+end
+
+Engine.FormatNumber = function(val)
+	if (val >= 1e6) then
+		return ("%.1fm"):format(val / 1e6)
+	elseif (val >= 1e3) then
+		return ("%.1fk"):format(val / 1e3)
+	else
+		return ("%d"):format(val)
+	end
 end
 
 Engine.ToClock = function(seconds)

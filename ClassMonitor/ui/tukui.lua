@@ -76,6 +76,7 @@ end
 
 UI.Move = function()
 	-- TODO: call /moveui
+	return true
 end
 
 -- Skin

@@ -1,6 +1,27 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
+	<Script file="init.lua"/>
+
 	<Script file="locales\english.lua"/>
 	<Script file="locales\french.lua"/>
+
+	<Script file="definitions\helpers.lua"/>
+	<Script file="definitions\default.lua"/>
+	<Script file="definitions\aura.lua"/>
+	<Script file="definitions\aurabar.lua"/>
+	<Script file="definitions\power.lua"/>
+	<Script file="definitions\combo.lua"/>
+	<Script file="definitions\resource.lua"/>
+	<Script file="definitions\health.lua"/>
+	<Script file="definitions\runes.lua"/>
+	<Script file="definitions\eclipse.lua"/>
+	<Script file="definitions\totems.lua"/>
+	<Script file="definitions\burningembers.lua"/>
+	<Script file="definitions\demonicfury.lua"/>
+	<Script file="definitions\dots.lua"/>
+	<Script file="definitions\energize.lua"/>
+	<Script file="definitions\banditsguile.lua"/>
+	<Script file="definitions\stagger.lua"/>
+	<Script file="definitions\tankshield.lua"/>
 
 	<Script file="helpers.lua"/>
 	<Script file="core.lua"/>

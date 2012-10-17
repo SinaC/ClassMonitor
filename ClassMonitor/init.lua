@@ -3,10 +3,10 @@ local ADDON_NAME, Engine = ...
 Engine.Locales = {}
 Engine.UI = {}
 
-if IsAddOnLoaded("ClassMonitor_ConfigUI") then
---print("ClassMonitor_ConfigUI loaded")
-	ClassMonitorUI = Engine.UI -- Makes UI accessible by ClassMonitor_ConfigUI
-end
+-- if IsAddOnLoaded("ClassMonitor_ConfigUI") then
+-- --print("ClassMonitor_ConfigUI loaded")
+	-- ClassMonitorUI = Engine.UI -- Makes UI accessible by ClassMonitor_ConfigUI
+-- end
 
 -- TODO
 -- [DONE]split Tukui/ElvUI/Blizzard code
@@ -19,4 +19,5 @@ end
 -- [DONE]autohide on each plugin
 -- optimize saved variables by removing entry equals to config one
 -- call /moveui in tukui and elvui
--- pixel perfect method callable by config (build a list with ideal width for 1->n bars/points and 1->n-1 spacing)
+-- [DONE]pixel perfect method callable by config (build a list with ideal width for 1->n bars/points and 1->n-1 spacing)
+-- new power kind: SPELL_POWER_BURNING_EMBERS and SPELL_POWER_DEMONIC_FURY, not included anymore in "POWER"

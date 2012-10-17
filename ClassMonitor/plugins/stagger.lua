@@ -6,7 +6,7 @@ local UI = Engine.UI
 local CheckSpec = Engine.CheckSpec
 
 -- TODO: OnUpdate
-local FormatHealth = Engine.FormatHealth
+local FormatNumber = Engine.FormatNumber
 
 local lightStagger = GetSpellInfo(124275)
 local moderateStagger = GetSpellInfo(124274)
@@ -67,7 +67,7 @@ Engine.CreateStaggerMonitor = function(name, enable, threshold, text, autohide, 
 				local staggerTotal = staggerTick * math.floor(duration)
 				local hp = math.floor(staggerTotal/UnitHealthMax("player") * 100)
 				if text == true then
-					cmSM.valueText:SetText(tostring(staggerTick).." - "..FormatHealth(staggerTotal).." ("..hp.."%)")
+					cmSM.valueText:SetText(tostring(staggerTick).." - "..FormatNumber(staggerTotal).." ("..hp.."%)")
 				end
 				if hp <= threshold then cmSM.status:SetValue(hp) else cmSM.status:SetValue(threshold) end
 				cmSM:Show()

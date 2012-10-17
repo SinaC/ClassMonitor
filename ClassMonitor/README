@@ -1,4 +1,13 @@
-3.3.0
+3.3.1
+IG config continued, edit panel done except anchor/colors
+Bug fixed in ElvUI skin and in Runes plugin
+Plugin with count doesn't specify point width+spacing anymore but total bar width (point width and spacing are computed dynamically)
+spec replaced with specs (table instead of value)
+anchors removed, only one anchor
+Tank shield plugin (more shield will come later)
+TOTEM kind renamed to TOTEMS
+
+3.3.0beta
 Basic config UI
 Shadow removed from from bar/points
 Bug fixed in Health plugin

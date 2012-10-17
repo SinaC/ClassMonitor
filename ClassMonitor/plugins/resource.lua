@@ -33,34 +33,34 @@ Engine.CreateResourceMonitor = function(name, enable, text, autohide, anchor, wi
 
 	cmResource.timeSinceLastUpdate = GetTime()
 	local function OnUpdate(self, elapsed)
-		cmResource.timeSinceLastUpdate = cmResource.timeSinceLastUpdate + elapsed
-		if cmResource.timeSinceLastUpdate > 0.2 then
+		self.timeSinceLastUpdate = self.timeSinceLastUpdate + elapsed
+		if self.timeSinceLastUpdate > 0.2 then
 			local value = UnitPower("player")
 --print("Value:"..value)
-			cmResource.status:SetValue(value)
+			self.status:SetValue(value)
 			if text == true then
 				local p = UnitPowerType("player")
 				if p == SPELL_POWER_MANA then
 					local valueMax = UnitPowerMax("player", p)
 					if value == valueMax then
 						if value > 10000 then
-							cmResource.valueText:SetFormattedText("%.1fk", value/1000)
+							self.valueText:SetFormattedText("%.1fk", value/1000)
 						else
-							cmResource.valueText:SetText(value)
+							self.valueText:SetText(value)
 						end
 					else
 						local percentage = (value * 100) / valueMax
 						if value > 10000 then
-							cmResource.valueText:SetFormattedText("%2d%% - %.1fk", percentage, value/1000 )
+							self.valueText:SetFormattedText("%2d%% - %.1fk", percentage, value/1000 )
 						else
-							cmResource.valueText:SetFormattedText("%2d%% - %u", percentage, value )
+							self.valueText:SetFormattedText("%2d%% - %u", percentage, value )
 						end
 					end
 				else
-					cmResource.valueText:SetText(value)
+					self.valueText:SetText(value)
 				end
 			end
-			cmResource.timeSinceLastUpdate = 0
+			self.timeSinceLastUpdate = 0
 		end
 	end
 
@@ -81,7 +81,7 @@ Engine.CreateResourceMonitor = function(name, enable, text, autohide, anchor, wi
 			end
 		end
 		if not CheckSpec(specs) or not visible then
-			cmResource:Hide()
+			self:Hide()
 			return
 		end
 
@@ -90,19 +90,19 @@ Engine.CreateResourceMonitor = function(name, enable, text, autohide, anchor, wi
 			local valueMax = UnitPowerMax("player", resource)
 			-- use colors[resourceName] if defined, else use default resource color or class color
 			local color = (colors and (colors[resourceName] or colors[1])) or PowerColor(resourceName) or ClassColor()
-			cmResource.status:SetStatusBarColor(unpack(color))
-			cmResource.status:SetMinMaxValues(0, valueMax)
-			cmResource:Show()
+			self.status:SetStatusBarColor(unpack(color))
+			self.status:SetMinMaxValues(0, valueMax)
+			self:Show()
 		end
 		-- if autohide == true then
 			-- if event == "PLAYER_REGEN_DISABLED" then
-				-- cmResource:Show()
+				-- self:Show()
 			-- elseif event == "UNIT_POWER" or event == "UNIT_DISPLAYPOWER" or event == "UNIT_MAXPOWER" then
 				-- if InCombatLockdown() then
-					-- cmResource:Show()
+					-- self:Show()
 				-- end
 			-- else
-				-- cmResource:Hide()
+				-- self:Hide()
 			-- end
 		-- end
 	end)
@@ -123,6 +123,6 @@ Engine.CreateResourceMonitor = function(name, enable, text, autohide, anchor, wi
 			cmResource:Show()
 		end
 	end
-	
+
 	return cmResource
 end

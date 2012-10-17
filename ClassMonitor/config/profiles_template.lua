@@ -10,13 +10,6 @@ local AddConfig = Engine.AddConfig
 
 if UI.MyName == "Meuhhnon" then
 	local mover = GetConfig("druid", "mover")
-	mover.anchor = nil
-	mover.anchors = {
-		{ "CENTER", UIParent, "CENTER", 0, -110 }, -- Balance
-		{ "CENTER", UIParent, "CENTER", 0, -220 }, -- Feral
-		{ "CENTER", UIParent, "CENTER", 0, -330 }, -- Guardian
-		{ "CENTER", UIParent, "CENTER", 0, -440 } -- Restoration
-	}
 	-- add 2 health frames, player below wild mushrooms and target above combo/eclipse
 	AddConfig("druid", 
 		{
@@ -46,6 +39,6 @@ end
 
 if UI.MyName == "Gargulqwas" then
 	GetConfig("druid", "resource").specs = {2, 3} -- resource only in cat/bear
-	GetConfig("druid", "combo").spec = 2 -- combo only in cat
+	GetConfig("druid", "combo").specs = {2} -- combo only in cat
 	GetConfig("druid", "eclipse").anchor = {unpack(GetConfig("druid", "resource").anchor)} -- eclipse at the same location than resource(already only visible in balance spec)
 end
