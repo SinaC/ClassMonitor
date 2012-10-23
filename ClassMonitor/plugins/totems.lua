@@ -7,7 +7,7 @@ local ToClock = Engine.ToClock
 local CheckSpec = Engine.CheckSpec
 local PixelPerfect = Engine.PixelPerfect
 
--- Generic method to create totem monitor
+-- Generic method to create totems/mushrooms monitor
 Engine.CreateTotemMonitor = function(name, enable, autohide, count, anchor, totalWidth, height, colors, text, map, specs)
 	local cmTotems = {}
 	local width, spacing = PixelPerfect(totalWidth, count)

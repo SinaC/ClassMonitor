@@ -11,13 +11,13 @@ Engine.UI = {}
 -- TODO
 -- [DONE]split Tukui/ElvUI/Blizzard code
 -- /clm reset
--- [DONE]paladin holy power a few pixel of mana  (pixel perfect problem vu le nbre de 'bubble' qui peut changer, 3, 4 ou 5)
+-- [DONE]paladin holy power a few pixel of mana
 -- [DONE]warlock embers a few pixel of mana
 -- [DONE]unit option on AURA
 -- disable old version Tukui_ClassMonitor and Tukui_ElvUI_ClassMonitor on ADDON_LOADED or PLAYER ENTERING_WORLD
 -- [DONE]move UI functions to Engine.UI or Private instead of Engine
 -- [DONE]autohide on each plugin
 -- optimize saved variables by removing entry equals to config one
--- call /moveui in tukui and elvui
+-- [TO TEST]call /moveui in tukui and elvui
 -- [DONE]pixel perfect method callable by config (build a list with ideal width for 1->n bars/points and 1->n-1 spacing)
--- new power kind: SPELL_POWER_BURNING_EMBERS and SPELL_POWER_DEMONIC_FURY, not included anymore in "POWER"
+-- [TO TEST]new power kind: SPELL_POWER_BURNING_EMBERS and SPELL_POWER_DEMONIC_FURY, not included anymore in "POWER"

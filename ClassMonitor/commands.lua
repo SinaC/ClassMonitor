@@ -25,7 +25,7 @@ end
 local function SlashHandlerConfig(args)
 	if InCombatLockdown() then print(ERR_NOT_IN_COMBAT) return end
 	if ClassMonitor_DisplayConfigFrame then
-		ClassMonitor_DisplayConfigFrame(UI, C) -- There is a lot of things I don't understand with memory management in LUA, this line adds 26Kb of memory usage
+		ClassMonitor_DisplayConfigFrame(UI, C, ClassMonitorDataPerChar) -- There is a lot of things I don't understand with memory management in LUA, this line adds 26Kb of memory usage
 	else
 		print(L.classmonitor_command_noconfigfound)
 	end

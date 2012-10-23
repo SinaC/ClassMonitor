@@ -23,6 +23,9 @@
 	<Script file="definitions\stagger.lua"/>
 	<Script file="definitions\tankshield.lua"/>
 
+	<Script file="tukuiAce3Skin.lua"/>
+
 	<Script file="helpers.lua"/>
 	<Script file="core.lua"/>
+	<!--<Script file="test.lua"/>-->
 </Ui>

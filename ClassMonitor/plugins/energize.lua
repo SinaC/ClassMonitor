@@ -3,6 +3,7 @@ local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
 local UI = Engine.UI
 
+-- Create a buff spell_energize monitor
 Engine.CreateEnergizeMonitor = function(name, enable, spelltracked, anchor, width, height, color, duration, filling)
 	local cmEnergize = CreateFrame("Frame", name, UI.BattlerHider)
 	cmEnergize:SetTemplate()

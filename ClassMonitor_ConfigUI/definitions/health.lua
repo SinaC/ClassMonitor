@@ -17,14 +17,15 @@ D["HEALTH"] = {
 	[10] = {
 		key = "text",
 		name = "Text",
-		description = "Display current value",
+		desc = "Display current health value",
 		type = "toggle",
-		default = true
+		get = D.Helpers.GetValue,
+		set = D.Helpers.SetValue,
 	},
 	-- [11] = {
 		-- key = "color",
 		-- name = "Color",
-		-- description = "Bar color",
+		-- desc = "Bar color",
 		-- type = "color",
 		-- --TODO: default = UI. default: should be class color
 	-- }

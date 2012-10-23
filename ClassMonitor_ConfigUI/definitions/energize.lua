@@ -13,31 +13,28 @@ D["ENERGIZE"] = {
 	[6] = D.Helpers.Width,
 	[7] = D.Helpers.Height,
 	[8] = D.Helpers.Specs, -- TODO: not yet used
-	[9] = {
-		key = "spellID",
-		name = "Spell ID",
-		description = "Dot spell ID to monitor",
-		type = "spell",
-	},
+	[9] = D.Helpers.SpellID,
 	[10] = {
 		key = "filling",
 		name = "Filling",
-		description = "Fill or empty bar",
+		desc = "Fill or empty bar",
 		type = "toggle",
-		default = false
+		get = D.Helpers.GetValue,
+		set = D.Helpers.SetValue,
 	},
-	[11] = { -- TODO: number but not a slider
+	[11] = {
 		key = "duration",
 		name = "Duration",
-		description = "Display time left",
-		type = "string",
-		readonly = true,
-		default = 1
+		desc = "Energize duration",
+		type = "input",
+		get = D.Helpers.GetValue,
+		set = D.Helpers.SetValue,
+		validate = D.Helpers.ValidateNumber,
 	},
 	-- [12] = {
 		-- key = "color",
 		-- name = "Color",
-		-- description = "Bar color",
+		-- desc = "Bar color",
 		-- type = "color",
 		-- --TODO: default = UI. default: should be class color
 	-- }

@@ -2,7 +2,6 @@ local ADDON_NAME, Engine = ...
 
 local L = Engine.Locales
 local D = Engine.Definitions
-local UI = Engine.UI
 
 D["AURA"] = {
 	[1] = D.Helpers.Name,
@@ -14,37 +13,36 @@ D["AURA"] = {
 	[7] = D.Helpers.Height,
 	[8] = D.Helpers.Specs,
 	[9] = D.Helpers.Unit,
-	[10] = {
-		key = "spellID",
-		name = "Spell ID",
-		description = "Spell ID to monitor",
-		type = "spell",
-	},
-	[11] = {
+	[10] = D.Helpers.SpellID,
+	[11] = D.Helpers.SpellIcon,
+	[12] = {
 		key = "filter",
 		name = "Filter",
-		description = "Helpful or harmful",
+		desc = "Helpful or harmful",
 		type = "select",
+		get = D.Helpers.GetValue,
+		set = D.Helpers.SetValue,
 		values = {
-			{ value = "HELPFUL", text = "Helpful" },
-			{ value = "HARMFUL", text = "Harmful" },
+			["HELPFUL"] = "Helpful",
+			["HARMFUL"] = "Harmful",
 		},
-		default = "HELPFUL",
-	},
-	[12] = {
-		key = "count",
-		name = "Count",
-		description = "Maximum charges count",
-		type = "number",
-		min = 1, max = 20, step = 1,
-		default = 3
 	},
 	[13] = {
+		key = "count",
+		name = "Count",
+		desc = "Maximum stack count",
+		type = "range",
+		min = 1, max = 20, step = 1,
+		get = D.Helpers.GetValue,
+		set = D.Helpers.SetValue,
+	},
+	[14] = {
 		key = "filled",
 		name = "Filled",
-		description = "Stack filled or not",
+		desc = "Stack filled or not",
 		type = "toggle",
-		default = false
+		get = D.Helpers.GetValue,
+		set = D.Helpers.SetValue,
 	},
 	-- TODO: colors
 }

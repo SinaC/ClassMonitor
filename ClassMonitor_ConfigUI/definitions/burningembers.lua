@@ -2,7 +2,6 @@ local ADDON_NAME, Engine = ...
 
 local L = Engine.Locales
 local D = Engine.Definitions
-local UI = Engine.UI
 
 -- TODO: split power
 D["BURNINGEMBERS"] = {

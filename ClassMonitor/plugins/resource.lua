@@ -7,6 +7,7 @@ local CheckSpec = Engine.CheckSpec
 local PowerColor = UI.PowerColor
 local ClassColor = UI.ClassColor
 
+-- Generic method to create a resource monitor (resource = default power)
 Engine.CreateResourceMonitor = function(name, enable, text, autohide, anchor, width, height, colors, specs)
 	local cmResource = CreateFrame("Frame", name, UI.BattlerHider)
 	cmResource:SetTemplate()

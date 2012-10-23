@@ -9,6 +9,7 @@ local shallowInsight = GetSpellInfo(84745)
 local moderateInsight = GetSpellInfo(84746)
 local deepInsight = GetSpellInfo(84747)
 
+-- Create Bandit's Guile monitor
 Engine.CreateBanditsGuileMonitor = function(name, enable, autohide, anchor, totalWidth, height, colors, filled)
 	local cmBanditsGuiles = {}
 	local count = 3

@@ -13,24 +13,25 @@ D["TOTEMS"] = {
 	[6] = D.Helpers.Width,
 	[7] = D.Helpers.Height,
 	[8] = D.Helpers.Specs,
-	[9] = D.Helpers.Unit,
-	[10] = {
+	[9] = {
 		key = "count",
 		name = "Count",
-		description = "Totem count",
+		desc = "Totem count",
 		type = "select",
 		values = {
-			{ value = 3, text = "Wild Mushrooms" },
-			{ value = 4, text = "Totems" },
+			[3] = "Wild Mushrooms (3)",
+			[4] = "Totems (4)",
 		},
-		default = 4
+		get = D.Helpers.GetValue,
+		set = D.Helpers.SetValue,
 	},
-	[11] = {
+	[10] = {
 		key = "text",
 		name = "Text",
-		description = "Display time left",
+		desc = "Display time left",
 		type = "toggle",
-		default = true
+		get = D.Helpers.GetValue,
+		set = D.Helpers.SetValue,
 	},
 	-- TODO: map
 	-- TODO: colors

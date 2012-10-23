@@ -6,6 +6,7 @@ local UI = Engine.UI
 local CheckSpec = Engine.CheckSpec
 local HealthColor = UI.HealthColor
 
+-- Create a health monitor
 Engine.CreateHealthMonitor = function(name, enable, unit, text, autohide, anchor, width, height, color, specs)
 	local cmHealth = CreateFrame("Frame", name, UI.BattlerHider)
 	cmHealth:SetTemplate()

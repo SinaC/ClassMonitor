@@ -5,6 +5,7 @@ local UI = Engine.UI
 
 local CheckSpec = Engine.CheckSpec
 
+-- Generic method to create a dot monitor
 Engine.CreateDotMonitor = function(name, enable, autohide, spelltracked, anchor, width, height, colors, threshold, latency, specs)
 --print("DOT:"..tostring(name))
 	local aura = GetSpellInfo(spelltracked)

@@ -6,7 +6,7 @@ local UI = Engine.UI
 local CheckSpec = Engine.CheckSpec
 local PixelPerfect = Engine.PixelPerfect
 
--- Generic method to create BUFF/DEBUFF monitor
+-- Generic method to create BUFF/DEBUFF stack monitor
 Engine.CreateAuraMonitor = function(name, enable, autohide, unit, spellID, filter, count, anchor, totalWidth, height, colors, filled, specs)
 	local aura = GetSpellInfo(spellID)
 	local cmAMs = {}

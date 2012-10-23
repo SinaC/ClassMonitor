@@ -5,6 +5,7 @@ local UI = Engine.UI
 
 local BorderColor = UI.BorderColor
 
+-- Create eclipse monitor
 Engine.CreateEclipseMonitor = function(name, enable, autohide, text, anchor, width, height, colors)
 	local cmEclipse = CreateFrame("Frame", name, UI.BattlerHider)
 	cmEclipse:SetTemplate()

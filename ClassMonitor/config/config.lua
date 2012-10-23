@@ -6,7 +6,7 @@ local L = Engine.Locales
 Engine.Config = {
 --[[
 	name = frame name (can be used in anchor)
-	kind = MOVER | RESOURCE(mana/runic/energy/focus/rage) | COMBO | POWER | AURA | RUNES | ECLIPSE | ENERGIZE | HEALTH  | DOT | TOTEMS | BANDITSGUILE | STAGGER | TANKSHIELD
+	kind = MOVER | RESOURCE(mana/runic/energy/focus/rage) | COMBO | POWER | AURA | RUNES | ECLIPSE | ENERGIZE | HEALTH  | DOT | TOTEMS | BANDITSGUILE | STAGGER | TANKSHIELD | BURNINGEMBERS | DEMONICFURY
 	enable = true|false												no need to explain [default: true] (plugin will be created but never displayed, this allow other plugin to anchor it. Temporary easy fix to handle this problem)
 
 	MOVER	create a mover in Tukui/ElvUI to be able to move bars via /moveui
@@ -26,17 +26,15 @@ Engine.Config = {
 	COMBO:
 	autohide = true|false											hide or not while out of combat [default: true]
 	anchor =														see note below
-	--width = number													width of combo point [default: 85]
 	width = number													bar total width (combo * count + spacing * count-1)
 	height = number													height of combo point [default: 15]
-	--spacing = number												space between combo points [default: 3]
 	color|colors =													see note below [default: class color]
 	filled = true|false												is combo point filled or not [default: false]
 	specs = 														see note below [default: any]
 
 	POWER (holy power/soul shard/light force, ...):
 	autohide = true|false											hide or not while out of combat [default: false]
-	powerType = SPELL_POWER_HOLY_POWER|SPELL_POWER_SOUL_SHARDS|SPELL_POWER_LIGHT_FORCE|SPELL_POWER_BURNING_EMBERS|SPELL_POWER_DEMONIC_FURY|SPELL_POWER_SHADOW_ORBS	power to monitor (can be any power type (http://www.wowwiki.com/PowerType)
+	powerType = SPELL_POWER_HOLY_POWER|SPELL_POWER_SOUL_SHARDS|SPELL_POWER_LIGHT_FORCE|SPELL_POWER_SHADOW_ORBS	power to monitor (can be any power type (http://www.wowwiki.com/PowerType) for SPELL_POWER_BURNING_EMBERS|SPELL_POWER_DEMONIC_FURY, use specific plugin
 	count = number													max number of points to display
 	anchor =														see note below
 	--width = number													width of power point [default: 85]
@@ -45,7 +43,7 @@ Engine.Config = {
 	--spacing = number												space between power points [default: 3]
 	color|colors =													see note below [default: class color]
 	filled = true|false												is power point filled or not [default: false]
-	specs = 														see note below [default: any], not available for SPELL_POWER_BURNING_EMBERS|SPELL_POWER_DEMONIC_FURY
+	specs = 														see note below [default: any]
 
 	AURA (buff/debuff):
 	autohide = true|false											hide or not while out of combat [default: true]
@@ -171,6 +169,25 @@ Engine.Config = {
 	duration = true|false											display time left in status bar [default:false]
 	specs = 														see note below [default: any]
 
+	BURNINGEMBERS:
+	autohide = true|false											hide or not while out of combat [default: false]
+	anchor =														see note below
+	--width = number													width of power point [default: 85]
+	width = number													bar total width (point * count + spacing * count-1)
+	height = number													height of power point [default: 15]
+	--spacing = number												space between power points [default: 3]
+	color|colors =													see note below [default: class color]
+	filled = true|false												is power point filled or not [default: false]
+
+	DEMONICFURY:
+	autohide = true|false											hide or not while out of combat [default: false]
+	anchor =														see note below
+	--width = number													width of power point [default: 85]
+	width = number													bar total width (point * count + spacing * count-1)
+	height = number													height of power point [default: 15]
+	color =															bar color [default: Tukui demonic fury power color)
+	text = true|false												display value and % [default:true]
+
 	Notes about anchor
 	anchor = { "POSITION", parent, "POSITION", offsetX, offsetY }
 
@@ -283,9 +300,9 @@ Engine.Config = {
 			filled = true,
 		},
 		{
-			name = "CM_TANKSHIELD",
+			name = "CM_SACREDSHIELD",
 			kind = "TANKSHIELD",
-			specs = {2}, -- Protection
+			--specs = {2}, -- Protection
 			anchor = { "TOPLEFT", "CM_MANA", "BOTTOMLEFT", 0, -3 },
 			width = 262,
 			height = 15,
@@ -323,31 +340,23 @@ Engine.Config = {
 			color = {255/255, 101/255, 101/255, 1},
 			filled = false,
 		},
-		{
+		{ -- Destruction
 			name = "CM_BURNING_EMBERS",
-			kind = "POWER",
-			specs = {SPEC_WARLOCK_DESTRUCTION},
-			powerType = SPELL_POWER_BURNING_EMBERS,
-			--count = 4,
+			kind = "BURNINGEMBERS",
 			anchor = { "BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3 },
 			width = 261,
 			height = 15,
-			--spacing = 3,
 			color = {222/255, 95/255,  95/255, 1},
 			filled = false,
 		},
-		{
+		{ -- Demonology
 			name = "CM_DEMONIC_FURY",
-			kind = "POWER",
-			specs = {SPEC_WARLOCK_DEMONOLOGY},
-			powerType = SPELL_POWER_DEMONIC_FURY,
-			--count = 1,
+			kind = "DEMONICFURY",
 			anchor = { "BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3 },
 			width = 261,
 			height = 15,
-			--spacing = 3,
 			color = {95/255, 222/255,  95/255, 1},
-			filled = false,
+			text = true,
 		},
 	},
 	["ROGUE"] = {
@@ -438,7 +447,7 @@ Engine.Config = {
 			powerType = SPELL_POWER_SHADOW_ORBS,
 			count = 3,
 			anchor = { "BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3 },
-			width = 85,
+			width = 261,
 			height = 15,
 			spacing = 3,
 			color = {0.5, 0, 0.7, 1},
@@ -575,28 +584,28 @@ Engine.Config = {
 			filled = true,
 		},
 		{
+			name = "CM_BLOODSHIELD",
+			kind = "TANKSHIELD",
+			--specs = {1}, -- Blood
+			anchor = { "TOPLEFT", "CM_RUNIC_POWER", "BOTTOMLEFT", 0, -3 },
+			width = 261,
+			height = 15,
+			duration = true,
+		},
+		{
 			name = "CM_BONESHIELD",
 			kind = "AURA",
 			specs = {1},
 			spellID = 49222, -- Bone shield
 			filter = "HELPFUL",
 			count = 6,
-			anchor = { "TOPLEFT", "CM_RUNIC_POWER", "BOTTOMLEFT", 0, -3 },
+			anchor = { "TOPLEFT", "CM_BLOODSHIELD", "BOTTOMLEFT", 0, -3 },
 			width = 261,
 			height = 15,
 			--spacing = 3,
 			color = { 0.33, 0.59, 0.33, 1 },
 			filled = true,
 		},
-		{
-			name = "CM_TANKSHIELD",
-			kind = "TANKSHIELD",
-			specs = {1}, -- Blood
-			anchor = { "TOPLEFT", "CM_BONESHIELD", "BOTTOMLEFT", 0, -3 },
-			width = 262,
-			height = 15,
-			duration = true,
-		}
 	},
 	["HUNTER"] = {
 		{
@@ -650,11 +659,11 @@ Engine.Config = {
 			height = 15,
 		},
 		{
-			name = "CM_TANKSHIELD",
+			name = "CM_SHIELDWALL",
 			kind = "TANKSHIELD",
-			specs = {3}, -- Protection
+			--specs = {3}, -- Protection
 			anchor = { "TOPLEFT", "CM_RAGE", "BOTTOMLEFT", 0, -3 },
-			width = 262,
+			width = 261,
 			height = 15,
 			duration = true,
 		}
@@ -761,6 +770,21 @@ Engine.Config = {
 			},
 			filled = false,
 		},
+		{ -- only available is Brewmaster spec
+			name = "CM_STAGGER",
+			kind = "STAGGER",
+			text = true,
+			autohide = true,
+			threshold = 20,
+			anchor = { "TOPLEFT", "CM_RESOURCE", "BOTTOMLEFT", 0, -3 },
+			width = 262,
+			height = 15,
+			colors = {
+				[1] = {0, .4, 0, 1},
+				[2] = {.7, .7, .2, 1},
+				[3] = {.9, .2, .2, 1},
+			},
+		},
 		{
 			name = "CM_MANATEA",
 			kind = "AURABAR",
@@ -796,32 +820,44 @@ Engine.Config = {
 			spellID = 128939, -- Elusive brew
 			filter = "HELPFUL",
 			count = 15,
-			anchor = { "TOPLEFT", "CM_RESOURCE", "BOTTOMLEFT", 0, -3 },
+			anchor = { "TOPLEFT", "CM_STAGGER", "BOTTOMLEFT", 0, -3 },
 			width = 262,
 			height = 15,
 			color = {0.5, 0.9, 0.7, 1},
 			text = true,
 			duration = true,
 		},
-		{ -- only available is Brewmaster spec
-			name = "CM_STAGGER",
-			kind = "STAGGER",
-			text = true,
-			autohide = true,
-			threshold = 20,
-			anchor = { "TOPLEFT", "CM_ELUSIVEBREW", "BOTTOMLEFT", 0, -3 },
-			width = 262,
-			height = 15,
-			colors = {
-				[1] = {0, .4, 0, 1},
-				[2] = {.7, .7, .2, 1},
-				[3] = {.9, .2, .2, 1},
-			},
-		},
+		-- {
+			-- name = "CM_ELUSIVEBREW",
+			-- kind = "AURABAR",
+			-- specs = {1}, -- Brewmaster
+			-- spellID = 128939, -- Elusive brew
+			-- filter = "HELPFUL",
+			-- count = 15,
+			-- anchor = { "TOPLEFT", "CM_RESOURCE", "BOTTOMLEFT", 0, -3 },
+			-- width = 129,
+			-- height = 15,
+			-- color = {0.5, 0.9, 0.7, 1},
+			-- text = true,
+			-- duration = true,
+		-- },
+		-- {
+			-- name = "CM_TIGERPOWER",
+			-- kind = "AURA",
+			-- spellID = 125359, -- Tiger Power
+			-- filter = "HELPFUL",
+			-- count = 3,
+			-- anchor = { "TOPLEFT", "CM_RESOURCE", "BOTTOMRIGHT", -129, -3 },
+			-- width = 129,
+			-- height = 15,
+			-- --spacing = 3,
+			-- color = {0.33, 0.63, 0.33, 1},
+			-- filled = false,
+		-- },
 		{
-			name = "CM_TANKSHIELD",
+			name = "CM_GUARD",
 			kind = "TANKSHIELD",
-			specs = {1}, -- Brewmaster
+			--specs = {1}, -- Brewmaster
 			anchor = { "TOPLEFT", "CM_ELUSIVEBREW", "BOTTOMLEFT", 0, -3 },
 			width = 262,
 			height = 15,

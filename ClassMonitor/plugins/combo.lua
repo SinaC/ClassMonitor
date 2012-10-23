@@ -6,6 +6,7 @@ local UI = Engine.UI
 local CheckSpec = Engine.CheckSpec
 local PixelPerfect = Engine.PixelPerfect
 
+-- Create combo points monitor
 Engine.CreateComboMonitor = function(name, enable, autohide, anchor, totalWidth, height, colors, filled, specs)
 	local count = 5
 	local width, spacing = PixelPerfect(totalWidth, count)

@@ -15,21 +15,23 @@ D["RUNES"] = {
 	[8] = {
 		key = "updatethreshold",
 		name = "Update Threshold",
-		description = "Threshold update value",
-		type = "number",
+		desc = "Time between 2 updates",
+		type = "range",
 		min = 0.1, max = 1, step = 0.1,
-		default = 0.1
+		get = D.Helpers.GetValue,
+		set = D.Helpers.SetValue,
 	},
 	[9] = {
 		key = "orientation",
 		name = "Orientation",
-		description = "Fill orientation",
+		desc = "Fill orientation",
 		type = "select",
 		values = {
-			{ value = "HORIZONTAL", text = "Horizontal" },
-			{ value = "VERTICAL", text = "Vertical" },
+			["HORIZONTAL"] = "Horizontal",
+			["VERTICAL"] = "Vertical",
 		},
-		default = "HORIZONTAL"
+		get = D.Helpers.GetValue,
+		set = D.Helpers.SetValue,
 	},
 	-- TODO: runemap
 	-- TODO: colors

@@ -75,7 +75,7 @@ UI.CreateMover = function(name, width, height, anchor, text)
 end
 
 UI.Move = function()
-	-- TODO: call /moveui
+	E:ToggleConfigMode() -- Call MoveUI from ElvUI
 	return true
 end
 

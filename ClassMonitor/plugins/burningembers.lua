@@ -5,6 +5,7 @@ local UI = Engine.UI
 
 local PixelPerfect = Engine.PixelPerfect
 
+-- Create Burning Embers monitor
 Engine.CreateBurningEmbersMonitor = function(name, enable, autohide, anchor, totalWidth, height, colors)
 	local cmBEMs = {}
 	local count = 4 -- max embers

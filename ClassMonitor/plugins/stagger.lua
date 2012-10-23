@@ -3,17 +3,19 @@ local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
 local UI = Engine.UI
 
-local CheckSpec = Engine.CheckSpec
+local _, _, _, toc = GetBuildInfo()
 
 -- TODO: OnUpdate
 local FormatNumber = Engine.FormatNumber
+local CheckSpec = Engine.CheckSpec
 
 local lightStagger = GetSpellInfo(124275)
 local moderateStagger = GetSpellInfo(124274)
 local heavyStagger = GetSpellInfo(124273)
 
--- Generic method to create STAGGER monitor
+-- Create a Stagger monitor
 Engine.CreateStaggerMonitor = function(name, enable, threshold, text, autohide, anchor, width, height, colors)
+--print("Engine.CreateStaggerMonitor")
 	local cmSM = CreateFrame("Frame", name, UI.BattlerHider)
 	cmSM:SetTemplate()
 	cmSM:SetFrameStrata("BACKGROUND")
@@ -53,19 +55,26 @@ Engine.CreateStaggerMonitor = function(name, enable, threshold, text, autohide, 
 			end
 		end
 		local found = false
-		if GetSpecialization() ~= 1 and visible then
+		if GetSpecialization() == 1 and visible then
 			local spellName, duration, value1, _
+if toc > 50001 then
+--print("PTR")
+			spellName, _, _, _, _, duration, _, _, _, _, _, _, _, _, value1 = UnitAura("player", lightStagger, "", "HARMFUL")
+			if (not spellName) then spellName, _, _, _, _, duration, _, _, _, _, _, _, _, _, value1 = UnitAura("player", moderateStagger, "", "HARMFUL") end
+			if (not spellName) then spellName, _, _, _, _, duration, _, _, _, _, _, _, _, _, value1 = UnitAura("player", heavyStagger, "", "HARMFUL") end
+else
 			spellName, _, _, _, _, duration, _, _, _, _, _, _, _, value1 = UnitAura("player", lightStagger, "", "HARMFUL")
 			if (not spellName) then spellName, _, _, _, _, duration, _, _, _, _, _, _, _, value1 = UnitAura("player", moderateStagger, "", "HARMFUL") end
 			if (not spellName) then spellName, _, _, _, _, duration, _, _, _, _, _, _, _, value1 = UnitAura("player", heavyStagger, "", "HARMFUL") end
-
-			if spellName and value1 > 0 and duration > 0 then
+end
+--print(tostring(toc).."  "..tostring(spellName).."=>"..tostring(name).."  "..tostring(duration).."  "..tostring(value1))
+			if spellName and value1 ~= nil and type(value1) == "number" and value1 > 0 and duration > 0 then
 				if spellName == lightStagger then cmSM.status:SetStatusBarColor(unpack(colors[1])) end
 				if spellName == moderateStagger then cmSM.status:SetStatusBarColor(unpack(colors[2])) end
 				if spellName == heavyStagger then cmSM.status:SetStatusBarColor(unpack(colors[3])) end
 				local staggerTick = value1
 				local staggerTotal = staggerTick * math.floor(duration)
-				local hp = math.floor(staggerTotal/UnitHealthMax("player") * 100)
+				local hp = math.ceil(100*staggerTotal/UnitHealthMax("player"))
 				if text == true then
 					cmSM.valueText:SetText(tostring(staggerTick).." - "..FormatNumber(staggerTotal).." ("..hp.."%)")
 				end

@@ -16,32 +16,35 @@ D["POWER"] = {
 	[9] = {
 		key = "powerType",
 		name = "Power Type",
-		description = "Power type",
+		desc = "Power type",
 		type = "select",
 		values = {
-			{ value = SPELL_POWER_HOLY_POWER, text = "Holy Power" },
-			{ value = SPELL_POWER_SOUL_SHARDS, text = "Soul Shards" },
-			{ value = SPELL_POWER_LIGHT_FORCE or 12, text = "Chi" }, -- TODO: Bug in 5.1
-			{ value = SPELL_POWER_SHADOW_ORBS, text = "Shadow Orbs" },
-			{ value = SPELL_POWER_BURNING_EMBERS, text = "Burning Embers" }, --   -count entry
-			{ value = SPELL_POWER_DEMONIC_FURY, text = "Demonic Fury" }, --   -count entry +text entry
+			[SPELL_POWER_HOLY_POWER] = "Holy Power",
+			[SPELL_POWER_SOUL_SHARDS] = "Soul Shards",
+			[SPELL_POWER_LIGHT_FORCE or 12] = "Chi", -- TODO: Bug in 5.1
+			[SPELL_POWER_SHADOW_ORBS] = "Shadow Orbs",
+			[SPELL_POWER_BURNING_EMBERS] = "Burning Embers", -- TODO: split POWER  -count entry
+			[SPELL_POWER_DEMONIC_FURY] = "Demonic Fury", -- TODO: split POWER  -count entry +text entry
 		},
-		default = SPELL_POWER_HOLY_POWER
+		get = D.Helpers.GetValue,
+		set = D.Helpers.SetValue,
 	},
 	[10] = {
 		key = "count",
 		name = "Count",
-		description = "Maximum power count",
-		type = "number",
+		desc = "Maximum power count",
+		type = "range",
 		min = 1, max = 20, step = 1,
-		default = 3
+		get = D.Helpers.GetValue,
+		set = D.Helpers.SetValue,
 	},
 	[11] = {
 		key = "filled",
 		name = "Filled",
-		description = "Power point filled or not",
+		desc = "Power point filled or not",
 		type = "toggle",
-		default = false
+		get = D.Helpers.GetValue,
+		set = D.Helpers.SetValue,
 	},
 	-- TODO: colors
 }

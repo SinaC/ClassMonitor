@@ -15,9 +15,10 @@ D["ECLIPSE"] = {
 	[8] = {
 		key = "text",
 		name = "Text",
-		description = "Display current value",
+		desc = "Display arrows to show eclipse direction",
 		type = "toggle",
-		default = true
+		get = D.Helpers.GetValue,
+		set = D.Helpers.SetValue,
 	},
 	-- TODO: colors  lunar and solar
 }

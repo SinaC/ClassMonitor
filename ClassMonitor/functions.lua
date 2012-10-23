@@ -50,7 +50,7 @@ end
 Engine.CheckSpec = function(specs)
 	local activeSpec = GetSpecialization()
 	for _, spec in pairs(specs) do
-		if spec == "any" or spec == activeSpec then
+		if spec == "any" or tostring(spec) == tostring(activeSpec) then
 			return true
 		end
 	end

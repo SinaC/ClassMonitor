@@ -15,17 +15,19 @@ D["STAGGER"] = {
 	[8] = {
 		key = "threshold",
 		name = "Threshold",
-		description = "Threshold",
-		type = "number",
-		min = 1, max = 100, step = 1,
-		default = 100
+		desc = "Above this percentage, health percentage is not displayed",
+		type = "range",
+		min = 1, max = 100, step = 1, -- isPercent = true,  isPercent implies values in range [0, 1]
+		get = D.Helpers.GetValue,
+		set = D.Helpers.SetValue,
 	},
 	[9] = {
 		key = "text",
 		name = "Text",
-		description = "Display current stagger value",
+		desc = "Display current stagger value",
 		type = "toggle",
-		default = true
+		get = D.Helpers.GetValue,
+		set = D.Helpers.SetValue,
 	},
 	-- TODO: colors
 }

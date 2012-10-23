@@ -2,7 +2,6 @@ local ADDON_NAME, Engine = ...
 
 local L = Engine.Locales
 local D = Engine.Definitions
-local UI = Engine.UI
 
 D["AURABAR"] = {
 	[1] = D.Helpers.Name,
@@ -14,49 +13,49 @@ D["AURABAR"] = {
 	[7] = D.Helpers.Height,
 	[8] = D.Helpers.Specs,
 	[9] = D.Helpers.Unit,
-	[10] = {
-		key = "spellID",
-		name = "Spell ID",
-		description = "Spell ID to monitor",
-		type = "string",
-	},
-	[11] = {
+	[10] = D.Helpers.SpellID,
+	[11] = D.Helpers.SpellIcon,
+	[12] = {
 		key = "filter",
 		name = "Filter",
-		description = "Helpful or harmful",
+		desc = "Helpful or harmful",
 		type = "select",
+		get = D.Helpers.GetValue,
+		set = D.Helpers.SetValue,
 		values = {
-			{ value = "HELPFUL", text = "Helpful" },
-			{ value = "HARMFUL", text = "Harmful" },
+			["HELPFUL"] = "Helpful",
+			["HARMFUL"] = "Harmful",
 		},
-		default = "HELPFUL",
-	},
-	[12] = {
-		key = "count",
-		name = "Count",
-		description = "Maximum charges count",
-		type = "number",
-		min = 1, max = 20, step = 1,
-		default = 3
 	},
 	[13] = {
-		key = "text",
-		name = "Text",
-		description = "Display current stack/maximum stack",
-		type = "toggle",
-		default = true
+		key = "count",
+		name = "Count",
+		desc = "Maximum stack count",
+		type = "range",
+		min = 1, max = 20, step = 1,
+		get = D.Helpers.GetValue,
+		set = D.Helpers.SetValue,
 	},
 	[14] = {
+		key = "text",
+		name = "Text",
+		desc = "Display current stack/maximum stack",
+		type = "toggle",
+		get = D.Helpers.GetValue,
+		set = D.Helpers.SetValue,
+	},
+	[15] = {
 		key = "duration",
 		name = "Duration",
-		description = "Display aura time left",
+		desc = "Display aura time left",
 		type = "toggle",
-		default = true
+		get = D.Helpers.GetValue,
+		set = D.Helpers.SetValue,
 	},
-	-- [15] = {
+	-- [16] = {
 		-- key = "color",
 		-- name = "Color",
-		-- description = "Bar color",
+		-- desc = "Bar color",
 		-- type = "color",
 		-- --TODO: default = UI. default: should be class color
 	-- }

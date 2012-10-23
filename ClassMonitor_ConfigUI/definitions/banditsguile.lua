@@ -2,7 +2,6 @@ local ADDON_NAME, Engine = ...
 
 local L = Engine.Locales
 local D = Engine.Definitions
-local UI = Engine.UI
 
 D["BANDITSGUILE"] = {
 	[1] = D.Helpers.Name,
@@ -15,9 +14,10 @@ D["BANDITSGUILE"] = {
 	[8] = {
 		key = "filled",
 		name = "Filled",
-		description = "Point filled or not",
+		desc = "Stack filled or not",
 		type = "toggle",
-		default = false
+		get = D.Helpers.GetValue,
+		set = D.Helpers.SetValue,
 	},
 	-- TODO: colors
 }

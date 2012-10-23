@@ -16,9 +16,10 @@ D["RESOURCE"] = {
 	[9] = {
 		key = "text",
 		name = "Text",
-		description = "Display current value",
+		desc = "Display current value",
 		type = "toggle",
-		default = true
+		get = D.Helpers.GetValue,
+		set = D.Helpers.SetValue,
 	},
 	-- TODO: colors (one entry by resource_type)
 }

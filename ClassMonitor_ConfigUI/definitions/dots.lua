@@ -13,26 +13,24 @@ D["DOT"] = {
 	[6] = D.Helpers.Width,
 	[7] = D.Helpers.Height,
 	[8] = D.Helpers.Specs,
-	[9] = {
-		key = "spellID",
-		name = "Spell ID",
-		description = "Dot spell ID to monitor",
-		type = "spell",
-	},
-	[10] = {
+	[9] = D.Helpers.SpellID,
+	[10] = D.Helpers.SpellIcon,
+	[11] = {
 		key = "latency",
 		name = "Latency",
-		description = "Latency",
+		desc = "See latency",
 		type = "toggle",
-		default = false
+		get = D.Helpers.GetValue,
+		set = D.Helpers.SetValue,
 	},
-	[11] = { -- TODO: number but not a slider
+	[12] = {
 		key = "threshold",
 		name = "Threshold",
-		description = "Threshold",
-		type = "string",
-		readonly = true,
-		default = 0
+		desc = "Threshold",
+		type = "input",
+		get = D.Helpers.GetValue,
+		set = D.Helpers.SetValue,
+		validate = ValidateNumber,
 	},
 	-- TODO: colors (3)
 }

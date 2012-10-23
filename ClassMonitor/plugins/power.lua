@@ -6,6 +6,7 @@ local UI = Engine.UI
 local CheckSpec = Engine.CheckSpec
 local PixelPerfect = Engine.PixelPerfect
 
+-- Generic method to create a power monitor
 Engine.CreatePowerMonitor = function(name, enable, autohide, powerType, count, anchor, totalWidth, height, colors, filled, specs)
 	local cmPMs = {}
 	local width, spacing = PixelPerfect(totalWidth, count)

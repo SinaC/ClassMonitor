@@ -1,11 +1,16 @@
-3.3.1
+3.3.2
 IG config continued, edit panel done except anchor/colors
-Bug fixed in ElvUI skin and in Runes plugin
+Bug fixed in ElvUI skin
 Plugin with count doesn't specify point width+spacing anymore but total bar width (point width and spacing are computed dynamically)
 spec replaced with specs (table instead of value)
 anchors removed, only one anchor
-Tank shield plugin (more shield will come later)
+Tank shield plugin (more shields will come later)
 TOTEM kind renamed to TOTEMS
+Demonic fury and burning embers config has been removed from power config
+Bug fixed in Runes and Stagger plugin
+
+3.3.1
+Bug fixed in Stagger plugin
 
 3.3.0beta
 Basic config UI

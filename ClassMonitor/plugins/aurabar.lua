@@ -6,7 +6,7 @@ local UI = Engine.UI
 local ToClock = Engine.ToClock
 local CheckSpec = Engine.CheckSpec
 
--- Generic method to create BUFF/DEBUFF monitor
+-- Generic method to create BUFF/DEBUFF bar monitor
 Engine.CreateBarAuraMonitor = function(name, enable, autohide, unit, spellID, filter, count, anchor, width, height, color, text, duration, specs)
 	local aura = GetSpellInfo(spellID)
 	local cmAM = CreateFrame("Frame", name, UI.BattlerHider)

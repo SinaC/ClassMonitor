@@ -16,9 +16,10 @@ D["DEMONICFURY"] = {
 	[8] = {
 		key = "text",
 		name = "Text",
-		description = "Display current demonic fury value",
+		desc = "Display current demonic fury value",
 		type = "toggle",
-		default = true
+		get = D.Helpers.GetValue,
+		set = D.Helpers.SetValue,
 	},
 	-- TODO: color
 }

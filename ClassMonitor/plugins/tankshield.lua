@@ -3,23 +3,27 @@ local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
 local UI = Engine.UI
 
+local _, _, _, toc = GetBuildInfo()
+
 local cfg = {
-	["WARRIOR"] = 112048, -- Shield Wall
-	["MONK"] = 115295, -- Guard
-	["DEATHKNIGHT"] = 77535, -- Blood Shield
-	["PALADIN"] = 65148, -- Sacred Shield
+	["WARRIOR"] = { spellID = 112048, specs = {3}}, -- Shield Wall
+	["MONK"] = { spellID = 115295, specs = {1} }, -- Guard
+	["DEATHKNIGHT"] = { spellID = 77535, specs = {1} }, -- Blood Shield
+	["PALADIN"] = { spellID = 65148, specs = {2}}, -- Sacred Shield
 }
 
-local _, class = UnitClass("player")
-if not cfg[class] then return end
-local spellName = GetSpellInfo(cfg[class])
+if not cfg[UI.MyClass] then return end
+local spellName = GetSpellInfo(cfg[UI.MyClass].spellID)
 if not spellName then return end
+local specs = cfg[UI.MyClass].specs
 
 local ToClock = Engine.ToClock
 local CheckSpec = Engine.CheckSpec
 
--- Method to create tank shield monitor
-Engine.CreateTankShieldMonitor = function(name, enable, autohide, anchor, width, height, text, color, specs)
+-- Create tank shield monitor
+--Engine.CreateTankShieldMonitor = function(name, enable, autohide, anchor, width, height, text, color, specs)
+Engine.CreateTankShieldMonitor = function(name, enable, autohide, anchor, width, height, text, color)
+--print("CreateTankShieldMonitor")
 	local cmTSM = CreateFrame("Frame", name, UI.BattlerHider)
 	cmTSM:SetTemplate()
 	cmTSM:SetFrameStrata("BACKGROUND")
@@ -50,6 +54,7 @@ Engine.CreateTankShieldMonitor = function(name, enable, autohide, anchor, width,
 
 	cmTSM.timeSinceLastUpdate = GetTime()
 	local function OnUpdate(self, elapsed)
+--print("CreateTankShieldMonitor:OnUpdate")
 		cmTSM.timeSinceLastUpdate = cmTSM.timeSinceLastUpdate + elapsed
 		if cmTSM.timeSinceLastUpdate > 0.2 then
 			local timeLeft = cmTSM.expirationTime - GetTime()
@@ -73,6 +78,7 @@ Engine.CreateTankShieldMonitor = function(name, enable, autohide, anchor, width,
 	cmTSM:RegisterUnitEvent("UNIT_AURA", "player")
 	cmTSM:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
 	cmTSM:SetScript("OnEvent", function(self, event)
+--print("CreateTankShieldMonitor:OnEvent:"..tostring(event))
 		local visible = true
 		if autohide == true then
 			if event == "PLAYER_REGEN_DISABLED" or InCombatLockdown() then
@@ -83,9 +89,14 @@ Engine.CreateTankShieldMonitor = function(name, enable, autohide, anchor, width,
 		end
 		local found = false
 		if CheckSpec(specs) and visible then
-			local name, _, _, _, _, duration, expirationTime, unitCaster, _, _, _, _, _, _, value1, value2, value3 = UnitBuff("player", spellName)
-			--print(tostring(spellName).."=>"..tostring(name).."  "..tostring(duration).."  "..tostring(expirationTime).."  "..tostring(unitCaster).."  "..tostring(value1).."  "..tostring(value2).."  "..tostring(value3))
-			if name == spellName and unitCaster == "player" and value1 ~= nil and value1 > 0 then
+			local name, duration, expirationTime, unitCaster, value1, _
+if toc > 50001 then
+			name, _, _, _, _, duration, expirationTime, unitCaster, _, _, _, _, _, _, value1 = UnitBuff("player", spellName) -- 5.1
+else
+			name, _, _, _, _, duration, expirationTime, unitCaster, _, _, _, _, _, value1 = UnitBuff("player", spellName) -- 5.0
+end
+--print(tostring(toc).."  "..tostring(spellName).."=>"..tostring(name).."  "..tostring(duration).."  "..tostring(expirationTime).."  "..tostring(unitCaster).."  "..tostring(value1))
+			if name == spellName and unitCaster == "player" and value1 ~= nil and type(value1) == "number" and value1 > 0 then
 				cmTSM.status:SetValue(duration)
 				cmTSM.status:SetMinMaxValues(0, duration)
 				cmTSM.valueText:SetText(tostring(value1))

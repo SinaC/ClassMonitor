@@ -6,7 +6,8 @@ local UI = Engine.UI
 local PowerColor = UI.PowerColor
 local ClassColor = UI.ClassColor
 
-Engine.CreateDemonicFuryMonitor = function(name, enable, text, autohide, anchor, width, height, colors)
+-- Create Demonic fury monitor
+Engine.CreateDemonicFuryMonitor = function(name, enable, text, autohide, anchor, width, height, color)
 	local cmDFM = CreateFrame("Frame", name, UI.BattlerHider)
 	cmDFM:SetTemplate()
 	cmDFM:SetFrameStrata("BACKGROUND")
@@ -72,8 +73,6 @@ Engine.CreateDemonicFuryMonitor = function(name, enable, text, autohide, anchor,
 
 		if event == "PLAYER_ENTERING_WORLD" or event == "UNIT_DISPLAYPOWER" or event == "UNIT_MAXPOWER" or event == "PLAYER_SPECIALIZATION_CHANGED" or event == "PLAYER_REGEN_DISABLED" then
 			local valueMax = UnitPowerMax("player", SPELL_POWER_DEMONIC_FURY)
-			-- use colors[SPELL_POWER_DEMONIC_FURY] if defined, else use default resource color or class color
-			local color = (colors and (colors[SPELL_POWER_DEMONIC_FURY] or colors[1])) or PowerColor(SPELL_POWER_DEMONIC_FURY) or ClassColor()
 			cmDFM.status:SetStatusBarColor(unpack(color))
 			cmDFM.status:SetMinMaxValues(0, valueMax)
 			cmDFM:Show()

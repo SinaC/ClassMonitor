@@ -2,7 +2,6 @@ local ADDON_NAME, Engine = ...
 
 local L = Engine.Locales
 local D = Engine.Definitions
-local UI = Engine.UI
 
 D["COMBO"] = {
 	[1] = D.Helpers.Name,
@@ -16,9 +15,10 @@ D["COMBO"] = {
 	[9] = {
 		key = "filled",
 		name = "Filled",
-		description = "Combo point filled or not",
+		desc = "Combo point filled or not",
 		type = "toggle",
-		default = false
+		get = D.Helpers.GetValue,
+		set = D.Helpers.SetValue,
 	},
 	-- TODO: colors
 }
