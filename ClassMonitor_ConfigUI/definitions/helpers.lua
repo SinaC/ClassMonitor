@@ -2,19 +2,11 @@ local _, Engine = ...
 
 local L = Engine.Locales
 local D = Engine.Definitions
+local G = Engine.Globals
+
+G.ConfigModified = false
 
 D.Helpers = {}
-
---
-StaticPopupDialogs["CLASSMONITOR_CONFIG_RL"] = {
-	text = "One or more of the changes you have made require a ReloadUI.", -- TODO: locales
-	button1 = ACCEPT,
-	button2 = CANCEL,
-	OnAccept = function() ReloadUI() end,
-	timeout = 0,
-	whileDead = 1,
-	hideOnEscape = false,
-}
 
 ----------------------------------------------------------------------------------------
 -- Create an Ace3 config from definition, add arg with keyName, sectionName, config, savedVariables and parent
@@ -68,6 +60,82 @@ D.Helpers.DeepCopy = function(object)
 end
 
 ----------------------------------------------------------------------------------------
+local function GetGlobalWidth(info)
+	-- MOVER is the reference
+	for _, section in pairs(info.arg.config) do
+		if section.name == "CM_MOVER" or section.kind == "MOVER" then
+			return section.width
+		end
+	end
+	assert(false, "No mover found to get global width")
+end
+
+local function SetGlobalWidth(info, value)
+	for _, section in pairs(info.arg.config) do
+		if section.width then
+			section.width = value
+			info.arg.saved[section.name] = info.arg.saved[section.name] or {}
+			info.arg.saved[section.name].width = value
+		end
+	end
+
+	-- something modified, -> /reloadui
+	--StaticPopup_Show("CLASSMONITOR_CONFIG_RL")
+	G.ConfigModified = true
+end
+
+function D.Helpers.CreateGlobalWidthOption(config, saved)
+	return {
+		name = "Setting width of every plugin",
+		desc = "Modifying this value will modify width of every plugin",
+		order = 1,
+		type = "range",
+		arg = {key = "width", config = config, saved = saved},
+		min = 80, max = 300, step = 1,
+		get = GetGlobalWidth,
+		set = SetGlobalWidth,
+	}
+end
+
+----------------------------------------------------------------------------------------
+local function GetGlobalHeight(info)
+	-- MOVER is the reference
+	for _, section in pairs(info.arg.config) do
+		if section.name == "CM_MOVER" or section.kind == "MOVER" then
+			return section.height
+		end
+	end
+	assert(false, "No mover found to get global height")
+end
+
+local function SetGlobalHeight(info, value)
+	for _, section in pairs(info.arg.config) do
+		if section.height then
+			section.height = value
+			info.arg.saved[section.name] = info.arg.saved[section.name] or {}
+			info.arg.saved[section.name].height = value
+		end
+	end
+
+	-- something modified, -> /reloadui
+	--StaticPopup_Show("CLASSMONITOR_CONFIG_RL")
+	G.ConfigModified = true
+end
+
+function D.Helpers.CreateGlobalHeightOption(config, saved)
+	return {
+		name = "Setting height of every plugin",
+		desc = "Modifying this value will modify height of every plugin",
+		order = 2,
+		type = "range",
+		arg = {key = "height", config = config, saved = saved},
+		min = 10, max = 50, step = 1,
+		get = GetGlobalHeight,
+		set = SetGlobalHeight,
+	}
+end
+
+----------------------------------------------------------------------------------------
 local function GetConfigSection(config, name)
 	for k, section in pairs(config) do
 		if section.name == name then
@@ -85,8 +153,10 @@ local function SaveValue(section, info, value)
 -- end
 	info.arg.saved[section.name] = info.arg.saved[section.name] or {}
 	info.arg.saved[section.name][info.arg.key] = value
+
 	-- something modified, -> /reloadui
-	StaticPopup_Show("CLASSMONITOR_CONFIG_RL")
+	--StaticPopup_Show("CLASSMONITOR_CONFIG_RL")
+	G.ConfigModified = true
 end
 
 D.Helpers.GetValue = function(info)

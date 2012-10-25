@@ -1,3 +1,9 @@
+1.0.3
+Global width/height option added
+LibStub/CallbackHandler were missing
+bug fixed in Tukui skin
+ReloadUI dialog box only shown when closing dialog box
+
 1.0.2
 Rewritten with Ace3Config
 
