@@ -5,6 +5,8 @@ local H = Engine.Helpers
 local D = Engine.Definitions
 local G = Engine.Globals
 
+local addonName = ADDON_NAME
+
 ----------------------------------------------------------------------------------------
 StaticPopupDialogs["CLASSMONITOR_CONFIG_RL"] = {
 	text = "One or more of the changes you have made require a ReloadUI.", -- TODO: locales
@@ -31,10 +33,23 @@ local function HookAce3OnHide(ACD)
 			-- G.ConfigModified = false
 		-- end
 	-- end)
+	--[[
 	if ACD.OpenFrames[ADDON_NAME].frame.ClassMonitor_ConfigUI_Hooked then return end
 --print("HookAce3OnHide:"..tostring(ACD.OpenFrames[ADDON_NAME].frame))
 	ACD.OpenFrames[ADDON_NAME].frame.ClassMonitor_ConfigUI_Hooked = true
 	ACD.OpenFrames[ADDON_NAME].frame:HookScript("OnHide", function(self)
+--print("OnHide:"..tostring(self).."  "..tostring(G.ConfigModified))
+		if G.ConfigModified == true then
+			StaticPopup_Show("CLASSMONITOR_CONFIG_RL")
+			G.ConfigModified = false
+		end
+	end)
+	--]]
+	if not ACD.OpenFrames[addonName] or not ACD.OpenFrames[addonName].frame then return end
+	if ACD.OpenFrames[addonName].frame.ClassMonitor_ConfigUI_Hooked then return end
+--print("HookAce3OnHide:"..tostring(ACD.OpenFrames[ADDON_NAME].frame))
+	ACD.OpenFrames[addonName].frame.ClassMonitor_ConfigUI_Hooked = true
+	ACD.OpenFrames[addonName].frame:HookScript("OnHide", function(self)
 --print("OnHide:"..tostring(self).."  "..tostring(G.ConfigModified))
 		if G.ConfigModified == true then
 			StaticPopup_Show("CLASSMONITOR_CONFIG_RL")
@@ -47,7 +62,7 @@ local function BuildAce3Options(config, saved)
 --print("BuildAce3Options:"..tostring(config).."  "..tostring(saved))
 	local options = {
 		type = "group",
-		guiInline = true,
+		--guiInline = true,
 		name = "Class Monitor",
 		args = {
 		},
@@ -78,6 +93,7 @@ if ElvUI then
 		E.Options.args.classmonitor = options -- insert options in ElvUI config panel
 		E:ToggleConfig()
 
+		addonName = "ElvUI"
 		local ACD = LibStub("AceConfigDialog-3.0")
 		ACD:SelectGroup("ElvUI", "classmonitor") -- try to select classmonitor node
 		HookAce3OnHide(ACD)
