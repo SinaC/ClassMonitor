@@ -2,23 +2,26 @@ local ADDON_NAME, Engine = ...
 
 local L = Engine.Locales
 local D = Engine.Definitions
-local UI = Engine.UI
+
+local Colors = D.Helpers.CreateColorsDefinition("colors", 2, {L.EclipseLunar, L.EclipseSolar} )
 
 D["ECLIPSE"] = {
 	[1] = D.Helpers.Name,
-	[2] = D.Helpers.Kind,
-	[3] = D.Helpers.Enable,
-	[4] = D.Helpers.Anchor,
+	[2] = D.Helpers.DisplayName,
+	[3] = D.Helpers.Kind,
+	[4] = D.Helpers.Enable,
 	[5] = D.Helpers.Autohide,
 	[6] = D.Helpers.Width,
 	[7] = D.Helpers.Height,
 	[8] = {
 		key = "text",
-		name = "Text",
-		desc = "Display arrows to show eclipse direction",
+		name = L.EclipseText,
+		desc = L.EclipseTextDesc,
 		type = "toggle",
 		get = D.Helpers.GetValue,
 		set = D.Helpers.SetValue,
+		disabled = D.Helpers.IsDisabled
 	},
-	-- TODO: colors  lunar and solar
+	[9] = Colors,
+	[10] = D.Helpers.Anchor,
 }

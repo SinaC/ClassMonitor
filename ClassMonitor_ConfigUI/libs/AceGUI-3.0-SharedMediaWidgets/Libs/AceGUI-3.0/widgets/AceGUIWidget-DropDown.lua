@@ -453,7 +453,6 @@ do
 		local pullout = AceGUI:Create("Dropdown-Pullout")
 		self.pullout = pullout
 		pullout.userdata.obj = self
-print("OnAcquire2:"..tostring(self))
 		pullout:SetCallback("OnClose", OnPulloutClose)
 		pullout:SetCallback("OnOpen", OnPulloutOpen)
 		self.pullout.frame:SetFrameLevel(self.frame:GetFrameLevel() + 1)

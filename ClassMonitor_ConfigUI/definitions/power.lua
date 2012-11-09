@@ -2,49 +2,55 @@ local ADDON_NAME, Engine = ...
 
 local L = Engine.Locales
 local D = Engine.Definitions
-local UI = Engine.UI
+
+local powerTypes = {
+	[SPELL_POWER_HOLY_POWER] = L.PowerValueHolyPower,
+	[SPELL_POWER_SOUL_SHARDS] = L.PowerValueSoulShards,
+	[SPELL_POWER_LIGHT_FORCE or 12] = L.PowerValueChi, -- TODO: Bug in 5.1
+	[SPELL_POWER_SHADOW_ORBS] = L.PowerValueShadowOrbs,
+}
+local function GetPowerTypes()
+	return powerTypes
+end
 
 D["POWER"] = {
 	[1] = D.Helpers.Name,
-	[2] = D.Helpers.Kind,
-	[3] = D.Helpers.Enable,
-	[4] = D.Helpers.Anchor,
+	[2] = D.Helpers.DisplayName,
+	[3] = D.Helpers.Kind,
+	[4] = D.Helpers.Enable,
 	[5] = D.Helpers.Autohide,
 	[6] = D.Helpers.Width,
 	[7] = D.Helpers.Height,
 	[8] = D.Helpers.Specs,
 	[9] = {
 		key = "powerType",
-		name = "Power Type",
-		desc = "Power type",
+		name = L.PowerType,
+		desc = L.PowerTypeDesc,
 		type = "select",
-		values = {
-			[SPELL_POWER_HOLY_POWER] = "Holy Power",
-			[SPELL_POWER_SOUL_SHARDS] = "Soul Shards",
-			[SPELL_POWER_LIGHT_FORCE or 12] = "Chi", -- TODO: Bug in 5.1
-			[SPELL_POWER_SHADOW_ORBS] = "Shadow Orbs",
-			[SPELL_POWER_BURNING_EMBERS] = "Burning Embers", -- TODO: split POWER  -count entry
-			[SPELL_POWER_DEMONIC_FURY] = "Demonic Fury", -- TODO: split POWER  -count entry +text entry
-		},
+		values = GetPowerTypes,
 		get = D.Helpers.GetValue,
 		set = D.Helpers.SetValue,
+		disabled = D.Helpers.IsDisabled
 	},
 	[10] = {
 		key = "count",
-		name = "Count",
-		desc = "Maximum power count",
+		name = L.PowerCount,
+		desc = L.PowerCountDesc,
 		type = "range",
 		min = 1, max = 20, step = 1,
 		get = D.Helpers.GetValue,
 		set = D.Helpers.SetValue,
+		disabled = D.Helpers.IsDisabled
 	},
 	[11] = {
 		key = "filled",
-		name = "Filled",
-		desc = "Power point filled or not",
+		name = L.Filled,
+		desc = L.PowerFilledDesc,
 		type = "toggle",
 		get = D.Helpers.GetValue,
 		set = D.Helpers.SetValue,
+		disabled = D.Helpers.IsDisabled
 	},
 	-- TODO: colors
+	[12] = D.Helpers.Anchor,
 }

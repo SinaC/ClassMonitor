@@ -6,7 +6,8 @@ local L = Engine.Locales
 Engine.Config = {
 --[[
 	name = frame name (can be used in anchor)
-	kind = MOVER | RESOURCE(mana/runic/energy/focus/rage) | COMBO | POWER | AURA | RUNES | ECLIPSE | ENERGIZE | HEALTH  | DOT | TOTEMS | BANDITSGUILE | STAGGER | TANKSHIELD | BURNINGEMBERS | DEMONICFURY
+	displayName = name displayed in config
+	kind = MOVER | RESOURCE | COMBO | POWER | AURA | RUNES | ECLIPSE | ENERGIZE | HEALTH  | DOT | TOTEMS | BANDITSGUILE | STAGGER | TANKSHIELD | BURNINGEMBERS | DEMONICFURY
 	enable = true|false												no need to explain [default: true] (plugin will be created but never displayed, this allow other plugin to anchor it. Temporary easy fix to handle this problem)
 
 	MOVER	create a mover in Tukui/ElvUI to be able to move bars via /moveui
@@ -17,9 +18,10 @@ Engine.Config = {
 	RESOURCE (mana/runic power/energy/focus/rage/chi):
 	text = true|false												display resource value (% for mana) [default: true]
 	autohide = true|false											hide or not while out of combat [default: false]
+	hideifmax = true|false											hide when current value = max value [default: false]
 	anchor 	=														see note below
 	width = number													width of resource bar [default: 85]
-	height = number													height of resource bar [default: 15]
+	height = number													height of resource bar [default: 16]
 	color|colors =													see note below [default: tukui power color]
 	specs = 														see note below [default: any]
 
@@ -27,7 +29,7 @@ Engine.Config = {
 	autohide = true|false											hide or not while out of combat [default: true]
 	anchor =														see note below
 	width = number													bar total width (combo * count + spacing * count-1)
-	height = number													height of combo point [default: 15]
+	height = number													height of combo point [default: 16]
 	color|colors =													see note below [default: class color]
 	filled = true|false												is combo point filled or not [default: false]
 	specs = 														see note below [default: any]
@@ -39,7 +41,7 @@ Engine.Config = {
 	anchor =														see note below
 	--width = number													width of power point [default: 85]
 	width = number													bar total width (point * count + spacing * count-1)
-	height = number													height of power point [default: 15]
+	height = number													height of power point [default: 16]
 	--spacing = number												space between power points [default: 3]
 	color|colors =													see note below [default: class color]
 	filled = true|false												is power point filled or not [default: false]
@@ -54,7 +56,7 @@ Engine.Config = {
 	anchor =														see note below
 	--width = number													width of buff stack or bar[default: 85]
 	width = number													bar total width (stack * count + spacing * count-1)
-	height = number													height of buff stack or bar [default: 15]
+	height = number													height of buff stack or bar [default: 16]
 	--spacing = number												space between buff stack if no bar[default: 3]
 	color|colors =													see note below [default: class color]
 	filled = true|false												is buff stack filled or not if no bar[default: false]
@@ -67,7 +69,7 @@ Engine.Config = {
 	count = number													max number of stack to display
 	anchor =														see note below
 	width = number													width of bar[default: 85]
-	height = number													height of bar [default: 15]
+	height = number													height of bar [default: 16]
 	color =															see note below [default: class color]
 	text = true|false												display current/max stack in status bar [default:true]
 	duration = true|false											display buff|debuff time left in status bar [default:false]
@@ -80,7 +82,7 @@ Engine.Config = {
 	anchor =														see note below
 	--width = number													width of rune [default: 85]
 	width = number													bar total width (rune * count + spacing * count-1)
-	height = number													height of rune [default: 15]
+	height = number													height of rune [default: 16]
 	--spacing = number												space between runes [default: 3]
 	colors = { blood, unholy, frost, death }						color of runes
 	runemap = { 1, 2, 3, 4, 5, 6 }									see instruction in DEATHKNIGHT section
@@ -90,7 +92,7 @@ Engine.Config = {
 	text = true|false												display eclipse direction [default: true]
 	anchor=															see note below
 	width = number													width of eclipse bar [default: 85]
-	height = number													height of eclipse bar [default: 15]
+	height = number													height of eclipse bar [default: 16]
 	colors = { lunar, solar }										color of lunar and solar bar
 
 	ENERGIZE
@@ -98,7 +100,7 @@ Engine.Config = {
 	text = true|false												display energize value (% for mana) [default: true]
 	autohide = true|false											hide or not while out of combat [default: false]
 	width = number													width of energize bar [default: 85]
-	height = number													height of energize bar [default: 15]
+	height = number													height of energize bar [default: 16]
 	color =															see note below [default: class color]
 
 	HEALTH
@@ -106,7 +108,7 @@ Engine.Config = {
 	anchor = 														see note below
 	autohide = true|false											hide or not while out of combat [default: true]
 	width = number													width of health bar [default: 85]
-	height = number													height of health bar [default: 15]
+	height = number													height of health bar [default: 16]
 	color =															see note below [default: class color]
 	specs = 														see note below [default: any]
 
@@ -114,7 +116,7 @@ Engine.Config = {
 	autohide = true|false											hide or not while out of combat [default: true]
 	anchor = 														see note below
 	width = number													width of dot bar [default: 85]
-	height = number													height of dot bar [default: 15]
+	height = number													height of dot bar [default: 16]
 	spellID = number												spell id of dot to monitor
 	latency = true|false											indicate latency on buff (usefull for ignite)
 	threshold = number or 0											threshold to work with colors [default: 0]
@@ -132,7 +134,7 @@ Engine.Config = {
 	anchor = 														see note below
 	--width = number													width of totem bar [default: 85]
 	width = number													bar total width (totem * count + spacing * count-1)
-	height = number													height of totem bar [default: 15]
+	height = number													height of totem bar [default: 16]
 	--spacing = number												spacing between each totems [default: 3]
 	count = number													number of totems (4 for shaman totems, 3 for druid mushrooms)
 	color|colors =													see note below [default: class color]
@@ -146,7 +148,7 @@ Engine.Config = {
 	anchor =														see note below
 	--width = number													width of bandit's guilde charge [default: 85]
 	width = number													bar total width (point * count + spacing * count-1)
-	height = number													height of bandit's guilde charge [default: 15]
+	height = number													height of bandit's guilde charge [default: 16]
 	--spacing = number												space between bandit's guilde charge [default: 3]
 	color|colors =													see note below [default: class color]
 	filled = true|false												is bandit's guilde charge filled or not [default: false]
@@ -155,7 +157,7 @@ Engine.Config = {
 	autohide = true|false											hide or not while out of combat [default: true]
 	anchor =														see note below
 	width = number													width of stagger bar [default: 85]
-	height = number													height of stagger bar [default: 15]
+	height = number													height of stagger bar [default: 16]
 	text = true|false												display value and % [default:true]
 	colors =														colors of 3 states (light, moderate and heavy)
 	threshold = number (%)											above this value, bar state is meaningless, below this value, bar state is meaningful [default: 100]
@@ -164,7 +166,7 @@ Engine.Config = {
 	autohide = true|false											hide or not while out of combat [default: true]
 	anchor =														see note below
 	width = number													width of bar[default: 85]
-	height = number													height of bar [default: 15]
+	height = number													height of bar [default: 16]
 	color =															see note below [default: class color]
 	duration = true|false											display time left in status bar [default:false]
 	specs = 														see note below [default: any]
@@ -174,7 +176,7 @@ Engine.Config = {
 	anchor =														see note below
 	--width = number													width of power point [default: 85]
 	width = number													bar total width (point * count + spacing * count-1)
-	height = number													height of power point [default: 15]
+	height = number													height of power point [default: 16]
 	--spacing = number												space between power points [default: 3]
 	color|colors =													see note below [default: class color]
 	filled = true|false												is power point filled or not [default: false]
@@ -184,7 +186,7 @@ Engine.Config = {
 	anchor =														see note below
 	--width = number													width of power point [default: 85]
 	width = number													bar total width (point * count + spacing * count-1)
-	height = number													height of power point [default: 15]
+	height = number													height of power point [default: 16]
 	color =															bar color [default: Tukui demonic fury power color)
 	text = true|false												display value and % [default:true]
 
@@ -205,27 +207,30 @@ Engine.Config = {
 	["DRUID"] = {
 		{ -- 1
 			name = "CM_MOVER",
+			displayName = "Mover",
 			kind = "MOVER",
 			anchor = { "CENTER", UIParent, "CENTER", 0, -140 },
 			width = 262,
-			height = 15,
+			height = 16,
 			text = L.classmonitor_move
 		},
 		{ -- 2
 			name = "CM_RESOURCE",
+			displayName = "Resource bar",
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchor = { "TOPLEFT", "CM_MOVER", 0, 0 },
+			anchor = { "TOPLEFT", "CM_MOVER", "TOPLEFT", 0, 0 },
 			width = 262,
-			height = 15,
+			height = 16,
 		},
 		{ -- 3
 			name = "CM_COMBO",
+			displayName = "Combo points",
 			kind = "COMBO",
 			anchor = { "BOTTOMLEFT", "CM_RESOURCE", "TOPLEFT", 0, 3 },
 			width = 262,
-			height = 15,
+			height = 16,
 			--spacing = 3,
 			colors = {
 				{0.69, 0.31, 0.31, 1}, -- 1
@@ -238,10 +243,11 @@ Engine.Config = {
 		},
 		{ -- 4
 			name = "CM_ECLIPSE",
+			displayName = "Eclipse bar",
 			kind = "ECLIPSE",
 			anchor = { "BOTTOMLEFT", "CM_RESOURCE", "TOPLEFT", 0, 3 },
 			width = 262,
-			height = 15,
+			height = 16,
 			text = true,
 			colors = {
 				{0.50, 0.52, 0.70, 1}, -- Lunar
@@ -250,12 +256,13 @@ Engine.Config = {
 		},
 		{ -- 5
 			name = "CM_WILDMUSHROOMS",
+			displayName = "Wild Mushrooms",
 			kind = "TOTEMS",
 			count = 3,
 			specs = {1, 4},
 			anchor = { "TOPLEFT", "CM_RESOURCE", "BOTTOMLEFT", 0, -3 },
 			width = 262,
-			height = 15,
+			height = 16,
 			--spacing = 3,
 			color = { 95/255, 222/255,  95/255, 1 },
 		},
@@ -263,10 +270,11 @@ Engine.Config = {
 	["PALADIN"] = {
 		{
 			name = "CM_MOVER",
+			displayName = "Mover",
 			kind = "MOVER",
 			anchor = { "CENTER", UIParent, "CENTER", 0, -140 },
 			width = 262,
-			height = 15,
+			height = 16,
 			text = L.classmonitor_move
 		},
 		--{
@@ -280,109 +288,120 @@ Engine.Config = {
 		--},
 		{
 			name = "CM_MANA",
+			displayName = "Mana bar",
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchor = { "TOPLEFT", "CM_MOVER", 0, 0 },
+			anchor = { "TOPLEFT", "CM_MOVER", "TOPLEFT", 0, 0 },
 			width = 262, -- 50 + 3 + 50 + 3 + 50 + 3 + 50 + 3 + 50
-			height = 15,
+			height = 16,
 		},
 		{
 			name = "CM_HOLYPOWER",
+			displayName = "Holy power bar",
 			kind = "POWER",
 			powerType = SPELL_POWER_HOLY_POWER,
 			count = 5,
 			anchor = { "BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3 },
 			width = 262,
-			height = 15,
+			height = 16,
 			--spacing = 3,
 			color = {228/255, 225/255, 16/255, 1},
 			filled = true,
 		},
 		{
 			name = "CM_SACREDSHIELD",
+			displayName = "Sacred shield",
 			kind = "TANKSHIELD",
 			--specs = {2}, -- Protection
 			anchor = { "TOPLEFT", "CM_MANA", "BOTTOMLEFT", 0, -3 },
 			width = 262,
-			height = 15,
+			height = 16,
 			duration = true,
 		}
 	},
 	["WARLOCK"] = {
 		{
 			name = "CM_MOVER",
+			displayName = "Mover",
 			kind = "MOVER",
 			anchor = { "CENTER", UIParent, "CENTER", 0, -140 },
 			width = 261,
-			height = 15,
+			height = 16,
 			text = L.classmonitor_move
 		},
 		{
 			name = "CM_MANA",
+			displayName = "Mana bar",
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchor = { "TOPLEFT", "CM_MOVER", 0, 0 },
+			anchor = { "TOPLEFT", "CM_MOVER", "TOPLEFT", 0, 0 },
 			width = 261,
-			height = 15,
+			height = 16,
 		},
 		{
 			name = "CM_SOUL_SHARD",
+			displayName = "Soul shards",
 			kind = "POWER",
 			specs = {SPEC_WARLOCK_AFFLICTION},
 			powerType = SPELL_POWER_SOUL_SHARDS,
 			count = 4,
 			anchor = { "BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3 },
 			width = 261,
-			height = 15,
+			height = 16,
 			--spacing = 3,
-			color = {255/255, 101/255, 101/255, 1},
+			color = {148/255, 130/255, 201/255, 1},
 			filled = false,
 		},
 		{ -- Destruction
 			name = "CM_BURNING_EMBERS",
+			displayName = "Burning embers",
 			kind = "BURNINGEMBERS",
 			anchor = { "BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3 },
 			width = 261,
-			height = 15,
-			color = {222/255, 95/255,  95/255, 1},
+			height = 16,
+			--color = {222/255, 95/255,  95/255, 1},
 			filled = false,
 		},
 		{ -- Demonology
 			name = "CM_DEMONIC_FURY",
+			displayName = "Demonic fury",
 			kind = "DEMONICFURY",
 			anchor = { "BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3 },
 			width = 261,
-			height = 15,
-			color = {95/255, 222/255,  95/255, 1},
+			height = 16,
+			--color = {95/255, 222/255,  95/255, 1},
 			text = true,
 		},
 	},
 	["ROGUE"] = {
 		{
 			name = "CM_MOVER",
+			displayName = "Mover",
 			kind = "MOVER",
 			anchor = { "CENTER", UIParent, "CENTER", 0, -140 },
 			width = 262,
-			height = 15,
+			height = 16,
 			text = L.classmonitor_move
 		},
 		{
 			name = "CM_ENERGY",
+			displayName = "Energy bar",
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchor = { "TOPLEFT", "CM_MOVER", 0, 0 },
+			anchor = { "TOPLEFT", "CM_MOVER", "TOPLEFT", 0, 0 },
 			width = 262,
-			height = 15,
+			height = 16,
 		},
 		{
 			name = "CM_COMBO",
+			displayName = "Combo points",
 			kind = "COMBO",
 			anchor = { "BOTTOMLEFT", "CM_ENERGY", "TOPLEFT", 0, 3 },
 			width = 262,
-			height = 15,
+			height = 16,
 			--spacing = 3,
 			colors = { 
 				{0.69, 0.31, 0.31, 1}, -- 1
@@ -396,28 +415,30 @@ Engine.Config = {
 		},
 		{
 			name = "CM_ANTICIPATION",
+			displayName = "Anticipation",
 			kind = "AURA",
 			spellID = 114015, -- Anticipation
 			filter = "HELPFUL",
 			count = 5,
 			anchor = { "BOTTOMLEFT", "CM_COMBO", "TOPLEFT", 0, 3 },
 			width = 262,
-			height = 15,
+			height = 16,
 			--spacing = 3,
 			color = {0.33, 0.63, 0.33, 1},
 			filled = false,
 		},
 		{
 			name = "CM_BANDITSGUILE",
+			displayName = "Bandit's Guile",
 			kind = "BANDITSGUILE",
 			anchor = { "TOPLEFT", "CM_ENERGY", "BOTTOMLEFT", 0, -3},
 			width = 262,
-			height = 15,
+			height = 16,
 			--spacing = 2,
 			colors = {
 				{0.33, 0.63, 0.33, 1}, -- shallow
 				{0.65, 0.63, 0.35, 1}, -- moderate
-				{0.69, 0.31, 0.31, 1}, -- Deep
+				{0.69, 0.31, 0.31, 1}, -- deep
 			},
 			filled = false,
 		},
@@ -425,66 +446,73 @@ Engine.Config = {
 	["PRIEST"] = {
 		{
 			name = "CM_MOVER",
+			displayName = "Mover",
 			kind = "MOVER",
 			anchor = { "CENTER", UIParent, "CENTER", 0, -140 },
 			width = 261,
-			height = 15,
+			height = 16,
 			text = L.classmonitor_move
 		},
 		{
 			name = "CM_MANA",
+			displayName = "Mana bar",
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchor = { "TOPLEFT", "CM_MOVER", 0, 0 },
+			anchor = { "TOPLEFT", "CM_MOVER", "TOPLEFT", 0, 0 },
 			width = 261,
-			height = 15,
+			height = 16,
 		},
 		{
 			name = "CM_SHADOW_ORBS",
+			displayName = "Shadow orbs",
 			kind = "POWER",
 			specs = {3}, -- Shadow
 			powerType = SPELL_POWER_SHADOW_ORBS,
 			count = 3,
 			anchor = { "BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3 },
 			width = 261,
-			height = 15,
+			height = 16,
 			spacing = 3,
-			color = {0.5, 0, 0.7, 1},
+			--color = {0.5, 0, 0.7, 1},
 			filled = false,
 		},
 		{
 			name = "CM_RAPTURE",
+			displayName = "Rapture ICD",
 			kind = "ENERGIZE",
 			specs = {1}, -- Discipline
 			spellID = 47755, -- Rapture
 			anchor = { "TOPLEFT", "CM_MANA", "BOTTOMLEFT", 0, -2 },
 			width = 261,
-			height = 3,
-			filling = false,
+			height = 16,
+			filling = true,
 			duration = 12,
 		},
 	},
 	["MAGE"] = {
 		{
 			name = "CM_MOVER",
+			displayName = "Mover",
 			kind = "MOVER",
 			anchor = { "CENTER", UIParent, "CENTER", 0, -140 },
 			width = 261,
-			height = 15,
+			height = 16,
 			text = L.classmonitor_move
 		},
 		{
 			name = "CM_MANA",
+			displayName = "Mana bar",
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchor = { "TOPLEFT", "CM_MOVER", 0, 0 },
+			anchor = { "TOPLEFT", "CM_MOVER", "TOPLEFT", 0, 0 },
 			width = 261,
-			height = 15,
+			height = 16,
 		},
 		{
 			name = "CM_ARCANE_BLAST",
+			displayName = "Arcane blast charges",
 			kind = "AURA",
 			specs = {1}, -- Arcane
 			spellID = 36032, -- Arcane blast
@@ -492,68 +520,79 @@ Engine.Config = {
 			count = 6,
 			anchor = { "BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3 },
 			width = 261,
-			height = 15,
+			height = 16,
 			--spacing = 3,
 			filled = false,
 			-- width = 261,
-			-- height = 15,
+			-- height = 16,
 			-- bar = true,
 			-- text = true,
 			-- duration = true,
 		},
 		{
 			name = "CM_IGNITE",
+			displayName = "Ignite dot",
 			kind = "DOT",
 			spellID = 12654, -- Ignite 
+			specs = {2}, -- Fire
 			anchor = { "BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3 },
 			width = 261,
-			height = 15,
+			height = 16,
 			colors = { 
 				{255/255, 165/255, 0, 1}, -- bad -- orange
 				{255/255, 255/255, 0, 1}, -- 0,75% -- yellow
 				{127/255, 255/255, 0, 1}, -- > 100% GO -- green
-				},
+			},
 			latency = true,
 			threshold = 20000,
 		},
 		{
 			name = "CM_COMBU",
+			displayName = "Combustion dot",
 			kind = "DOT",
 			spellID = 83853, -- Combustion
+			specs = {2}, -- Fire
 			anchor = { "TOPLEFT", "CM_MANA", "BOTTOMLEFT", 0, -3 },
 			width = 261,
-			height = 15,
-			color = {228/255, 225/255, 16/255, 1},
+			height = 16,
+			colors = {
+				{228/255, 225/255, 16/255, 1},
+				{228/255, 225/255, 16/255, 1},
+				{228/255, 225/255, 16/255, 1},
+			},
 			latency = false,
 		},
 	},
 	["DEATHKNIGHT"] = {
 		{
 			name = "CM_MOVER",
+			displayName = "Mover",
 			kind = "MOVER",
 			anchor = { "CENTER", UIParent, "CENTER", 0, -140 },
 			width = 261,
-			height = 15,
+			height = 16,
 			text = L.classmonitor_move
 		},
 		{
 			name = "CM_RUNIC_POWER",
+			displayName = "Runic power",
 			kind = "RESOURCE",
 			text = true,
 			autohide = true,
-			anchor = { "TOPLEFT", "CM_MOVER", 0, 0 },
+			anchor = { "TOPLEFT", "CM_MOVER", "TOPLEFT", 0, 0 },
 			width = 261,
-			height = 15,
+			height = 16,
 		},
 		{
 			name = "CM_RUNES",
+			displayName = "Runes",
 			kind = "RUNES",
 			updatethreshold = 0.1,
 			autohide = true,
 			orientation = "HORIZONTAL",
 			anchor = { "BOTTOMLEFT", "CM_RUNIC_POWER", "TOPLEFT", 0, 3 },
 			width = 261,
-			height = 15,
+			height = 16,
 			--spacing = 3,
 			colors = {
 				{ 0.69, 0.31, 0.31, 1 }, -- Blood
@@ -571,6 +610,7 @@ Engine.Config = {
 		},
 		{
 			name = "CM_SHADOW_INFUSION",
+			displayName = "Shadow infusion stacks",
 			kind = "AURA",
 			specs = {3},
 			spellID = 91342, -- Shadow infusion
@@ -578,22 +618,24 @@ Engine.Config = {
 			count = 5,
 			anchor = { "TOPLEFT", "CM_RUNIC_POWER", "BOTTOMLEFT", 0, -3 },
 			width = 261,
-			height = 15,
+			height = 16,
 			--spacing = 4,
 			color = { 0.33, 0.59, 0.33, 1 },
 			filled = true,
 		},
 		{
 			name = "CM_BLOODSHIELD",
+			displayName = "Blood shield",
 			kind = "TANKSHIELD",
 			--specs = {1}, -- Blood
 			anchor = { "TOPLEFT", "CM_RUNIC_POWER", "BOTTOMLEFT", 0, -3 },
 			width = 261,
-			height = 15,
+			height = 16,
 			duration = true,
 		},
 		{
 			name = "CM_BONESHIELD",
+			displayName = "Bone shield",
 			kind = "AURA",
 			specs = {1},
 			spellID = 49222, -- Bone shield
@@ -601,7 +643,7 @@ Engine.Config = {
 			count = 6,
 			anchor = { "TOPLEFT", "CM_BLOODSHIELD", "BOTTOMLEFT", 0, -3 },
 			width = 261,
-			height = 15,
+			height = 16,
 			--spacing = 3,
 			color = { 0.33, 0.59, 0.33, 1 },
 			filled = true,
@@ -610,23 +652,26 @@ Engine.Config = {
 	["HUNTER"] = {
 		{
 			name = "CM_MOVER",
+			displayName = "Mover",
 			kind = "MOVER",
 			anchor = { "CENTER", UIParent, "CENTER", 0, -140 },
 			width = 262,
-			height = 15,
+			height = 16,
 			text = L.classmonitor_move
 		},
 		{
 			name = "CM_FOCUS",
+			displayName = "Focus bar",
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchor = { "TOPLEFT", "CM_MOVER", 0, 0 },
+			anchor = { "TOPLEFT", "CM_MOVER", "TOPLEFT", 0, 0 },
 			width = 262,
-			height = 15,
+			height = 16,
 		},
 		{
 			name = "CM_FRENZY",
+			displayName = "Pet frenzy stacks",
 			unit = "pet",
 			kind = "AURA",
 			spellID = 19615, -- Frenzy
@@ -634,7 +679,7 @@ Engine.Config = {
 			count = 5,
 			anchor = { "TOPLEFT", "CM_FOCUS", "BOTTOMLEFT", 0, -3 },
 			width = 262,
-			height = 15,
+			height = 16,
 			--spacing = 3,
 			color = { 0.59, 0.63, 0.1, 1},
 			filled = true,
@@ -643,51 +688,57 @@ Engine.Config = {
 	["WARRIOR"] = {
 		{
 			name = "CM_MOVER",
+			displayName = "Mover",
 			kind = "MOVER",
 			anchor = { "CENTER", UIParent, "CENTER", 0, -140 },
 			width = 261,
-			height = 15,
+			height = 16,
 			text = L.classmonitor_move
 		},
 		{
 			name = "CM_RAGE",
+			displayName = "Rage bar",
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchor = { "TOPLEFT", "CM_MOVER", 0, 0 },
+			anchor = { "TOPLEFT", "CM_MOVER", "TOPLEFT", 0, 0 },
 			width = 261,
-			height = 15,
+			height = 16,
 		},
 		{
 			name = "CM_SHIELDWALL",
+			displayName = "Shield wall",
 			kind = "TANKSHIELD",
 			--specs = {3}, -- Protection
 			anchor = { "TOPLEFT", "CM_RAGE", "BOTTOMLEFT", 0, -3 },
 			width = 261,
-			height = 15,
+			height = 16,
 			duration = true,
 		}
 	},
 	["SHAMAN"] = {
 		{
 			name = "CM_MOVER",
+			displayName = "Mover",
 			kind = "MOVER",
 			anchor = { "CENTER", UIParent, "CENTER", 0, -140 },
 			width = 262,
-			height = 15,
+			height = 16,
 			text = L.classmonitor_move
 		},
 		{
 			name = "CM_MANA",
+			displayName = "Mana bar",
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchor = { "TOPLEFT", "CM_MOVER", 0, 0 },
+			anchor = { "TOPLEFT", "CM_MOVER", "TOPLEFT", 0, 0 },
 			width = 262,
-			height = 15,
+			height = 16,
 		},
 		{
 			name = "CM_FULMINATION",
+			displayName = "Fulmination stacks",
 			kind = "AURA",
 			specs = {1},  -- Elemental
 			spellID = 324, -- Fulmination
@@ -695,32 +746,34 @@ Engine.Config = {
 			count = 7,
 			anchor = { "BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3 },
 			width = 262,
-			height = 15,
+			height = 16,
 			--spacing = 4,
 			color = {0.5, 0, 0.7, 1},
 			filled = false,
 		},
 		{
-			name = "CM_MAELSTROMM",
+			name = "CM_MAELSTROM",
+			displayName = "Maelstrom weapon charges",
 			kind = "AURA",
 			specs = {2},  -- Enhancement
-			spellID = 53817, -- Maestrom
+			spellID = 53817, -- Maestrom weapon
 			filter = "HELPFUL",
 			count = 5,
 			anchor = { "BOTTOMLEFT", "CM_MANA", "TOPLEFT", 0, 3 },
 			width = 262,
-			height = 15,
+			height = 16,
 			--spacing = 3,
 			color = {0.5, 0, 0.7, 1},
 			filled = false,
 		},
 		{
 			name = "CM_TOTEMS",
+			displayName = "Totems",
 			kind = "TOTEMS",
 			count = 4,
 			anchor = { "TOPLEFT", "CM_MANA", "BOTTOMLEFT", 0, -3 },
 			width = 262,
-			height = 15,
+			height = 16,
 			--spacing = 2,
 			text = true,
 			colors = {
@@ -737,29 +790,32 @@ Engine.Config = {
 	["MONK"] = {
 		{
 			name = "CM_MOVER",
+			displayName = "Mover",
 			kind = "MOVER",
 			anchor = { "CENTER", UIParent, "CENTER", 0, -140 },
 			width = 262,
-			height = 15,
+			height = 16,
 			text = L.classmonitor_move
 		},
 		{
 			name = "CM_RESOURCE",
+			displayName = "Resource bar",
 			kind = "RESOURCE",
 			text = true,
 			autohide = false,
-			anchor = { "TOPLEFT", "CM_MOVER", 0, 0 },
+			anchor = { "TOPLEFT", "CM_MOVER", "TOPLEFT", 0, 0 },
 			width = 262,
-			height = 15,
+			height = 16,
 		},
 		{
 			name = "CM_CHI",
+			displayName = "Chi charges",
 			kind = "POWER",
 			powerType = SPELL_POWER_LIGHT_FORCE or 12, -- Bug in 5.1
 			count = 5,
 			anchor = { "BOTTOMLEFT", "CM_RESOURCE", "TOPLEFT", 0, 3 },
 			width = 262,
-			height = 15,
+			height = 16,
 			--spacing = 3,
 			colors = {
 				[1] = {.69, .31, .31, 1},
@@ -772,13 +828,14 @@ Engine.Config = {
 		},
 		{ -- only available is Brewmaster spec
 			name = "CM_STAGGER",
+			displayName = "Stagger bar",
 			kind = "STAGGER",
 			text = true,
 			autohide = true,
 			threshold = 20,
 			anchor = { "TOPLEFT", "CM_RESOURCE", "BOTTOMLEFT", 0, -3 },
 			width = 262,
-			height = 15,
+			height = 16,
 			colors = {
 				[1] = {0, .4, 0, 1},
 				[2] = {.7, .7, .2, 1},
@@ -787,6 +844,7 @@ Engine.Config = {
 		},
 		{
 			name = "CM_MANATEA",
+			displayName = "Manatea bar",
 			kind = "AURABAR",
 			specs = {2},  -- Mistweaver
 			spellID = 115867, -- Mana tea
@@ -794,13 +852,14 @@ Engine.Config = {
 			count = 20,
 			anchor = { "TOPLEFT", "CM_RESOURCE", "BOTTOMLEFT", 0, -3 },
 			width = 262,
-			height = 15,
+			height = 16,
 			color = {0.5, 0.9, 0.7, 1},
 			text = true,
 			duration = true,
 		},
 		{
 			name = "CM_TIGEREYEBREW",
+			displayName = "Tigereye brew bar",
 			kind = "AURABAR",
 			specs = {3}, -- Windwalker
 			spellID = 125195, -- Tigereye brew
@@ -808,13 +867,14 @@ Engine.Config = {
 			count = 10,
 			anchor = { "TOPLEFT", "CM_RESOURCE", "BOTTOMLEFT", 0, -3 },
 			width = 262,
-			height = 15,
+			height = 16,
 			color = {0.5, 0.9, 0.7, 1},
 			text = true,
 			duration = true,
 		},
 		{
 			name = "CM_ELUSIVEBREW",
+			displayName = "Elusive brew bar",
 			kind = "AURABAR",
 			specs = {1}, -- Brewmaster
 			spellID = 128939, -- Elusive brew
@@ -822,7 +882,7 @@ Engine.Config = {
 			count = 15,
 			anchor = { "TOPLEFT", "CM_STAGGER", "BOTTOMLEFT", 0, -3 },
 			width = 262,
-			height = 15,
+			height = 16,
 			color = {0.5, 0.9, 0.7, 1},
 			text = true,
 			duration = true,
@@ -836,7 +896,7 @@ Engine.Config = {
 			-- count = 15,
 			-- anchor = { "TOPLEFT", "CM_RESOURCE", "BOTTOMLEFT", 0, -3 },
 			-- width = 129,
-			-- height = 15,
+			-- height = 16,
 			-- color = {0.5, 0.9, 0.7, 1},
 			-- text = true,
 			-- duration = true,
@@ -849,18 +909,19 @@ Engine.Config = {
 			-- count = 3,
 			-- anchor = { "TOPLEFT", "CM_RESOURCE", "BOTTOMRIGHT", -129, -3 },
 			-- width = 129,
-			-- height = 15,
+			-- height = 16,
 			-- --spacing = 3,
 			-- color = {0.33, 0.63, 0.33, 1},
 			-- filled = false,
 		-- },
 		{
 			name = "CM_GUARD",
+			displayName = "Guard bar",
 			kind = "TANKSHIELD",
 			--specs = {1}, -- Brewmaster
 			anchor = { "TOPLEFT", "CM_ELUSIVEBREW", "BOTTOMLEFT", 0, -3 },
 			width = 262,
-			height = 15,
+			height = 16,
 			duration = true,
 		}
 	},

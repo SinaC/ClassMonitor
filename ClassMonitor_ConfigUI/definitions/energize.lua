@@ -2,40 +2,38 @@ local ADDON_NAME, Engine = ...
 
 local L = Engine.Locales
 local D = Engine.Definitions
-local UI = Engine.UI
+
+local Color = D.Helpers.CreateColorsDefinition("color", 1, {L.BarColor})
 
 D["ENERGIZE"] = {
 	[1] = D.Helpers.Name,
-	[2] = D.Helpers.Kind,
-	[3] = D.Helpers.Enable,
-	[4] = D.Helpers.Anchor,
+	[2] = D.Helpers.DisplayName,
+	[3] = D.Helpers.Kind,
+	[4] = D.Helpers.Enable,
 	[5] = D.Helpers.Autohide,
 	[6] = D.Helpers.Width,
 	[7] = D.Helpers.Height,
-	[8] = D.Helpers.Specs, -- TODO: not yet used
-	[9] = D.Helpers.SpellID,
+	[8] = D.Helpers.Specs,
+	[9] = D.Helpers.Spell,
 	[10] = {
 		key = "filling",
-		name = "Filling",
-		desc = "Fill or empty bar",
+		name = L.EnergizeFilling,
+		desc = L.EnergizeFillingDesc,
 		type = "toggle",
 		get = D.Helpers.GetValue,
 		set = D.Helpers.SetValue,
+		disabled = D.Helpers.IsDisabled
 	},
 	[11] = {
 		key = "duration",
-		name = "Duration",
-		desc = "Energize duration",
+		name = L.EnergizeDuration,
+		desc = L.EnergizeDurationDesc,
 		type = "input",
-		get = D.Helpers.GetValue,
-		set = D.Helpers.SetValue,
+		get = D.Helpers.GetNumberValue, --D.Helpers.GetValue,
+		set = D.Helpers.SetNumberValue, --D.Helpers.SetValue,
 		validate = D.Helpers.ValidateNumber,
+		disabled = D.Helpers.IsDisabled
 	},
-	-- [12] = {
-		-- key = "color",
-		-- name = "Color",
-		-- desc = "Bar color",
-		-- type = "color",
-		-- --TODO: default = UI. default: should be class color
-	-- }
+	[12] = Color,
+	[12] = D.Helpers.Anchor,
 }

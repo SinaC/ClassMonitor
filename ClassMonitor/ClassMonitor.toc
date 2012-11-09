@@ -1,11 +1,11 @@
 ## Interface: 50001
-## Version: 3.3.3a
+## Version: 3.4.0
 ## Author: SinaC
 ## Title: |cFF148587Class|r Monitor
 ## Credits: Smelly, Hydra, Krevlorne, Ildyria
-## Editors: Ildyria
 ## Notes: Class monitor compatible with Blizzard UI, Tukui and ElvUI
 ## OptionalDeps: Tukui, ElvUI, ClassMonitor_ConfigUI
+## SavedVariables: ClassMonitorData
 ## SavedVariablesPerCharacter: ClassMonitorDataPerChar
 
 ClassMonitor.xml

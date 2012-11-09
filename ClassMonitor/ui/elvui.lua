@@ -13,18 +13,18 @@ Engine.Enabled = true -- ElvUI found
 ------------
 local E, _, _, P, _, _ = unpack(ElvUI)
 
+local UF = E:GetModule("UnitFrames")
+
 UI.BorderColor = P.general.bordercolor
 UI.NormTex = E["media"].normTex
 UI.MyClass = E.myclass
 UI.MyName = E.myname
-UI.Font = E["media"].normFont
-UI.BlankTex = E["media"].blankTex
 
 -- Hider Secure (mostly used to hide stuff while in pet battle)  ripped from Tukui
 local petBattleHider = CreateFrame("Frame", "ElvUIClassMonitorPetBattleHider", UIParent, "SecureHandlerStateTemplate")
 petBattleHider:SetAllPoints(UIParent)
 RegisterStateDriver(petBattleHider, "visibility", "[petbattle] hide; show")
-UI.BattlerHider = petBattleHider
+UI.PetBattleHider = petBattleHider
 
 UI.SetFontString = function(parent, fontHeight, fontStyle)
 	local fs = parent:CreateFontString(nil, "OVERLAY")
@@ -43,7 +43,37 @@ UI.ClassColor = function(className)
 end
 
 UI.PowerColor = function(resourceName)
-	local color = P.unitframe.colors.power[resourceName]
+	local color = nil
+	if type(resourceName) == "number" then
+		if resourceName == SPELL_POWER_MANA then
+			color = UF.db.colors.power.MANA
+		elseif resourceName == SPELL_POWER_RAGE then
+			color = UF.db.colors.power.RAGE
+		elseif resourceName == SPELL_POWER_FOCUS then
+			color = UF.db.colors.power.FOCUS
+		elseif resourceName == SPELL_POWER_ENERGY then
+			color = UF.db.colors.power.ENERGY
+		--elseif resourceName == SPELL_POWER_RUNES then
+		elseif resourceName == SPELL_POWER_RUNIC_POWER then
+			color = UF.db.colors.power.RUNIC_POWER
+		elseif resourceName == SPELL_POWER_SOUL_SHARDS then
+			color = UF.db.colors.classResources.WARLOCK[1]
+		--elseif resourceName == SPELL_POWER_ECLIPSE then
+		elseif resourceName == SPELL_POWER_HOLY_POWER then
+			color = UF.db.colors.holyPower
+		--elseif resourceName == SPELL_POWER_LIGHT_FORCE then
+		elseif resourceName == SPELL_POWER_SHADOW_ORBS then 
+			color = UF.db.colors.classResources.PRIEST
+		elseif resourceName == SPELL_POWER_BURNING_EMBERS then 
+			color = UF.db.colors.classResources.WARLOCK[3]
+		elseif resourceName == SPELL_POWER_DEMONIC_FURY then
+			color = UF.db.colors.classResources.WARLOCK[2]
+		end
+	else
+		color = UF.db.colors.power[resourceName]
+	end
+--print("resourceName:"..tostring(resourceName).."  "..tostring(color and color.r).."  "..tostring(color and color.g).."  "..tostring(color and color.b))
+	--local color = E.db.unitframe.colors.power[resourceName]
 	if color then
 		return ConvertColor(color)
 	end
@@ -52,13 +82,13 @@ end
 UI.HealthColor = function(unit)
 	local color = {1, 1, 1, 1}
 	if UnitIsTapped(unit) and not UnitIsTappedByPlayer(unit) then
-		color = P.unitframe.colors.tapped
+		color = UF.db.colors.tapped
 	elseif not UnitIsConnected(unit) then
-		color = P.unitframe.colors.disconnected
+		color = UF.db.colors.disconnected
 	elseif UnitIsPlayer(unit) or (UnitPlayerControlled(unit) and not UnitIsPlayer(unit)) then
 		color = RAID_CLASS_COLORS[E.myclass]
 	elseif UnitReaction(unit, "player") then
-		color = P.unitframe.colors.reaction[UnitReaction(unit, "player")]
+		color = UF.db.colors.reaction[UnitReaction(unit, "player")]
 	end
 	return ConvertColor(color)
 end
@@ -77,31 +107,4 @@ end
 UI.Move = function()
 	E:ToggleConfigMode() -- Call MoveUI from ElvUI
 	return true
-end
-
--- Skin
-local S = E:GetModule('Skins')
-
-UI.SkinCheckBox = function(frame)
-	S:HandleCheckBox(frame)
-end
-
-UI.SkinSlideBar = function(btn, horizonal)
-	S:HandleSliderFrame(btn)
-end
-
-UI.SkinDropDownBox = function(frame, width)
-	S:HandleDropDownBox(frame)
-end
-
-UI.SkinNextPrevButton = function(frame)
-	S:HandleNextPrevButton(frame)
-end
-
-UI.SkinCloseButton = function(frame, point)
-	S:HandleCloseButton(frame)
-end
-
-UI.SkinScrollBar = function(frame)
-	S:HandleScrollBar(frame)
 end

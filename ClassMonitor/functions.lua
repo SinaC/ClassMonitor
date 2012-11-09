@@ -1,15 +1,33 @@
 local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
 
--- functions used in multiple plugins
+-- Create a color array from one color
+Engine.CreateColorArray = function(color, count)
+	if not color or not count then return end
+	local colors = { }
+	for i = 1, count, 1 do
+		tinsert(colors, color)
+	end
+	return colors
+end
 
+Engine.DefaultBoolean = function(value, default)
+	if value == nil then
+		return default
+	else
+		return value
+	end
+end
+
+-- Compute width and spacing for total width and count
+-- Don't want to solve a Diophantine equation, so we use a guess/try method =)
 Engine.PixelPerfect = function(totalWidth, count)
 	local width, spacing = math.floor(totalWidth/count) - (count-1), 1
 	while true do
 		local total = width * count + spacing * (count-1)
 		if total > totalWidth then
 			if width * count >= totalWidth then
-				assert(false, "Problem with PixelPerfect, unable to compute valid width/spacing totalWidth: "..tostring(totalWidth).."  count: "..tostring(count))
+				assert(false, "Problem with PixelPerfect, unable to compute valid width/spacing. totalWidth: "..tostring(totalWidth).."  count: "..tostring(count))
 				return nil --width, 1-- error
 			end
 			spacing = 1
@@ -23,9 +41,9 @@ Engine.PixelPerfect = function(totalWidth, count)
 end
 
 Engine.FormatNumber = function(val)
-	if (val >= 1e6) then
+	if val >= 1e6 then
 		return ("%.1fm"):format(val / 1e6)
-	elseif (val >= 1e3) then
+	elseif val >= 1e3 then
 		return ("%.1fk"):format(val / 1e3)
 	else
 		return ("%d"):format(val)
@@ -33,14 +51,16 @@ Engine.FormatNumber = function(val)
 end
 
 Engine.ToClock = function(seconds)
-	seconds = ceil(tonumber(seconds))
-	if seconds <= 0 then
+	local ceilSeconds = ceil(tonumber(seconds))
+	if ceilSeconds <= 0 then
 		return " "
-	elseif seconds < 600 then
-		local d, h, m, s = ChatFrame_TimeBreakDown(seconds)
+	elseif ceilSeconds < 10 then
+		return format("%.1f", seconds)
+	elseif ceilSeconds < 600 then
+		local _, _, m, s = ChatFrame_TimeBreakDown(ceilSeconds)
 		return format("%01d:%02d", m, s)
-	elseif seconds < 3600 then
-		local d, h, m, s = ChatFrame_TimeBreakDown(seconds)
+	elseif ceilSeconds < 3600 then
+		local _, _, m, s = ChatFrame_TimeBreakDown(ceilSeconds)
 		return format("%02d:%02d", m, s)
 	else
 		return "1 hr+"
@@ -97,4 +117,10 @@ Engine.DeepCopy = function(object)
 		return new_table
 	end
 	return _copy(object)
+end
+
+-- Check if PTR
+Engine.IsPTR = function()
+	local toc = select(4, GetBuildInfo())
+	return toc > 50001
 end

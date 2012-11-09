@@ -16,6 +16,8 @@
 	<Script file="config\config.lua"/>
 	<Script file="config\profiles.lua"/>
 
+	<Script file="plugin.lua"/>
+
 	<Script file="plugins\aura.lua"/>
 	<Script file="plugins\aurabar.lua"/>
 	<Script file="plugins\power.lua"/>
@@ -27,13 +29,18 @@
 	<Script file="plugins\totems.lua"/>
 	<Script file="plugins\burningembers.lua"/>
 	<Script file="plugins\demonicfury.lua"/>
-	<Script file="plugins\dots.lua"/>
+	<Script file="plugins\dot.lua"/>
 	<Script file="plugins\energize.lua"/>
 	<Script file="plugins\banditsguile.lua"/>
 	<Script file="plugins\stagger.lua"/>
 	<Script file="plugins\tankshield.lua"/>
+	<Script file="plugins\CD.lua"/>
+	<Script file="plugins\recharge.lua"/>
+	<Script file="plugins\rechargebar.lua"/>
+
+	<!--<Include file="test\test.xml"/> TEST on PTR -->
 
 	<Script file="core.lua"/>
 	<Script file="commands.lua"/>
-
+	<Script file="update.lua"/>
 </Ui>

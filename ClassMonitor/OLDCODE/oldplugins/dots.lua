@@ -10,7 +10,7 @@ Engine.CreateDotMonitor = function(name, enable, autohide, spelltracked, anchor,
 --print("DOT:"..tostring(name))
 	local aura = GetSpellInfo(spelltracked)
 
-	local cmDot = CreateFrame("Frame", name, UI.BattlerHider)
+	local cmDot = CreateFrame("Frame", name, UI.PetBattleHider)
 	cmDot:SetTemplate()
 	cmDot:SetFrameStrata("BACKGROUND")
 	cmDot:Size(width, height)
@@ -44,13 +44,13 @@ Engine.CreateDotMonitor = function(name, enable, autohide, spelltracked, anchor,
 				color = {1,0,0,1}
 			else
 				if(threshold == 0) then
-					color = (colors and (colors[1])) or T.UnitColor.class[T.myclass]
+					color = (colors and (colors[1])) or UI.ClassColor()
 				elseif(threshold >= cmDot.dmg) then
-					color = (colors and (colors[1])) or T.UnitColor.class[T.myclass]
+					color = (colors and (colors[1])) or UI.ClassColor()
 				elseif(threshold >= cmDot.dmg) then
-					color = (colors and (colors[2])) or T.UnitColor.class[T.myclass]
+					color = (colors and (colors[2])) or UI.ClassColor()
 				else
-					color = (colors and (colors[3])) or T.UnitColor.class[T.myclass]
+					color = (colors and (colors[3])) or UI.ClassColor()
 				end
 			end
 			cmDot.status:SetStatusBarColor(unpack(color))

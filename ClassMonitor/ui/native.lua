@@ -16,10 +16,7 @@ local backdropcolor = { .1,.1,.1 }
 local bordercolor = { .6,.6,.6 }
 local blank = [[Interface\AddOns\ClassMonitor\medias\textures\blank]]
 local normTex = [[Interface\AddOns\ClassMonitor\medias\textures\normTex]]
-local glowTex = [[Interface\AddOns\ClassMonitor\medias\textures\glowTex]]
-local normalFont = [=[Interface\Addons\ClassMonitor\medias\fonts\normal_font.ttf]=]
 local ufFont = [=[Interface\Addons\ClassMonitor\medias\fonts\uf_font.ttf]=]
-local pixelFont = [=[Interface\Addons\ClassMonitor\medias\fonts\pixel_font.ttf]=]
 
 local floor = math.floor
 local texture = blank
@@ -73,30 +70,11 @@ local function SetTemplate(f, t, tex)
 		tile = false, tileSize = 0, edgeSize = mult, 
 		insets = { left = -mult, right = -mult, top = -mult, bottom = -mult}
 	})
-	
+
 	if t == "Transparent" then backdropa = 0.8 else backdropa = 1 end
-	
+
 	f:SetBackdropColor(backdropr, backdropg, backdropb, backdropa)
 	f:SetBackdropBorderColor(borderr, borderg, borderb)
-end
-
-local function CreateShadow(f, t)
-	if f.shadow then return end
-
-	local shadow = CreateFrame("Frame", nil, f)
-	shadow:SetFrameLevel(1)
-	shadow:SetFrameStrata(f:GetFrameStrata())
-	shadow:Point("TOPLEFT", -3, 3)
-	shadow:Point("BOTTOMLEFT", -3, -3)
-	shadow:Point("TOPRIGHT", 3, 3)
-	shadow:Point("BOTTOMRIGHT", 3, -3)
-	shadow:SetBackdrop( { 
-		edgeFile = glowTex, edgeSize = Scale(3),
-		insets = {left = Scale(5), right = Scale(5), top = Scale(5), bottom = Scale(5)},
-	})
-	shadow:SetBackdropColor(0, 0, 0, 0)
-	shadow:SetBackdropBorderColor(0, 0, 0, 0.8)
-	f.shadow = shadow
 end
 
 local function Kill(object)
@@ -114,7 +92,6 @@ local function addapi(object)
 	if not object.Height then mt.Height = Height end
 	if not object.Point then mt.Point = Point end
 	if not object.SetTemplate then mt.SetTemplate = SetTemplate end
-	if not object.CreateShadow then mt.CreateShadow = CreateShadow end
 	if not object.Kill then mt.Kill = Kill end
 end
 
@@ -154,12 +131,10 @@ local ResourceColor = {
 
 --
 UI.BorderColor = bordercolor
-UI.BattlerHider = petBattleHider
+UI.PetBattleHider = petBattleHider
 UI.NormTex = normTex
 UI.MyClass = select(2, UnitClass("player"))
 UI.MyName = UnitName("player")
-UI.Font = ufFont
-UI.BlankTex = blank
 
 UI.SetFontString = function(parent, fontHeight, fontStyle)
 	local fs = parent:CreateFontString(nil, "OVERLAY")
@@ -254,229 +229,4 @@ UI.Move = function()
 	end
 	enable = not enable
 	return enable
-end
-
--- Skin
-local function dummy()
-end
-
-local function StripTextures(object, kill)
-	for i=1, object:GetNumRegions() do
-		local region = select(i, object:GetRegions())
-		if region:GetObjectType() == "Texture" then
-			if kill then
-				region:Kill()
-			else
-				region:SetTexture(nil)
-			end
-		end
-	end
-end
-
-local inset = 0
-local function CreateBackdrop(f, t, tex)
-	if f.backdrop then return end
-	if not t then t = "Default" end
-
-	local b = CreateFrame("Frame", nil, f)
-	b:Point("TOPLEFT", -2 + inset, 2 - inset)
-	b:Point("BOTTOMRIGHT", 2 - inset, -2 + inset)
-	b:SetTemplate(t, tex)
-
-	if f:GetFrameLevel() - 1 >= 0 then
-		b:SetFrameLevel(f:GetFrameLevel() - 1)
-	else
-		b:SetFrameLevel(0)
-	end
-	
-	f.backdrop = b
-end
-
-UI.SkinCheckBox = function(frame)
-	StripTextures(frame)
-	CreateBackdrop(frame, "Default")
-	Point(frame.backdrop, "TOPLEFT", 4, -4)
-	Point(frame.backdrop, "BOTTOMRIGHT", -4, 4)
-	
-	if frame.SetCheckedTexture then
-		frame:SetCheckedTexture("Interface\\Buttons\\UI-CheckBox-Check")
-	end
-	
-	if frame.SetDisabledCheckedTexture then
-		frame:SetDisabledCheckedTexture("Interface\\Buttons\\UI-CheckBox-Check-Disabled")
-	end
-	
-	-- why does the disabled texture is always displayed as checked ?
-	frame:HookScript('OnDisable', function(self)
-		if not self.SetDisabledTexture then return end
-		if self:GetChecked() then
-			self:SetDisabledTexture("Interface\\Buttons\\UI-CheckBox-Check-Disabled")
-		else
-			self:SetDisabledTexture("")
-		end
-	end)
-	
-	frame.SetNormalTexture = dummy
-	frame.SetPushedTexture = dummy
-	frame.SetHighlightTexture = dummy
-end
-
-UI.SkinSlideBar = function(frame, height, movetext)
-	frame:SetTemplate( "Default" )
-	frame:SetBackdropColor( 0, 0, 0, .8 )
-
-	if not height then
-		height = frame:GetHeight()
-	end
-
-	if movetext then
-		if(_G[frame:GetName() .. "Low"]) then _G[frame:GetName() .. "Low"]:Point("BOTTOM", 0, -18) end
-		if(_G[frame:GetName() .. "High"]) then _G[frame:GetName() .. "High"]:Point("BOTTOM", 0, -18) end
-		if(_G[frame:GetName() .. "Text"]) then _G[frame:GetName() .. "Text"]:Point("TOP", 0, 19) end
-	end
-
-	_G[frame:GetName()]:SetThumbTexture( [[Interface\AddOns\ClassMonitor\medias\textures\blank.tga]] )
-	_G[frame:GetName()]:GetThumbTexture():SetVertexColor(unpack( bordercolor))
-	if( frame:GetWidth() < frame:GetHeight() ) then
-		frame:Width(height)
-		_G[frame:GetName()]:GetThumbTexture():Size(frame:GetWidth(), frame:GetWidth() + 4)
-	else
-		frame:Height(height)
-		_G[frame:GetName()]:GetThumbTexture():Size(height + 4, height)
-	end
-end
-
-UI.SkinDropDownBox = function(frame, width)
-	local button = _G[frame:GetName().."Button"]
-	if not width then width = 155 end
-	
-	StripTextures(frame)
-	Width(frame, width)
-	
-	_G[frame:GetName().."Text"]:ClearAllPoints()
-	Point(_G[frame:GetName().."Text"], "RIGHT", button, "LEFT", -2, 0)
-
-	button:ClearAllPoints()
-	Point(button, "RIGHT", frame, "RIGHT", -10, 3)
-	button.SetPoint = T.dummy
-	
-	SkinNextPrevButton(button, true)
-	
-	CreateBackdrop(frame, "Default")
-	Point(frame.backdrop, "TOPLEFT", 20, -2)
-	Point(frame.backdrop, "BOTTOMRIGHT", button, "BOTTOMRIGHT", 2, -2)
-end
-
-
-UI.SkinNextPrevButton = function(btn, horizonal)
-	SetTemplate(btn, "Default")
-	Size(btn, btn:GetWidth() - 7, btn:GetHeight() - 7)	
-	
-	if horizonal then
-		btn:GetNormalTexture():SetTexCoord(0.3, 0.29, 0.3, 0.72, 0.65, 0.29, 0.65, 0.72)
-		btn:GetPushedTexture():SetTexCoord(0.3, 0.35, 0.3, 0.8, 0.65, 0.35, 0.65, 0.8)
-		btn:GetDisabledTexture():SetTexCoord(0.3, 0.29, 0.3, 0.75, 0.65, 0.29, 0.65, 0.75)	
-	else
-		btn:GetNormalTexture():SetTexCoord(0.3, 0.29, 0.3, 0.81, 0.65, 0.29, 0.65, 0.81)
-		if btn:GetPushedTexture() then
-			btn:GetPushedTexture():SetTexCoord(0.3, 0.35, 0.3, 0.81, 0.65, 0.35, 0.65, 0.81)
-		end
-		if btn:GetDisabledTexture() then
-			btn:GetDisabledTexture():SetTexCoord(0.3, 0.29, 0.3, 0.75, 0.65, 0.29, 0.65, 0.75)
-		end
-	end
-	
-	btn:GetNormalTexture():ClearAllPoints()
-	Point(btn:GetNormalTexture(), "TOPLEFT", 2, -2)
-	Point(btn:GetNormalTexture(), "BOTTOMRIGHT", -2, 2)
-	if btn:GetDisabledTexture() then
-		btn:GetDisabledTexture():SetAllPoints(btn:GetNormalTexture())
-	end
-	if btn:GetPushedTexture() then
-		btn:GetPushedTexture():SetAllPoints(btn:GetNormalTexture())
-	end
-	btn:GetHighlightTexture():SetTexture(1, 1, 1, 0.3)
-	btn:GetHighlightTexture():SetAllPoints(btn:GetNormalTexture())
-end
-
-UI.SkinCloseButton = function(frame, point)
-	if point then
-		Point(f, "TOPRIGHT", point, "TOPRIGHT", 2, 2)
-	end
-	
-	frame:SetNormalTexture("")
-	frame:SetPushedTexture("")
-	frame:SetHighlightTexture("")
-	frame:SetDisabledTexture("")
-
-	frame.t = frame:CreateFontString(nil, "OVERLAY")
-	frame.t:SetFont(pixelFont, 12, "MONOCHROMEOUTLINE")
-	frame.t:SetPoint("CENTER", 0, 1)
-	frame.t:SetText("x")
-end
-
-UI.SkinScrollBar = function(frame)
---print(frame:GetName())
-	if _G[frame:GetName().."BG"] then
-		_G[frame:GetName().."BG"]:SetTexture(nil)
-	end
-	if _G[frame:GetName().."Track"] then
-		_G[frame:GetName().."Track"]:SetTexture(nil)
-	end
-
-	if _G[frame:GetName().."Top"] then
-		_G[frame:GetName().."Top"]:SetTexture(nil)
-	end
-	
-	if _G[frame:GetName().."Bottom"] then
-		_G[frame:GetName().."Bottom"]:SetTexture(nil)
-	end
-	
-	if _G[frame:GetName().."Middle"] then
-		_G[frame:GetName().."Middle"]:SetTexture(nil)
-	end
-
-	if _G[frame:GetName().."ScrollUpButton"] and _G[frame:GetName().."ScrollDownButton"] then
-		StripTextures(_G[frame:GetName().."ScrollUpButton"])
-		SetTemplate(_G[frame:GetName().."ScrollUpButton"], "Default", true)
-		if not _G[frame:GetName().."ScrollUpButton"].texture then
-			_G[frame:GetName().."ScrollUpButton"].texture = _G[frame:GetName().."ScrollUpButton"]:CreateTexture(nil, "OVERLAY")
-			Point(_G[frame:GetName().."ScrollUpButton"].texture, "TOPLEFT", 2, -2)
-			Point(_G[frame:GetName().."ScrollUpButton"].texture, "BOTTOMRIGHT", -2, 2)
-			_G[frame:GetName().."ScrollUpButton"].texture:SetTexture([[Interface\AddOns\ClassMonitor\medias\textures\arrowup.tga]])
-			_G[frame:GetName().."ScrollUpButton"].texture:SetVertexColor(unpack(bordercolor))
-		end	
-		
-		StripTextures(_G[frame:GetName().."ScrollDownButton"])
-		SetTemplate(_G[frame:GetName().."ScrollDownButton"], "Default", true)
-
-		if not _G[frame:GetName().."ScrollDownButton"].texture then
-			_G[frame:GetName().."ScrollDownButton"].texture = _G[frame:GetName().."ScrollDownButton"]:CreateTexture(nil, "OVERLAY")
-			Point(_G[frame:GetName().."ScrollDownButton"].texture, "TOPLEFT", 2, -2)
-			Point(_G[frame:GetName().."ScrollDownButton"].texture, "BOTTOMRIGHT", -2, 2)
-			_G[frame:GetName().."ScrollDownButton"].texture:SetTexture([[Interface\AddOns\ClassMonitor\medias\textures\arrowdown.tga]])
-			_G[frame:GetName().."ScrollDownButton"].texture:SetVertexColor(unpack(bordercolor))
-		end				
-		
-		if not frame.trackbg then
-			frame.trackbg = CreateFrame("Frame", nil, frame)
-			Point(frame.trackbg, "TOPLEFT", _G[frame:GetName().."ScrollUpButton"], "BOTTOMLEFT", 0, -1)
-			Point(frame.trackbg, "BOTTOMRIGHT", _G[frame:GetName().."ScrollDownButton"], "TOPRIGHT", 0, 1)
-			SetTemplate(frame.trackbg, "Transparent")
-		end
-
-		if frame:GetThumbTexture() then
-			if not thumbTrim then thumbTrim = 3 end
-			frame:GetThumbTexture():SetTexture(nil)
-			if not frame.thumbbg then
-				frame.thumbbg = CreateFrame("Frame", nil, frame)
-				Point(frame.thumbbg, "TOPLEFT", frame:GetThumbTexture(), "TOPLEFT", 2, -thumbTrim)
-				Point(frame.thumbbg, "BOTTOMRIGHT", frame:GetThumbTexture(), "BOTTOMRIGHT", -2, thumbTrim)
-				SetTemplate(frame.thumbbg, "Default", true)
-				if frame.trackbg then
-					frame.thumbbg:SetFrameLevel(frame.trackbg:GetFrameLevel())
-				end
-			end
-		end
-	end
 end

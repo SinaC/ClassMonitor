@@ -14,12 +14,10 @@ Engine.Enabled = true -- Tukui found
 local T, C, _ = unpack(Tukui)
 
 UI.BorderColor = C.general.bordercolor
-UI.BattlerHider = TukuiPetBattleHider
+UI.PetBattleHider = TukuiPetBattleHider
 UI.NormTex = C["media"].normTex
 UI.MyClass = T.myclass
 UI.MyName = T.myname
-UI.Font = C["media"]["uffont"]
-UI.BlankTex = C["media"].blank
 
 UI.SetFontString = function(parent, fontHeight, fontStyle)
 	local fs = parent:CreateFontString(nil, "OVERLAY")
@@ -83,44 +81,4 @@ UI.Move = function()
 		-- T.MoveUnitFrames()
 	-- end
 	return true
-end
-
--- Skin
-UI.SkinCheckBox = function(frame)
-	frame:SkinCheckBox()
-end
-
-UI.SkinSlideBar = function(btn, horizonal)
-	btn:SkinSlideBar(horizontal)
-end
-
-UI.SkinDropDownBox = function(frame, width)
-	frame:SkinDropDownBox(width)
-end
-
-UI.SkinNextPrevButton = function(frame)
-	frame:SkinNextPrevButton()
-end
-
-UI.SkinCloseButton = function(frame, point)
-	frame:SkinCloseButton(point)
-end
-
-UI.SkinScrollBar = function(frame)
-	frame:SkinScrollBar()
-end
-
--- check old version
-local oldVersion = select(4, GetAddOnInfo("Tukui_ClassMonitor"))
-if oldVersion then
-	T.CreatePopup["CLASSMONITOR_DISABLEOLDVERSION"] = {
-		question = L.classmonitor_disableoldversion_tukui,
-		answer1 = ACCEPT,
-		answer2 = CANCEL,
-		function1 = function()
-			DisableAddOn("Tukui_ClassMonitor")
-			ReloadUI()
-		end,
-	}
-	T.ShowPopup("CLASSMONITOR_DISABLEOLDVERSION")
 end

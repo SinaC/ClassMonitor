@@ -6,12 +6,10 @@ Engine.Enabled = false -- true, once an UI has been found
 
 -- Variables
 UI.BorderColor = nil
-UI.BattlerHider = nil
+UI.PetBattleHider = nil
 UI.NormTex = nil
-UI.BlankTex = nil
 UI.MyClass = nil
 UI.MyName = nil
-UI.Font = nil
 
 -- Functions
 UI.SetFontString = function(parent, fontHeight, fontStyle)
@@ -35,30 +33,5 @@ UI.CreateMover = function(name, width, height, anchor, text)
 end
 
 UI.Move = function()
-	assert(false, "MUST BE OVERRIDEN IN UI COMPATIBLITY")
-end
-
--- Skin
-UI.SkinCheckBox = function(frame)
-	assert(false, "MUST BE OVERRIDEN IN UI COMPATIBLITY")
-end
-
-UI.SkinSlideBar = function(btn, horizonal)
-	assert(false, "MUST BE OVERRIDEN IN UI COMPATIBLITY")
-end
-
-UI.SkinDropDownBox = function(frame, width)
-	assert(false, "MUST BE OVERRIDEN IN UI COMPATIBLITY")
-end
-
-UI.SkinNextPrevButton = function(frame)
-	assert(false, "MUST BE OVERRIDEN IN UI COMPATIBLITY")
-end
-
-UI.SkinCloseButton = function(frame, point)
-	assert(false, "MUST BE OVERRIDEN IN UI COMPATIBLITY")
-end
-
-UI.SkinScrollBar = function(frame)
 	assert(false, "MUST BE OVERRIDEN IN UI COMPATIBLITY")
 end
