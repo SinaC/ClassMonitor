@@ -1,7 +1,7 @@
 local ADDON_NAME, Engine = ...
 local L = Engine.Locales
 
-L.classmonitor_outdated = "Your version of "..ADDON_NAME.." is out of date. You can download the latest version from http://www.curse.com/addons/wow/classmonitor"
+L.classmonitor_outdated = "Your version of "..tostring(ADDON_NAME).." is out of date. You can download the latest version from http://www.curse.com/addons/wow/classmonitor"
 L.classmonitor_move = "Move class monitor"
 L.classmonitor_disableoldversion_tukui = "Old version of Tukui_ClassMonitor detected. Disable it?"
 L.classmonitor_disableoldversion_elvui = "Old version of ElvUI_ClassMonitor detected. Disable it?"

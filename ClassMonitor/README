@@ -1,5 +1,5 @@
 3.4.0
-No more reloadUI when modifying options
+Plugins rewritten to allow on-the-fly settings modification without reloadUI (==>no more reloadUI when modifying options)
 Anchor added in config
 Code refactored
 Default height set to 16 (stupid workaround for multisampling and pixel perfect)
@@ -11,7 +11,6 @@ Use ElvUI colors when possible
 Bug fixed in DOT and ENERGIZE plugin
 hideifmax option added in RESOURCE plugin
 Default color for Demonic Fury and Burning Embers
-Plugins rewritten to allow on-the-fly settings modification without reloadUI
 SendAddonMessage added to check if a new version is available
 
 3.3.3b

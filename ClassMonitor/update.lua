@@ -6,19 +6,39 @@ if not Engine.Enabled then return end
 local L = Engine.Locales
 
 -- Communicate to other players through our AddOn
-local tonumber = tonumber
-local Version = tonumber(GetAddOnMetadata(ADDON_NAME, "Version"))
+local LocalVersion = GetAddOnMetadata(ADDON_NAME, "Version")
+local PlayerName = select(1, UnitName("player"))
+local MessagePrefix = "CMVersion"
 local SendAddonMessage = SendAddonMessage
-local playerName = select(1, UnitName("player"))
+
+local function SplitVersion(version)
+	local major, minor, build, revision = strsplit(".", version, 4)
+	return tonumber(major or 0), tonumber(minor or 0), tonumber(build or 0), tonumber(revision or 0)
+end
+
+local function CompareVersion(remoteVersion)
+	local major, minor, build, revision = SplitVersion(LocalVersion)
+	local remoteMajor, remoteMinor, remoteBuild, remoteRevision = SplitVersion(remoteVersion)
+
+	if remoteMajor > major then return 1
+	elseif remoteMajor < major then return -1
+	elseif remoteMinor > minor then return 1
+	elseif remoteMinor < minor then return -1
+	elseif remoteBuild > build then return 1
+	elseif remoteBuild < build then return -1
+	elseif remoteRevision > revision then return 1
+	elseif remoteRevision < revision then return -1
+	else return 0 end
+end
 
 --
-local CheckVersion = function(self, event, prefix, message, channel, sender)
+local function CheckVersion(self, event, prefix, message, channel, sender)
+--print("CheckVersion:"..tostring(event).."  "..tostring(prefix).."  "..tostring(message).."  "..tostring(channel).."  "..tostring(sender))
 	if event == "CHAT_MSG_ADDON" then
-		if (prefix ~= "ClassMonitorVersion") or (sender == playerName) then 
+		if (prefix ~= MessagePrefix) or (sender == PlayerName) then 
 			return
 		end
-		
-		if (tonumber(message) > Version) then -- We recieved a higher version, we're outdated. :(
+		if (CompareVersion(message) == 1 ) then -- We received a higher version, we're outdated. :(
 			print("|cffffff00"..L.classmonitor_outdated.."|r")
 			self:UnregisterEvent("CHAT_MSG_ADDON")
 		end
@@ -26,13 +46,13 @@ local CheckVersion = function(self, event, prefix, message, channel, sender)
 		-- Tell everyone what version we use.
 		local bg = UnitInBattleground("player")
 		if bg and bg > 0 then
-			SendAddonMessage("ClassMonitorVersion", Version, "BATTLEGROUND")
+			SendAddonMessage(MessagePrefix, LocalVersion, "BATTLEGROUND")
 		elseif UnitInRaid("player") then
-			SendAddonMessage("ClassMonitorVersion", Version, "RAID") 
+			SendAddonMessage(MessagePrefix, LocalVersion, "RAID") 
 		elseif UnitInParty("player") then
-			SendAddonMessage("ClassMonitorVersion", Version, "PARTY")
+			SendAddonMessage(MessagePrefix, LocalVersion, "PARTY")
 		elseif IsInGuild() then
-			SendAddonMessage("ClassMonitorVersion", Version, "GUILD")
+			SendAddonMessage(MessagePrefix, LocalVersion, "GUILD")
 		end
 	end
 end
@@ -43,4 +63,4 @@ ClassMonitorVersionFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
 ClassMonitorVersionFrame:RegisterEvent("CHAT_MSG_ADDON")
 ClassMonitorVersionFrame:SetScript("OnEvent", CheckVersion)
 
-RegisterAddonMessagePrefix("ClassMonitorVersion")
+RegisterAddonMessagePrefix(MessagePrefix)
