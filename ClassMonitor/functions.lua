@@ -20,8 +20,9 @@ Engine.DefaultBoolean = function(value, default)
 end
 
 -- Compute width and spacing for total width and count
--- Don't want to solve a Diophantine equation, so we use a guess/try method =)
+-- Don't want to solve a Diophantine equation, so we use a dumb guess/try method =)
 Engine.PixelPerfect = function(totalWidth, count)
+	if count == 1 then return totalWidth, 0 end
 	local width, spacing = math.floor(totalWidth/count) - (count-1), 1
 	while true do
 		local total = width * count + spacing * (count-1)

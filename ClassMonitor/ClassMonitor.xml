@@ -38,9 +38,9 @@
 	<Script file="plugins\recharge.lua"/>
 	<Script file="plugins\rechargebar.lua"/>
 
-	<!--<Include file="test\test.xml"/> TEST on PTR -->
-
 	<Script file="core.lua"/>
 	<Script file="commands.lua"/>
 	<Script file="update.lua"/>
+
+	<Include file="test\test.xml"/>
 </Ui>

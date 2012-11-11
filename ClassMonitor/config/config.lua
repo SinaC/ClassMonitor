@@ -9,6 +9,8 @@ Engine.Config = {
 	displayName = name displayed in config
 	kind = MOVER | RESOURCE | COMBO | POWER | AURA | RUNES | ECLIPSE | ENERGIZE | HEALTH  | DOT | TOTEMS | BANDITSGUILE | STAGGER | TANKSHIELD | BURNINGEMBERS | DEMONICFURY
 	enable = true|false												no need to explain [default: true] (plugin will be created but never displayed, this allow other plugin to anchor it. Temporary easy fix to handle this problem)
+	verticalIndex = number (-100->100)								in automatic anchor mode, these indices are used to order frames vertically (frame with index 0 is anchored on mover)
+	horizontalIndex = number (0->9)									in autoanchor mode, if 2 frames have similar verticalIndex, these indices are used to order frames horizontally (if both horizontal and vertical are identical, frames are overlapped)
 
 	MOVER	create a mover in Tukui/ElvUI to be able to move bars via /moveui
 	text = string													text to display in config mode
@@ -223,6 +225,7 @@ Engine.Config = {
 			anchor = { "TOPLEFT", "CM_MOVER", "TOPLEFT", 0, 0 },
 			width = 262,
 			height = 16,
+			verticalIndex = 0,
 		},
 		{ -- 3
 			name = "CM_COMBO",
@@ -240,6 +243,8 @@ Engine.Config = {
 				{0.33, 0.63, 0.33, 1}, -- 5
 			},
 			filled = false,
+			verticalIndex = -1,
+			horizontalIndex = 0,
 		},
 		{ -- 4
 			name = "CM_ECLIPSE",
@@ -253,6 +258,8 @@ Engine.Config = {
 				{0.50, 0.52, 0.70, 1}, -- Lunar
 				{0.80, 0.82, 0.60, 1}, -- Solar
 			},
+			verticalIndex = -1,
+			horizontalIndex = 0,
 		},
 		{ -- 5
 			name = "CM_WILDMUSHROOMS",
@@ -265,6 +272,7 @@ Engine.Config = {
 			height = 16,
 			--spacing = 3,
 			color = { 95/255, 222/255,  95/255, 1 },
+			verticalIndex = 1
 		},
 	},
 	["PALADIN"] = {

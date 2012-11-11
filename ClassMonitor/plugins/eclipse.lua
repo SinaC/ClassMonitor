@@ -26,7 +26,7 @@ function plugin:UpdateVisibility(event)
 		self:RegisterUnitEvent("UNIT_POWER", "player", plugin.UpdatePower)
 		self:RegisterUnitEvent("UNIT_AURA", "player", plugin.UpdateAura)
 		--
-		self:UpdatePower()
+		self:UpdatePower(nil, nil, "ECLIPSE")
 		self:UpdateAura()
 		--
 		self.bar:Show()
@@ -40,9 +40,9 @@ function plugin:UpdateVisibility(event)
 end
 
 function plugin:UpdateDirection()
+if true then return end
 	if self.settings.text == true then
 		local direction = GetEclipseDirection()
---print("DIRECTION:"..tostring(direction))
 		if direction == "sun" then
 			if self.inEclipse then
 				self.bar.directionText:SetText(">>>")
@@ -62,6 +62,7 @@ function plugin:UpdateDirection()
 end
 
 function plugin:UpdateAura()
+if true then return end
 	self.inEclipse = false -- no eclipse
 	for i = 1, 40, 1 do
 		local name, _, _, _, _, _, _, _, _, _, spellID = UnitAura("player", i, "HELPFUL|PLAYER")
@@ -83,7 +84,9 @@ function plugin:UpdateAura()
 	self:UpdateDirection()
 end
 
-function plugin:UpdatePower()
+function plugin:UpdatePower(_, _, powerType)
+	if powerType ~= "ECLIPSE" then return end
+
 	local power = UnitPower("player", SPELL_POWER_ECLIPSE)
 	local maxPower = UnitPowerMax("player", SPELL_POWER_ECLIPSE)
 	if maxPower == 0 then maxPower = 100 end -- when entering world at 1st connection, max power is 0
@@ -112,19 +115,23 @@ function plugin:UpdateGraphics()
 	if not bar.lunar then
 		bar.lunar = CreateFrame("StatusBar", nil, bar)
 		bar.lunar:SetStatusBarTexture(UI.NormTex)
-		bar.lunar:Point("TOPLEFT", bar, "TOPLEFT", 2, -2)
 	end
+	bar.lunar:ClearAllPoints()
+	bar.lunar:Point("TOPLEFT", bar, "TOPLEFT", 2, -2)
 	bar.lunar:Size(self.settings.width-4, self.settings.height-4)
 	bar.lunar:SetStatusBarColor(unpack(self.settings.colors[1]))
+	bar.lunar:SetValue(0) -- needed for a correct refresh while changing width
 
 	-- solar status bar
 	if not bar.solar then
 		bar.solar = CreateFrame("StatusBar", nil, bar)
 		bar.solar:SetStatusBarTexture(UI.NormTex)
-		bar.solar:Point("LEFT", bar.lunar:GetStatusBarTexture(), "RIGHT", 0, 0) -- solar will move when lunar moves
 	end
+	bar.solar:ClearAllPoints()
+	bar.solar:Point("LEFT", bar.lunar:GetStatusBarTexture(), "RIGHT", 0, 0) -- solar will move when lunar moves
 	bar.solar:Size(self.settings.width-4, self.settings.height-4)
 	bar.solar:SetStatusBarColor(unpack(self.settings.colors[2]))
+	bar.solar:SetValue(0) -- needed for a correct refresh while changing width
 
 	-- direction
 	if self.settings.text == true and not bar.directionText then
