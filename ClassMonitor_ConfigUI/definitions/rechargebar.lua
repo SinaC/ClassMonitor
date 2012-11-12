@@ -26,4 +26,6 @@ D["RECHARGEBAR"] = {
 	[10] = D.Helpers.Spell,
 	[11] = Color,
 	[12] = D.Helpers.Anchor,
+	[13] = D.Helpers.AutoGridVerticalIndex,
+	[14] = D.Helpers.AutoGridHorizontalIndex,
 }

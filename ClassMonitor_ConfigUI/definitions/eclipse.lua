@@ -24,4 +24,6 @@ D["ECLIPSE"] = {
 	},
 	[9] = Colors,
 	[10] = D.Helpers.Anchor,
+	[11] = D.Helpers.AutoGridVerticalIndex,
+	[12] = D.Helpers.AutoGridHorizontalIndex,
 }

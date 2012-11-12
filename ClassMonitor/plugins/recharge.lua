@@ -19,6 +19,7 @@ It's a new way of thinking about cooldowns, and I personally am excited to see w
 local ToClock = Engine.ToClock
 local CheckSpec = Engine.CheckSpec
 local PixelPerfect = Engine.PixelPerfect
+local DefaultBoolean = Engine.DefaultBoolean
 
 --
 local plugin = Engine:NewPlugin("RECHARGE")
@@ -183,6 +184,10 @@ end
 
 -- overridden methods
 function plugin:Initialize()
+	-- set defaults
+	self.settings.color = self.settings.color or UI.ClassColor()
+	self.settings.text = DefaultBoolean(self.settings.text, true)
+	-- no default for spellID
 	--
 	self.count = 1 -- starts with one charge
 	self.spellName = GetSpellInfo(self.settings.spellID)

@@ -158,18 +158,6 @@ end
 -- Update plugin instance settings
 ------------------------------------------------
 function Engine:UpdatePluginInstance(pluginName, instanceName)
--- print("UpdatePluginInstance:"..tostring(pluginName).."  "..tostring(instanceName))
-	-- --if true then return false end -- TODO: remove this when fully updated
-	-- local category = Plugins[pluginName]
-	-- if category then
--- print("category:"..tostring(category))
-		-- for _, instance in pairs(category.instances) do
--- print("UPDATING:"..tostring(instance.name).."  "..tostring(instance.pluginName))
-			-- instance:SettingsModified()
-		-- end
-	-- end
-	-- return true
-
 	-- TODO: remove this workaround
 	if pluginName == "MOVER" then return true end
 
@@ -183,7 +171,15 @@ function Engine:UpdatePluginInstance(pluginName, instanceName)
 	-- update instance
 	instance:SettingsModified()
 	return true
+end
 
+function Engine:UpdateAllPlugins()
+	for _, pluginCategory in pairs(Plugins) do
+		for _, instance in pairs(pluginCategory.instances) do
+--print("UPDATE:"..tostring(instance).."  "..tostring(instance.name))
+			instance:SettingsModified()
+		end
+	end
 end
 
 -- ----------------------------------------------

@@ -10,9 +10,19 @@ if UI.MyClass ~= "ROGUE" and UI.MyClass ~= "DRUID" then return end -- combo not 
 
 local CheckSpec = Engine.CheckSpec
 local PixelPerfect = Engine.PixelPerfect
+local DefaultBoolean = Engine.DefaultBoolean
+local GetColor = Engine.GetColor
 
 --
 local plugin = Engine:NewPlugin("COMBO")
+
+local DefaultColors = {
+	{0.69, 0.31, 0.31, 1}, -- 1
+	{0.65, 0.42, 0.31, 1}, -- 2
+	{0.65, 0.63, 0.35, 1}, -- 3
+	{0.46, 0.63, 0.35, 1}, -- 4
+	{0.33, 0.63, 0.33, 1}, -- 5
+}
 
 -- own methods
 function plugin:UpdateVisibility(event)
@@ -77,12 +87,13 @@ function plugin:UpdateGraphics()
 			point.status:Point("TOPLEFT", point, "TOPLEFT", 2, -2)
 			point.status:Point("BOTTOMRIGHT", point, "BOTTOMRIGHT", -2, 2)
 		end
+		local color = GetColor(self.settings.color, i, DefaultColors[i])
 		if self.settings.filled == true then
-			point.status:SetStatusBarColor(unpack(self.settings.colors[i]))
+			point.status:SetStatusBarColor(unpack(color))
 			point.status:Show()
 			point:SetBackdropBorderColor(unpack(UI.BorderColor))
 		else
-			point:SetBackdropBorderColor(unpack(self.settings.colors[i]))
+			point:SetBackdropBorderColor(unpack(color))
 			if point.status then point.status:Hide() end
 		end
 	end
@@ -90,6 +101,9 @@ end
 
 -- overridden methods
 function plugin:Initialize()
+	-- set defaults
+	self.settings.filled = DefaultBoolean(self.settings.filled, false)
+	self.settings.colors = self.settings.colors or DefaultColors
 	--
 	self.count = 5
 	--

@@ -61,12 +61,21 @@ local function BuildAce3Options()
 		-- }
 	-- }
 	-- options.args["general"] = generalOptions
+	local index = 1
 	-- Add global width option
-	options.args["GlobalWidth"] = D.Helpers.CreateGlobalWidthOption(1) -- index 1
+	options.args["GlobalWidth"] = D.Globals.CreateGlobalWidthOption(1) -- index 1
+	index = index + 1
 	-- Add global width option
-	options.args["GlobalHeight"] = D.Helpers.CreateGlobalHeightOption(2) -- index 2
+	options.args["GlobalHeight"] = D.Globals.CreateGlobalHeightOption(2) -- index 2
+	index = index + 1
 	-- Add reset option
-	options.args["Reset"] = D.Helpers.CreateResetOption(3) -- index 3
+	options.args["Reset"] = D.Globals.CreateResetOption(3) -- index 3
+	index = index + 1
+	-- Add autogrid anchor
+	if G.AutoGridAnchor and type(G.AutoGridAnchor) == "function" then
+		options.args["AutoGridAnchor"] = D.Globals.CreateAutoGridAnchorOption(4)
+		index = index + 1
+	end
 	-- Add options for every section in config
 	-- options.args["plugins"] = {
 		-- order = 1,
@@ -80,8 +89,9 @@ local function BuildAce3Options()
 		if section.kind ~= "MOVER" then -- can't configure MOVER
 			local definition = D[section.kind] or D.DefaultPluginDefinition
 			-- create new entry
-			options.args[section.name] = D.Helpers.CreateOptionsFromDefinitions(definition, i+3, section)
+			options.args[section.name] = D.Helpers.CreateOptionsFromDefinitions(definition, index, section)
 			-- options.args["plugins"].args[section.name] = D.Helpers.CreateOptionsFromDefinitions(definition, i, section)
+			index = index + 1
 		end
 	end
 --[[
@@ -119,12 +129,13 @@ if ElvUI then
 	local E, _, _, _, _, _ = unpack(ElvUI) --Import: Engine, Locales, PrivateDB, ProfileDB, GlobalDB, Localize Underscore
 
 	--
-	Engine.BuildOptionsTree = function(config, savedPerChar, savedPerAccount, updatePluginFunction)
+	Engine.BuildOptionsTree = function(config, savedPerChar, savedPerAccount, updatePluginFunction, autoGridAnchor)
 		-- Set globals
 		G.Config = config
 		G.SavedPerChar = savedPerChar
 		G.SavedPerAccount = savedPerAccount
 		G.PluginUpdateFunction = updatePluginFunction
+		G.AutoGridAnchor = autoGridAnchor
 		--
 		E.Options.args.ClassMonitor = BuildAce3Options()
 		HookAce3OnHide(ACD, "ElvUI")
@@ -140,12 +151,13 @@ if ElvUI then
 elseif Tukui then
 	local blizOptions = nil
 
-	Engine.BuildOptionsTree = function(config, savedPerChar, savedPerAccount, updatePluginFunction)
+	Engine.BuildOptionsTree = function(config, savedPerChar, savedPerAccount, updatePluginFunction, autoGridAnchor)
 		-- Set globals
 		G.Config = config
 		G.SavedPerChar = savedPerChar
 		G.SavedPerAccount = savedPerAccount
 		G.PluginUpdateFunction = updatePluginFunction
+		G.AutoGridAnchor = autoGridAnchor
 		--[[
 		--
 		local options = {
@@ -214,12 +226,13 @@ print("SUB MENU:"..tostring(k))
 		HookAce3OnHide(ACD, "ClassMonitor")
 	end
 else
-	Engine.BuildOptionsTree = function(config, savedPerChar, savedPerAccount, updatePluginFunction)
+	Engine.BuildOptionsTree = function(config, savedPerChar, savedPerAccount, updatePluginFunction, autoGridAnchor)
 		-- Set globals
 		G.Config = config
 		G.SavedPerChar = savedPerChar
 		G.SavedPerAccount = savedPerAccount
 		G.PluginUpdateFunction = updatePluginFunction
+		G.AutoGridAnchor = autoGridAnchor
 		--
 		local options = BuildAce3Options()
 		AC:RegisterOptionsTable("ClassMonitor", options)

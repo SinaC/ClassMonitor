@@ -8,6 +8,8 @@ local UI = Engine.UI
 
 local CheckSpec = Engine.CheckSpec
 local PixelPerfect = Engine.PixelPerfect
+local DefaultBoolean = Engine.DefaultBoolean
+local GetColor = Engine.GetColor
 
 --
 local plugin = Engine:NewPlugin("POWER")
@@ -159,12 +161,13 @@ function plugin:UpdatePointGraphics(index, width, spacing)
 		point.status:Point("BOTTOMRIGHT", point, "BOTTOMRIGHT", -2, 2)
 	end
 	--
+	local color = GetColor(self.settings.colors, index, UI.ClassColor())
 	if self.settings.filled == true then
-		point.status:SetStatusBarColor(unpack(self.settings.colors[index]))
+		point.status:SetStatusBarColor(unpack(color))
 		point.status:Show()
 		point:SetBackdropBorderColor(unpack(UI.BorderColor))
 	else
-		point:SetBackdropBorderColor(unpack(self.settings.colors[index]))
+		point:SetBackdropBorderColor(unpack(color))
 		if point.status then point.status:Hide() end
 	end
 end
@@ -190,8 +193,15 @@ end
 
 -- overridden methods
 function plugin:Initialize()
-	-- Start with count = 1 if count not found in settings
-	self.count = self.settings.count or 1
+	-- set defaults
+	self.settings.count = self.settings.count or 1 -- starts with count = 1 if count not found in settings
+	self.settings.filled = DefaultBoolean(self.settings.filled, false)
+	self.settings.powerType = self.settings.powerType or SPELL_POWER_HOLY_POWER --
+	--local color = self.settings.color or UI.PowerColor(self.settings.powerType) or UI.ClassColor()
+	--self.settings.colors = self.settings.colors or CreateColorArray(color, self.settings.count)
+	self.settings.colors = self.settings.colors or self.settings.color or UI.PowerColor(self.settings.powerType) or UI.ClassColor()
+	--
+	self.count = self.settings.count
 	self.maxValue = self.count -- current max value (<= count)
 	-- Create a frame including every points
 	self:UpdateGraphics()

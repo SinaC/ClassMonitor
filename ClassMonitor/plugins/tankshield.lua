@@ -9,7 +9,7 @@ local UI = Engine.UI
 local _, _, _, toc = GetBuildInfo()
 
 local cfg = {
-	["WARRIOR"] = { spellID = 112048, specs = {3} }, -- Shield Wall
+	["WARRIOR"] = { spellID = 112048, specs = {3} }, -- Shield Barrier
 	["MONK"] = { spellID = 115295, specs = {1} }, -- Guard
 	["DEATHKNIGHT"] = { spellID = 77535, specs = {1} }, -- Blood Shield
 	["PALADIN"] = { spellID = 65148, specs = {2} }, -- Sacred Shield
@@ -22,6 +22,7 @@ local specs = cfg[UI.MyClass].specs
 
 local ToClock = Engine.ToClock
 local CheckSpec = Engine.CheckSpec
+local DefaultBoolean = Engine.DefaultBoolean
 
 --
 local plugin = Engine:NewPlugin("TANKSHIELD")
@@ -117,6 +118,9 @@ end
 
 -- overridden methods
 function plugin:Initialize()
+	-- set defaults
+	self.settings.color = self.settings.color or UI.ClassColor()
+	self.settings.duration = DefaultBoolean(self.settings.duration, false)
 	--
 	self:UpdateGraphics()
 end

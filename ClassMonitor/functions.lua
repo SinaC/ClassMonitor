@@ -1,16 +1,16 @@
 local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
 
--- Create a color array from one color
-Engine.CreateColorArray = function(color, count)
-	if not color or not count then return end
-	local colors = { }
-	for i = 1, count, 1 do
-		tinsert(colors, color)
-	end
-	return colors
+-- Return colors[index] or default color colors is nil or colors[index] doesn't exist
+Engine.GetColor = function(colors, index, default)
+	if not colors then return default end -- colors is nil
+	if type(colors) ~= "table" then return default end -- colors must be a color or a table of color
+	if type(colors[1]) == "number" then return colors end -- colors is a single color
+	if not colors[index] then return default end -- colors is a table of color but colors[index] doesn't exist
+	return colors[index] -- colors[index] exists
 end
 
+-- Return value or default is value is nil
 Engine.DefaultBoolean = function(value, default)
 	if value == nil then
 		return default

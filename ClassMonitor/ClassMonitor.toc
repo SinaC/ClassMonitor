@@ -1,5 +1,5 @@
 ## Interface: 50001
-## Version: 3.4.0.2
+## Version: 3.4.1
 ## Author: SinaC
 ## Title: |cFF148587Class|r Monitor
 ## Credits: Smelly, Hydra, Krevlorne, Ildyria

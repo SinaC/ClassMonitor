@@ -47,4 +47,6 @@ D["AURABAR"] = {
 	},
 	[15] = Color,
 	[16] = D.Helpers.Anchor,
+	[17] = D.Helpers.AutoGridVerticalIndex,
+	[18] = D.Helpers.AutoGridHorizontalIndex,
 }

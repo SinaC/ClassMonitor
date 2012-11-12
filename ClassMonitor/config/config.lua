@@ -120,7 +120,7 @@ Engine.Config = {
 	width = number													width of dot bar [default: 85]
 	height = number													height of dot bar [default: 16]
 	spellID = number												spell id of dot to monitor
-	latency = true|false											indicate latency on buff (usefull for ignite)
+	latency = true|false											indicate latency on buff (useful for ignite)
 	threshold = number or 0											threshold to work with colors [default: 0]
 	colors = array of array : 
 		{
@@ -164,7 +164,7 @@ Engine.Config = {
 	colors =														colors of 3 states (light, moderate and heavy)
 	threshold = number (%)											above this value, bar state is meaningless, below this value, bar state is meaningful [default: 100]
 
-	TANKSHIELD (Warrior: Shield Wall, Monk: Guard, Deathknight: Blood Shield, Paladin: Sacred Shield):
+	TANKSHIELD (Warrior: Shield Barrier, Monk: Guard, Deathknight: Blood Shield, Paladin: Sacred Shield):
 	autohide = true|false											hide or not while out of combat [default: true]
 	anchor =														see note below
 	width = number													width of bar[default: 85]
@@ -715,7 +715,7 @@ Engine.Config = {
 		},
 		{
 			name = "CM_SHIELDWALL",
-			displayName = "Shield wall",
+			displayName = "Shield barrier",
 			kind = "TANKSHIELD",
 			--specs = {3}, -- Protection
 			anchor = { "TOPLEFT", "CM_RAGE", "BOTTOMLEFT", 0, -3 },

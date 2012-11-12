@@ -10,7 +10,7 @@ ClassMonitor_ConfigUI = {} -- Expose methods for ClassMonitor
 TODO:
 	[DONE]test Tukui skin
 	[DONE]saved variables
-	[TO TEST]anchor
+	[DONE]anchor
 	colors
 	add/delete new plugin instances
 	[DONE]reload UI when modification are done
@@ -19,7 +19,8 @@ TODO:
 	[DONE]global width/height
 	[DONE]reload UI only when modification has been done and config panel closed
 	[DONE]dont recreate options everytime config panel is opened
-	add an option to create a new plugin instance + dropdown
 	[DONE]add an option to reset to original config
-	input on number get/set must handle string  (check validatenumber to find them)
+	[DONE]input on number get/set must handle string  (check validatenumber to find them)
+	[TO TEST]auto grid anchor  +  vertical/horizontalIndex in the same group --> dummy key, real key is set in getValue/setValue
+	width, height in the same group --> dummy key, real key is set in getValue/setValue
 --]]

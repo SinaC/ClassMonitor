@@ -3,18 +3,30 @@ local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
 local UI = Engine.UI
 
+
+local _, _, _, toc = GetBuildInfo()
+
 -- ONLY ON PTR
 --if not Engine.IsPTR() then return end
 
 local CheckSpec = Engine.CheckSpec
+local DefaultBoolean = Engine.DefaultBoolean
+local GetColor = Engine.GetColor
 
 --
 local plugin = Engine:NewPlugin("DOT")
 
+local DefaultColors = {
+	{255/255, 165/255, 0, 1}, -- orange
+	{255/255, 255/255, 0, 1}, -- yellow
+	{127/255, 255/255, 0, 1} -- green
+}
+
 -- own methods
 function plugin:Update(elapsed)
 	self.timeSinceLastUpdate = self.timeSinceLastUpdate + elapsed
-	if self.timeSinceLastUpdate > 0.01 then
+	if self.timeSinceLastUpdate > 0.1 then
+--print("DMG:"..tostring(self.dmg))
 		local _, _, _, _, _, duration, expTime = UnitAura("target", self.auraName, nil, "PLAYER|HARMFUL")
 		local remainTime = (expTime or 0) - GetTime()
 		local color
@@ -34,16 +46,13 @@ function plugin:Update(elapsed)
 				-- color = (self.settings.colors and self.settings.colors[3]) or self.settings.color or {127/255, 255/255, 0, 1} -- > 100% GO -- green
 			-- end
 			if self.settings.threshold == 0 then
-				color = self.settings.colors[1] -- bad: orange
+				color = GetColor(self.settings.colors, 1, DefaultColors[1])--self.settings.colors[1] -- bad: orange
 			elseif self.settings.threshold*.75 >= self.dmg then
-				color = self.settings.colors[1] -- bad: orange
-				-- print("attend encore")
+				color = GetColor(self.settings.colors, 1, DefaultColors[1])--self.settings.colors[1] -- bad: orange
 			elseif self.settings.threshold >= self.dmg then
-				-- print("hoh")
-				color = self.settings.colors[2] -- 0,75% -- yellow
+				color = GetColor(self.settings.colors, 2, DefaultColors[2])--self.settings.colors[2] -- 0,75% -- yellow
 			else
-				-- print("GOOOO")
-				color = self.settings.colors[3] -- > 100% GO -- green
+				color = GetColor(self.settings.colors, 3, DefaultColors[3]) -- self.settings.colors[3] -- > 100% GO -- green
 			end
 		end
 		self.bar.status:SetStatusBarColor(unpack(color))
@@ -55,9 +64,18 @@ function plugin:Update(elapsed)
 end
 
 function plugin:UpdateVisibility(event)
+--print("UpdateVisibility:"..tostring(event))
 	local visible = false
 	if CheckSpec(self.settings.specs) then
-		local _, _, _, _, _, duration, expTime = UnitAura("target", self.auraName, nil, "PLAYER|HARMFUL")
+		local name, _, _, _, _, duration, expTime = UnitAura("target", self.auraName, nil, "PLAYER|HARMFUL")
+--print("--->"..tostring(name).."  "..tostring(expTime).."  "..tostring(duration).."  "..tostring(self.auraName).."  "..tostring(self.dmg))
+--		local name, duration, expirationTime, _, value1, value2, value3, _
+-- if toc > 50001 then
+		-- name, _, _, _, _, duration, expirationTime, _, _, _, _, _, _, _, value1, value2, value3 = UnitBuff("target", self.auraName, nil, "PLAYER|HARMFUL") -- 5.1
+-- else
+		-- name, _, _, _, _, duration, expirationTime, _, _, _, _, _, _, value1, value2, value3 = UnitBuff("target", self.auraName, nil, "PLAYER|HARMFUL") -- 5.0
+-- end
+--print("--->"..tostring(name).."  "..tostring(expTime).."  "..tostring(duration).."  "..tostring(self.auraName).."  "..tostring(value1).."  "..tostring(value2).."  "..tostring(value3))
 		if expTime ~= nil then
 			local remainTime = expTime - GetTime()
 			if remainTime > 0 then
@@ -66,11 +84,13 @@ function plugin:UpdateVisibility(event)
 		end
 	end
 	if visible then
+--print("VISIBLE:"..tostring(self.auraName).."  "..tostring(self.dmg))
 		self.timeSinceLastUpdate = GetTime()
 		self:RegisterUpdate(plugin.Update)
 		--
 		self.bar:Show()
 	else
+--print("NOT VISIBLE:"..tostring(self.auraName))
 		self:UnregisterUpdate()
 		--
 		self.bar:Hide()
@@ -78,23 +98,22 @@ function plugin:UpdateVisibility(event)
 	end
 end
 
-function plugin:UpdateLogChecker(event)
-	if event == "PLAYER_REGEN_DISABLED" or InCombatLockdown() then
-		self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED", plugin.UpdateDamage)
-	else
-		self:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
-	end
-end
-
 function plugin:UpdateDamage(_, _, eventType, _, sourceGUID, _, _, _, destGUID, _, _, _, spellID, _, _, amount)
 	local targetGUID = UnitGUID("target")
-	if sourceGUID == self.playerGUID and destGUID == targetGUID then
-		if string.find(eventType, "_DAMAGE") and spellID == self.settings.spellID then
-print("UpdateDamage:"..tostring(amount))
-			self.dmg = amount
-		end
+--print("UPDATEDAMAGE:"..tostring(eventType).." "..tostring(spellID).."  "..tostring(amount))
+	if sourceGUID == self.playerGUID and destGUID == targetGUID and spellID and type(spellID) == "number" and spellID == self.settings.spellID and string.find(eventType, "_DAMAGE") then
+--print("UpdateDamage:"..tostring(amount))
+		self.dmg = amount
+		self:UpdateVisibility()
 	end
 end
+-- function plugin:UpdateDamage(_, _, ...)
+	-- for index = 1, select('#', ...) do
+		-- local param = select(index, ...)
+		-- if index == 1 and not string.find(param, "DAMAGE") and not string.find(param, "AURA") then return end
+		-- print("UpdateDamage:"..tostring(index).."  "..tostring(param))
+	-- end
+-- end
 
 function plugin:UpdateGraphics()
 	local bar = self.bar
@@ -127,6 +146,11 @@ end
 
 -- overridden methods
 function plugin:Initialize()
+	-- set defaults
+	self.settings.colors = self.settings.colors or DefaultColors
+	self.settings.latency = DefaultBoolean(self.settings.latency, false)
+	self.settings.threshold = self.settings.threshold or 0
+	-- no default for spellID
 	--
 	self.dmg = 0
 	self.playerGUID = UnitGUID("player")
@@ -136,14 +160,15 @@ function plugin:Initialize()
 end
 
 function plugin:Enable()
-	self:RegisterEvent("PLAYER_REGEN_DISABLED", plugin.UpdateLogChecker)
-	self:RegisterEvent("PLAYER_REGEN_ENABLED", plugin.UpdateLogChecker)
-
+	self:RegisterEvent("PLAYER_REGEN_DISABLED", plugin.UpdateVisibility)
+	self:RegisterEvent("PLAYER_REGEN_ENABLED", plugin.UpdateVisibility)
 	--self:RegisterEvent("PLAYER_TARGET_CHANGED", plugin.UpdateVisibility)
 	self:RegisterEvent("PLAYER_ENTERING_WORLD", plugin.UpdateVisibility)
 	--self:RegisterEvent("PLAYER_REGEN_DISABLED", plugin.UpdateVisibility)
 	--self:RegisterEvent("PLAYER_REGEN_ENABLED", plugin.UpdateVisibility)
-	self:RegisterEvent("UNIT_AURA", plugin.UpdateVisibility)
+	self:RegisterUnitEvent("UNIT_AURA", "target", plugin.UpdateVisibility)
+
+	self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED", plugin.UpdateDamage)
 end
 
 function plugin:Disable()

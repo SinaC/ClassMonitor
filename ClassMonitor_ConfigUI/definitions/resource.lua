@@ -52,4 +52,6 @@ D["RESOURCE"] = {
 	},
 	-- TODO: colors (one entry by resource_type)
 	[11] = D.Helpers.Anchor,
+	[12] = D.Helpers.AutoGridVerticalIndex,
+	[13] = D.Helpers.AutoGridHorizontalIndex,
 }

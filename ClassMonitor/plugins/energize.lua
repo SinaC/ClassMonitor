@@ -7,6 +7,7 @@ local UI = Engine.UI
 --if not Engine.IsPTR() then return end
 
 local CheckSpec = Engine.CheckSpec
+local DefaultBoolean = Engine.DefaultBoolean
 
 --
 local plugin = Engine:NewPlugin("ENERGIZE")
@@ -99,6 +100,11 @@ end
 
 -- overridden methods
 function plugin:Initialize()
+	-- set defaults
+	self.settings.filling = DefaultBoolean(self.settings.filling, false)
+	self.settings.color = self.settings.color or UI.ClassColor()
+	self.settings.duration = 10
+	-- no default for spellID
 	--
 	self:UpdateGraphics()
 end

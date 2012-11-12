@@ -9,13 +9,22 @@ if UI.MyClass ~= "ROGUE" then return end -- meaningless for non-rogue
 --if not Engine.IsPTR() then return end
 
 local PixelPerfect = Engine.PixelPerfect
+local DefaultBoolean = Engine.DefaultBoolean
+local GetColor = Engine.GetColor
+
+--
+local plugin = Engine:NewPlugin("BANDITSGUILE")
 
 local shallowInsight = GetSpellInfo(84745)
 local moderateInsight = GetSpellInfo(84746)
 local deepInsight = GetSpellInfo(84747)
 
---
-local plugin = Engine:NewPlugin("BANDITSGUILE")
+local DefaultColors = {
+	{0.33, 0.63, 0.33, 1}, -- shallow
+	{0.65, 0.63, 0.35, 1}, -- moderate
+	{0.69, 0.31, 0.31, 1}, -- deep
+}
+
 
 -- own methods
 function plugin:UpdateVisibility(event)
@@ -85,12 +94,13 @@ function plugin:UpdateGraphics()
 			point.status:Point("TOPLEFT", point, "TOPLEFT", 2, -2)
 			point.status:Point("BOTTOMRIGHT", point, "BOTTOMRIGHT", -2, 2)
 		end
+		local color = GetColor(self.settings.colors, i, DefaultColors[i])
 		if self.settings.filled == true then
-			point.status:SetStatusBarColor(unpack(self.settings.colors[i]))
+			point.status:SetStatusBarColor(unpack(color))
 			point.status:Show()
 			point:SetBackdropBorderColor(unpack(UI.BorderColor))
 		else
-			point:SetBackdropBorderColor(unpack(self.settings.colors[i]))
+			point:SetBackdropBorderColor(unpack(color))
 			if point.status then point.status:Hide() end
 		end
 	end
@@ -98,6 +108,9 @@ end
 
 -- overridden methods
 function plugin:Initialize()
+	-- set defaults
+	self.settings.filled = DefaultBoolean(self.settings.filled, false)
+	self.settings.colors = self.settings.colors or DefaultColors
 	--
 	self.count = 3
 	--

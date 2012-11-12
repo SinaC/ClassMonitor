@@ -3,11 +3,6 @@ local ADDON_NAME, Engine = ...
 Engine.Locales = {}
 Engine.UI = {}
 
--- if IsAddOnLoaded("ClassMonitor_ConfigUI") then
--- --print("ClassMonitor_ConfigUI loaded")
-	-- ClassMonitorUI = Engine.UI -- Makes UI accessible by ClassMonitor_ConfigUI
--- end
-
 -- TODO
 -- [DONE]split Tukui/ElvUI/Blizzard code
 -- [DONE]/clm reset
@@ -26,7 +21,10 @@ Engine.UI = {}
 -- [DONE] addon message to detect new version
 -- update treshold for every plugin with update (0.1->0.5 step 0.1)
 -- smoothShow: use UIFrameFadeIn & UIFrameFadeOut instead of :Show  :Hide   check runes plugin
--- RegisterEvent(..., UpdateValue) only when frame is shown    check banditsguile plugin
--- colors
+-- [DONE]RegisterEvent(..., UpdateValue) only when frame is shown    check banditsguile plugin
+-- finish colors
 -- free anchors (one mover for each plugin)
--- auto anchors (based on index in config, index 0 is on mover, -1 above, +1 below, ...) (if 2 with the same index, they are put on the same line
+-- [IN TEST]auto anchors (based on index in config, index 0 is on mover, -1 above, +1 below, ...) (if 2 with the same index, they are put on the same line)
+--	KNOWN ISSUE: instead of setting anchor, width, height -> set autogridanchor, autogridwidth, autogridheight (in each plugin, call a function to get actual anchor, width, height in function of current anchor mode)
+-- placeholder for each plugin in config mode
+-- external plugin code + definition (expose ClassMonitor.Engine and ClassMonitor_ConfigUI.Engine namespace)

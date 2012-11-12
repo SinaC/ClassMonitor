@@ -176,5 +176,7 @@ D["AURA"] = {
 	},
 	-- TODO: colors
 	[14] = D.Helpers.Anchor,
+	[15] = D.Helpers.AutoGridVerticalIndex,
+	[16] = D.Helpers.AutoGridHorizontalIndex,
 --	[0] = __TestDefinition
 }

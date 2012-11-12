@@ -36,4 +36,6 @@ D["DOT"] = {
 	},
 	[12] = Colors,
 	[13] = D.Helpers.Anchor,
+	[14] = D.Helpers.AutoGridVerticalIndex,
+	[15] = D.Helpers.AutoGridHorizontalIndex,
 }

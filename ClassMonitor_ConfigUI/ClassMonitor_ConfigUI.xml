@@ -4,8 +4,10 @@
 	<Script file="locales\english.lua"/>
 	<Script file="locales\french.lua"/>
 
+	<Script file="definitions\globals.lua"/>
 	<Script file="definitions\helpers.lua"/>
 	<Script file="definitions\default.lua"/>
+
 	<Script file="definitions\aura.lua"/>
 	<Script file="definitions\aurabar.lua"/>
 	<Script file="definitions\power.lua"/>

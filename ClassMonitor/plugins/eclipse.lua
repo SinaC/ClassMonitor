@@ -5,11 +5,19 @@ local UI = Engine.UI
 
 if UI.MyClass ~= "DRUID" then return end -- Only for druid
 
+local DefaultBoolean = Engine.DefaultBoolean
+local GetColor = Engine.GetColor
+
 -- ONLY ON PTR
 --if not Engine.IsPTR() then return end
 
 --
 local plugin = Engine:NewPlugin("ECLIPSE")
+
+local DefaultColors = {
+	{0.50, 0.52, 0.70, 1}, -- Lunar
+	{0.80, 0.82, 0.60, 1}, -- Solar
+}
 
 -- own methods
 function plugin:UpdateVisibility(event)
@@ -68,11 +76,11 @@ if true then return end
 		local name, _, _, _, _, _, _, _, _, _, spellID = UnitAura("player", i, "HELPFUL|PLAYER")
 		if not name then break end
 		if spellID == ECLIPSE_BAR_SOLAR_BUFF_ID then -- solar eclipse
-			self.bar:SetBackdropBorderColor(unpack(self.settings.colors[1]))
+			self.bar:SetBackdropBorderColor(unpack(GetColor(self.settings.colors, 1, DefaultColors[1])))
 			self.inEclipse = true
 			break
 		elseif spellID == ECLIPSE_BAR_LUNAR_BUFF_ID then -- lunar eclipse
-			self.bar:SetBackdropBorderColor(unpack(self.settings.colors[2]))
+			self.bar:SetBackdropBorderColor(unpack(GetColor(self.settings.colors, 2, DefaultColors[2])))
 			self.inEclipse = true
 			break
 		end
@@ -119,7 +127,8 @@ function plugin:UpdateGraphics()
 	bar.lunar:ClearAllPoints()
 	bar.lunar:Point("TOPLEFT", bar, "TOPLEFT", 2, -2)
 	bar.lunar:Size(self.settings.width-4, self.settings.height-4)
-	bar.lunar:SetStatusBarColor(unpack(self.settings.colors[1]))
+	bar.lunar:SetStatusBarColor(unpack(GetColor(self.settings.colors, 1, DefaultColors[1])))
+	bar.lunar:SetMinMaxValues(0, 100)
 	bar.lunar:SetValue(0) -- needed for a correct refresh while changing width
 
 	-- solar status bar
@@ -130,7 +139,8 @@ function plugin:UpdateGraphics()
 	bar.solar:ClearAllPoints()
 	bar.solar:Point("LEFT", bar.lunar:GetStatusBarTexture(), "RIGHT", 0, 0) -- solar will move when lunar moves
 	bar.solar:Size(self.settings.width-4, self.settings.height-4)
-	bar.solar:SetStatusBarColor(unpack(self.settings.colors[2]))
+	bar.solar:SetStatusBarColor(unpack(GetColor(self.settings.colors, 2, DefaultColors[2])))
+	bar.solar:SetMinMaxValues(0, 100)
 	bar.solar:SetValue(0) -- needed for a correct refresh while changing width
 
 	-- direction
@@ -143,6 +153,9 @@ end
 
 -- overridden methods
 function plugin:Initialize()
+	-- set defaults
+	self.settings.text = DefaultBoolean(self.settings.text, true)
+	self.settings.colors = self.settings.colors or DefaultColors
 	--
 	self:UpdateGraphics()
 end

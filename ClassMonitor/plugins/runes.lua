@@ -9,9 +9,18 @@ if UI.MyClass ~= "DEATHKNIGHT" then return end -- only for DK
 --if not Engine.IsPTR() then return end
 
 local PixelPerfect = Engine.PixelPerfect
+local DefaultBoolean = Engine.DefaultBoolean
+local GetColor = Engine.GetColor
 
 --
 local plugin = Engine:NewPlugin("RUNES")
+
+local DefaultColors = {
+	{ 0.69, 0.31, 0.31, 1 }, -- Blood
+	{ 0.33, 0.59, 0.33, 1 }, -- Unholy
+	{ 0.31, 0.45, 0.63, 1 }, -- Frost
+	{ 0.84, 0.75, 0.65, 1 }, -- Death
+}
 
 -- own methods
 function plugin:UpdateVisibility(event)
@@ -43,7 +52,8 @@ function plugin:Update(elapsed)
 			local runeType = GetRuneType(runeIndex)
 
 			local rune = self.runes[i]
-			rune.status:SetStatusBarColor(unpack(self.settings.colors[runeType]))
+			local color = GetColor(self.settings.colors[runeType], runeType, DefaultColors[runeType])
+			rune.status:SetStatusBarColor(unpack(color))
 			rune.status:SetMinMaxValues(0, duration)
 
 			if finished then
@@ -94,13 +104,25 @@ function plugin:UpdateGraphics()
 			rune.status:SetMinMaxValues(0, 10)
 		end
 		local colorIndex = math.ceil(self.settings.runemap[i]/2)
-		rune.status:SetStatusBarColor(unpack(self.settings.colors[colorIndex]))
+		local color = GetColor(self.settings.colors[colorIndex], colorIndex, DefaultColors[colorIndex])
+		rune.status:SetStatusBarColor(unpack(color))
 		rune.status:SetOrientation(self.settings.orientation)
 	end
 end
 
 -- overridden methods
 function plugin:Initialize()
+	-- set defaults
+	self.settings.updatethreshold = self.settings.updatethreshold or 0.1
+	self.settings.orientation = self.settings.orientation or "HORIZONTAL"
+	-- runemap instructions.
+	-- This is the order you want your runes to be displayed in (down to bottom or left to right).
+	-- 1,2 = Blood
+	-- 3,4 = Unholy
+	-- 5,6 = Frost
+	-- (Note: All numbers must be included or it will break)
+	self.settings.runemap = self.settings.runemap or { 1, 2, 3, 4, 5, 6 }
+	self.settings.colors = self.settings.colors or DefaultColors
 	--
 	self.count = 6
 	--

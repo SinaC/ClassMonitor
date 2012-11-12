@@ -14,4 +14,6 @@ D.DefaultPluginDefinition = {
 	[7] = D.Helpers.Height,
 	[8] = D.Helpers.Specs,
 	[9] = D.Helpers.Anchor,
+	[10] = D.Helpers.AutoGridVerticalIndex,
+	[11] = D.Helpers.AutoGridHorizontalIndex,
 }

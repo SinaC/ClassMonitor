@@ -11,6 +11,8 @@ if UI.MyClass ~= "SHAMAN" and UI.MyClass ~= "DRUID" then return end -- Totems fo
 local ToClock = Engine.ToClock
 local CheckSpec = Engine.CheckSpec
 local PixelPerfect = Engine.PixelPerfect
+local DefaultBoolean = Engine.DefaultBoolean
+local GetColor = Engine.GetColor
 
 --
 local plugin = Engine:NewPlugin("TOTEMS")
@@ -112,7 +114,8 @@ function plugin:UpdateGraphics()
 			totem.status:Point("BOTTOMRIGHT", totem, "BOTTOMRIGHT", -2, 2)
 			totem.status:GetStatusBarTexture():SetHorizTile(false)
 		end
-		totem.status:SetStatusBarColor(unpack(self.settings.colors[i]))
+		local color = GetColor(self.settings.colors, i, UI.ClassColor())
+		totem.status:SetStatusBarColor(unpack(color))
 		totem.status:SetMinMaxValues(0, 300)
 		totem.status:SetValue(0)
 
@@ -141,6 +144,11 @@ end
 
 -- overridden methods
 function plugin:Initialize()
+	-- set defaults
+	self.settings.count = self.settings.count or 1
+	self.settings.colors = self.settings.colors or self.settings.color or UI.ClassColor()-- or CreateColorArray(color, self.settings.count)
+	self.settings.text = DefaultBoolean(self.settings.text, false)
+	-- no default for self.settings.map
 	--
 	self:UpdateGraphics()
 end

@@ -12,13 +12,21 @@ local _, _, _, toc = GetBuildInfo()
 
 local FormatNumber = Engine.FormatNumber
 local CheckSpec = Engine.CheckSpec
+local DefaultBoolean = Engine.DefaultBoolean
+local GetColor = Engine.GetColor
+
+--
+local plugin = Engine:NewPlugin("STAGGER")
 
 local lightStagger = GetSpellInfo(124275)
 local moderateStagger = GetSpellInfo(124274)
 local heavyStagger = GetSpellInfo(124273)
 
---
-local plugin = Engine:NewPlugin("STAGGER")
+local DefaultColors = {
+	[1] = {0, .4, 0, 1},
+	[2] = {.7, .7, .2, 1},
+	[3] = {.9, .2, .2, 1},
+}
 
 -- own methods
 function plugin:UpdateVisibilityAndValue(event)
@@ -42,9 +50,9 @@ function plugin:UpdateVisibilityAndValue(event)
 		end
 --print(tostring(toc).."  "..tostring(spellName).."=>"..tostring(name).."  "..tostring(duration).."  "..tostring(value1))
 		if spellName and value1 ~= nil and type(value1) == "number" and value1 > 0 and duration > 0 then
-			if spellName == lightStagger then self.bar.status:SetStatusBarColor(unpack(self.settings.colors[1])) end
-			if spellName == moderateStagger then self.bar.status:SetStatusBarColor(unpack(self.settings.colors[2])) end
-			if spellName == heavyStagger then self.bar.status:SetStatusBarColor(unpack(self.settings.colors[3])) end
+			if spellName == lightStagger then self.bar.status:SetStatusBarColor(unpack(GetColor(self.settings.colors, 1, DefaultColors[1]))) end
+			if spellName == moderateStagger then self.bar.status:SetStatusBarColor(unpack(GetColor(self.settings.colors, 2, DefaultColors[2]))) end
+			if spellName == heavyStagger then self.bar.status:SetStatusBarColor(unpack(GetColor(self.settings.colors, 3, DefaultColors[3]))) end
 			local staggerTick = value1
 			local staggerTotal = staggerTick * math.floor(duration)
 			local hp = math.ceil(100 * staggerTotal / UnitHealthMax("player"))
@@ -97,6 +105,10 @@ end
 
 -- overridden methods
 function plugin:Initialize()
+	-- set defaults
+	self.settings.threshold = self.settings.threshold or 100
+	self.settings.text = DefaultBoolean(self.settings.text, true)
+	self.settings.colors = self.settings.colors or DefaultColors
 	--
 	self:UpdateGraphics()
 end

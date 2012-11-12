@@ -22,6 +22,8 @@ L.GlobalWidth = "Global width"
 L.GlobalWidthDesc = "Modifying this value will modify width of every plugin"
 L.GlobalHeight = "Global height"
 L.GlobalHeightDesc = "Modifying this value will modify height of every plugin"
+L.AutoGridAnchor = "(experimental)Auto-grid anchoring"
+L.AutoGridAnchorDesc = "Automatically anchor frame using a grid system (experimental)"
 
 -- Helpers definition
 L.Name = "Frame name"
@@ -97,6 +99,11 @@ L.AnchorOffsetX = "Horizontal offset"
 L.AnchorOffsetXDesc = "Horizontal offset to apply to anchor"
 L.AnchorOffsetY = "Vertical offset"
 L.AnchorOffsetYDesc = "Vertical offset to apply to anchor"
+
+L.AutoGridAnchorVerticalIndex = "Line"
+L.AutoGridAnchorVerticalIndexDesc = "Vertical index in grid"
+L.AutoGridAnchorHorizontalIndex = "Column"
+L.AutoGridAnchorHorizontalIndexDesc = "Horizontal index in grid"
 
 -- Plugin definition
 L.AuraCount = "Maximum stack count"

@@ -8,6 +8,8 @@ local UI = Engine.UI
 
 local CheckSpec = Engine.CheckSpec
 local PixelPerfect = Engine.PixelPerfect
+local DefaultBoolean = Engine.DefaultBoolean
+local GetColor = Engine.GetColor
 
 --
 local plugin = Engine:NewPlugin("AURA")
@@ -78,12 +80,13 @@ function plugin:UpdateGraphics()
 			stack.status:Point("TOPLEFT", stack, "TOPLEFT", 2, -2)
 			stack.status:Point("BOTTOMRIGHT", stack, "BOTTOMRIGHT", -2, 2)
 		end
+		local color = GetColor(self.settings.colors, i, UI.ClassColor())
 		if self.settings.filled == true then
-			stack.status:SetStatusBarColor(unpack(self.settings.colors[i]))
+			stack.status:SetStatusBarColor(unpack(color))
 			stack.status:Show()
 			stack:SetBackdropBorderColor(unpack(UI.BorderColor))
 		else
-			stack:SetBackdropBorderColor(unpack(self.settings.colors[i]))
+			stack:SetBackdropBorderColor(unpack(color))
 			if stack.status then stack.status:Hide() end
 		end
 	end
@@ -91,6 +94,15 @@ end
 
 -- overridden methods
 function plugin:Initialize()
+	-- set defaults
+	self.settings.unit = self.settings.unit or "player"
+	self.settings.filled = DefaultBoolean(self.settings.filled, false)
+	self.settings.count = self.settings.count or 1
+	self.settings.filter = self.settings.filter or "HELPFUL"
+	--local color = self.settings.color or UI.ClassColor() -- TODO: use GetColor(settings, index) instead of using settings.colors[index]
+	--self.settings.colors = self.settings.colors or CreateColorArray(color, self.settings.count) -- TODO: use GetColor(settings, index) instead of using settings.colors[index]
+	self.settings.colors = self.settings.colors or self.settings.color or UI.ClassColor()
+	-- no default for spellID
 	--
 	self.auraName = GetSpellInfo(self.settings.spellID)
 	--

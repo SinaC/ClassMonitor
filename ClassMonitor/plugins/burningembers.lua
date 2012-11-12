@@ -9,6 +9,7 @@ if UI.MyClass ~= "WARLOCK" then return end -- Available only for warlocks
 --if not Engine.IsPTR() then return end
 
 local PixelPerfect = Engine.PixelPerfect
+local PowerColor = UI.PowerColor
 
 --
 local plugin = Engine:NewPlugin("BURNINGEMBERS")
@@ -112,6 +113,8 @@ end
 
 -- overridden methods
 function plugin:Initialize()
+	-- set defaults
+	self.settings.color = self.settings.color or PowerColor(SPELL_POWER_BURNING_EMBERS) or {222/255, 95/255,  95/255, 1}
 	--
 	self.count = 4
 	self.numBars = self.count

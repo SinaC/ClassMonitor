@@ -8,6 +8,7 @@ local UI = Engine.UI
 
 local ToClock = Engine.ToClock
 local CheckSpec = Engine.CheckSpec
+local DefaultBoolean = Engine.DefaultBoolean
 
 --
 local plugin = Engine:NewPlugin("CD")
@@ -93,6 +94,11 @@ end
 
 -- overridden methods
 function plugin:Initialize()
+	-- set defaults
+	self.settings.color = self.settings.color or UI.ClassColor()
+	self.settings.text = DefaultBoolean(self.settings.text, true)
+	self.settings.duration = DefaultBoolean(self.settings.duration, true)
+	-- no default for spellID
 	--
 	self.spellName = GetSpellInfo(self.settings.spellID)
 	--

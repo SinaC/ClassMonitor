@@ -25,4 +25,6 @@ D["COMBO"] = {
 	},
 	[10] = Colors,
 	[11] = D.Helpers.Anchor,
+	[12] = D.Helpers.AutoGridVerticalIndex,
+	[13] = D.Helpers.AutoGridHorizontalIndex,
 }

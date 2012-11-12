@@ -35,4 +35,6 @@ D["CD"] = {
 	[11] = D.Helpers.Spell,
 	[12] = Color,
 	[12] = D.Helpers.Anchor,
+	[13] = D.Helpers.AutoGridVerticalIndex,
+	[14] = D.Helpers.AutoGridHorizontalIndex,
 }

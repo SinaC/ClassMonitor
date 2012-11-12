@@ -7,6 +7,7 @@ local UI = Engine.UI
 --if not Engine.IsPTR() then return end
 
 local CheckSpec = Engine.CheckSpec
+local DefaultBoolean = Engine.DefaultBoolean
 local PowerColor = UI.PowerColor
 local ClassColor = UI.ClassColor
 
@@ -76,7 +77,7 @@ function plugin:UpdateMaxValueAndColor()
 	local valueMax = UnitPowerMax("player", resource)
 	local resource, resourceName = UnitPowerType("player")
 	-- use colors[resourceName] if defined, else use default resource color or class color
-	local color = (self.settings.colors and (self.settings.colors[resourceName] or self.settings.colors[1])) or PowerColor(resourceName) or ClassColor()
+	local color = (self.settings.colors and self.settings.colors[resourceName]) or PowerColor(resourceName) or ClassColor()
 	self.bar.status:SetStatusBarColor(unpack(color))
 	self.bar.status:SetMinMaxValues(0, valueMax)
 end
@@ -112,6 +113,10 @@ end
 
 -- overridden methods
 function plugin:Initialize()
+	-- set defaults
+	self.settings.text = DefaultBoolean(self.settings.text, true)
+	self.settings.hideifmax = DefaultBoolean(self.settings.hideifmax, false)
+	self.settings.colors = self.settings.colors or self.settings.color
 	--
 	self:UpdateGraphics()
 end

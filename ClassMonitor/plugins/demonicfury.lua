@@ -10,6 +10,7 @@ if UI.MyClass ~= "WARLOCK" then return end -- Available only for warlocks
 
 local PowerColor = UI.PowerColor
 local ClassColor = UI.ClassColor
+local DefaultBoolean = Engine.DefaultBoolean
 
 --
 local plugin = Engine:NewPlugin("DEMONICFURY")
@@ -78,6 +79,9 @@ end
 
 -- overridden methods
 function plugin:Initialize()
+	-- set defaults
+	self.settings.color = self.settings.color or PowerColor(SPELL_POWER_DEMONIC_FURY) or {95/255, 222/255,  95/255, 1}
+	self.settings.text = DefaultBoolean(self.settings.text, true)
 	--
 	self:UpdateGraphics()
 end

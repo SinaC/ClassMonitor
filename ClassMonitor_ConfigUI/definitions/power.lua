@@ -53,4 +53,6 @@ D["POWER"] = {
 	},
 	-- TODO: colors
 	[12] = D.Helpers.Anchor,
+	[13] = D.Helpers.AutoGridVerticalIndex,
+	[14] = D.Helpers.AutoGridHorizontalIndex,
 }

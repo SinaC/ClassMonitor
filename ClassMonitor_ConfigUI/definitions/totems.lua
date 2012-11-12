@@ -37,4 +37,6 @@ D["TOTEMS"] = {
 	-- TODO: map
 	-- TODO: colors
 	[11] = D.Helpers.Anchor,
+	[12] = D.Helpers.AutoGridVerticalIndex,
+	[13] = D.Helpers.AutoGridHorizontalIndex,
 }

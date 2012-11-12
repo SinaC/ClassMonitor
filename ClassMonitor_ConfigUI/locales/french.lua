@@ -22,6 +22,8 @@ if GetLocale() == "frFR" then
 	L.GlobalWidthDesc = "Modifier cette valeur changera la largeur de tous les plugins"
 	L.GlobalHeight = "Hauteur globale"
 	L.GlobalHeightDesc =  "Modifier cette valeur changera la hauteur de tous les plugins"
+	L.AutoGridAnchor = "(experimental)Ancrage automatique en grille"
+	L.AutoGridAnchorDesc = "Ancre automatiquement les fen\195\170tres en se basant sur une grille (experimental)"
 
 	-- Helpers definition
 	L.Name = "Nom de la fen\195\170tre"
@@ -97,6 +99,11 @@ if GetLocale() == "frFR" then
 	L.AnchorOffsetXDesc = "D\195\169calage horizontal \195\160 appliquer \195\160 l'ancre"
 	L.AnchorOffsetY = "D\195\169calage vertical"
 	L.AnchorOffsetYDesc = "D\195\169calage vertical \195\160 appliquer \195\160 l'ancre"
+
+	L.AutoGridAnchorVerticalIndex = "Ligne"
+	L.AutoGridAnchorVerticalIndexDesc = "Index vertical dans la grille"
+	L.AutoGridAnchorHorizontalIndex = "Colonne"
+	L.AutoGridAnchorHorizontalIndexDesc = "Index horizontal dans la grille"
 
 	-- Plugin definition
 	L.AuraCountDesc = "Nombre maximum de charges"

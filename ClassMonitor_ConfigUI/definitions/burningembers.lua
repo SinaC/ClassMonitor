@@ -13,4 +13,6 @@ D["BURNINGEMBERS"] = {
 	[7] = D.Helpers.Height,
 	-- TODO: colors
 	[8] = D.Helpers.Anchor,
+	[9] = D.Helpers.AutoGridVerticalIndex,
+	[10] = D.Helpers.AutoGridHorizontalIndex,
 }

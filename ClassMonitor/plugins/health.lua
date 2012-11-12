@@ -7,7 +7,9 @@ local UI = Engine.UI
 --if not Engine.IsPTR() then return end
 
 local CheckSpec = Engine.CheckSpec
+local DefaultBoolean = Engine.DefaultBoolean
 local HealthColor = UI.HealthColor
+local FormatNumber = Engine.FormatNumber
 
 --
 local plugin = Engine:NewPlugin("HEALTH")
@@ -25,11 +27,12 @@ function plugin:Update(elapsed)
 		self.bar.status:SetValue(value)
 		if self.settings.text == true then
 			if value == valueMax then
-				if value > 10000 then
-					self.bar.text:SetFormattedText("%.1fk", value/1000)
-				else
-					self.bar.text:SetText(value)
-				end
+				--if value > 10000 then
+				--	self.bar.text:SetFormattedText("%.1fk", value/1000)
+				--else
+				--	self.bar.text:SetText(value)
+				--end
+				self.bar.text:SetText(FormatNumber(value))
 			else
 				local percentage = (value * 100) / valueMax
 				if value > 10000 then
@@ -94,6 +97,10 @@ end
 
 -- overridden methods
 function plugin:Initialize()
+	-- set defaults
+	self.settings.unit = self.settings.unit or "player"
+	self.settings.text = DefaultBoolean(self.settings.text, true)
+	-- no default for color
 	--
 	self:UpdateGraphics()
 end
