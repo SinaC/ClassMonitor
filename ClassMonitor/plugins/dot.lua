@@ -22,58 +22,86 @@ local DefaultColors = {
 	{127/255, 255/255, 0, 1} -- green
 }
 
+--[[
+		local name, duration, expirationTime, _, value1, value2, value3, _
+
+if toc > 50001 then
+		name, _, _, _, _, duration, expTime, _, _, _, _, _, _, _, value1, value2, value3 = UnitAura("target", self.auraName, nil, "PLAYER|HARMFUL") -- 5.1
+else
+		name, _, _, _, _, duration, expTime, _, _, _, _, _, _, value1, value2, value3 = UnitAura("target", self.auraName, nil, "PLAYER|HARMFUL") -- 5.0
+end
+value1 gives current dot value
+--]]
+
 -- own methods
 function plugin:Update(elapsed)
 	self.timeSinceLastUpdate = self.timeSinceLastUpdate + elapsed
-	if self.timeSinceLastUpdate > 0.1 then
+	if self.timeSinceLastUpdate > 0.1 and self.auraName then
 --print("DMG:"..tostring(self.dmg))
-		local _, _, _, _, _, duration, expTime = UnitAura("target", self.auraName, nil, "PLAYER|HARMFUL")
-		local remainTime = (expTime or 0) - GetTime()
-		local color
-		if self.settings.latency == true and remainTime <= 0.4 then 
-			color = {1, 0, 0, 1} -- red
+		--local name, _, _, _, _, duration, expTime = 
+		local name, duration, expTime, value1, _
+		--UnitAura("target", self.auraName, nil, "PLAYER|HARMFUL")
+if toc > 50001 then
+		name, _, _, _, _, duration, expTime, _, _, _, _, _, _, _, value1 = UnitAura("target", self.auraName, nil, "PLAYER|HARMFUL") -- 5.1
+else
+		name, _, _, _, _, duration, expTime, _, _, _, _, _, _, value1 = UnitAura("target", self.auraName, nil, "PLAYER|HARMFUL") -- 5.0
+end
+		if not name or not duration then
+			self:UnregisterUpdate()
+			--
+			self.bar:Hide()
+			self.dmg = 0
 		else
-			-- if self.settings.threshold == 0 then
-				-- color = (self.settings.colors and self.settings.colors[1]) or self.settings.color or {255/255, 165/255, 0, 1} -- bad: orange
-			-- elseif self.settings.threshold*.75 >= self.dmg then
-				-- color = (self.settings.colors and self.settings.colors[1]) or self.settings.color or {255/255, 165/255, 0, 1} -- bad: orange
-				-- -- print("attend encore")
-			-- elseif self.settings.threshold >= self.dmg then
-				-- -- print("hoh")
-				-- color = (self.settings.colors and self.settings.colors[2]) or self.settings.color or {255/255, 255/255, 0, 1} -- 0,75% -- yellow
-			-- else
-				-- -- print("GOOOO")
-				-- color = (self.settings.colors and self.settings.colors[3]) or self.settings.color or {127/255, 255/255, 0, 1} -- > 100% GO -- green
-			-- end
-			if self.settings.threshold == 0 then
-				color = GetColor(self.settings.colors, 1, DefaultColors[1])--self.settings.colors[1] -- bad: orange
-			elseif self.settings.threshold*.75 >= self.dmg then
-				color = GetColor(self.settings.colors, 1, DefaultColors[1])--self.settings.colors[1] -- bad: orange
-			elseif self.settings.threshold >= self.dmg then
-				color = GetColor(self.settings.colors, 2, DefaultColors[2])--self.settings.colors[2] -- 0,75% -- yellow
-			else
-				color = GetColor(self.settings.colors, 3, DefaultColors[3]) -- self.settings.colors[3] -- > 100% GO -- green
+			if value1 and type(value1) == "number" then
+				self.dmg = value1
 			end
+			local remainTime = (expTime or 0) - GetTime()
+			local color
+			if self.settings.latency == true and remainTime <= 0.4 then 
+				color = {1, 0, 0, 1} -- red
+			else
+				-- if self.settings.threshold == 0 then
+					-- color = (self.settings.colors and self.settings.colors[1]) or self.settings.color or {255/255, 165/255, 0, 1} -- bad: orange
+				-- elseif self.settings.threshold*.75 >= self.dmg then
+					-- color = (self.settings.colors and self.settings.colors[1]) or self.settings.color or {255/255, 165/255, 0, 1} -- bad: orange
+					-- -- print("attend encore")
+				-- elseif self.settings.threshold >= self.dmg then
+					-- -- print("hoh")
+					-- color = (self.settings.colors and self.settings.colors[2]) or self.settings.color or {255/255, 255/255, 0, 1} -- 0,75% -- yellow
+				-- else
+					-- -- print("GOOOO")
+					-- color = (self.settings.colors and self.settings.colors[3]) or self.settings.color or {127/255, 255/255, 0, 1} -- > 100% GO -- green
+				-- end
+				if self.settings.threshold == 0 then
+					color = GetColor(self.settings.colors, 1, DefaultColors[1])--self.settings.colors[1] -- bad: orange
+				elseif self.settings.threshold*.75 >= self.dmg then
+					color = GetColor(self.settings.colors, 1, DefaultColors[1])--self.settings.colors[1] -- bad: orange
+				elseif self.settings.threshold >= self.dmg then
+					color = GetColor(self.settings.colors, 2, DefaultColors[2])--self.settings.colors[2] -- 0,75% -- yellow
+				else
+					color = GetColor(self.settings.colors, 3, DefaultColors[3]) -- self.settings.colors[3] -- > 100% GO -- green
+				end
+			end
+			self.bar.status:SetStatusBarColor(unpack(color))
+			self.bar.status:SetMinMaxValues(0, duration or 1)
+			self.bar.status:SetValue(remainTime)
+			self.bar.text:SetText(self.dmg)
+			self.timeSinceLastUpdate = 0
 		end
-		self.bar.status:SetStatusBarColor(unpack(color))
-		self.bar.status:SetMinMaxValues(0, duration)
-		self.bar.status:SetValue(remainTime)
-		self.bar.text:SetText(self.dmg)
-		self.timeSinceLastUpdate = 0
 	end
 end
 
 function plugin:UpdateVisibility(event)
 --print("UpdateVisibility:"..tostring(event))
 	local visible = false
-	if CheckSpec(self.settings.specs) then
+	if CheckSpec(self.settings.specs) and self.auraName then
 		local name, _, _, _, _, duration, expTime = UnitAura("target", self.auraName, nil, "PLAYER|HARMFUL")
 --print("--->"..tostring(name).."  "..tostring(expTime).."  "..tostring(duration).."  "..tostring(self.auraName).."  "..tostring(self.dmg))
 --		local name, duration, expirationTime, _, value1, value2, value3, _
 -- if toc > 50001 then
-		-- name, _, _, _, _, duration, expirationTime, _, _, _, _, _, _, _, value1, value2, value3 = UnitBuff("target", self.auraName, nil, "PLAYER|HARMFUL") -- 5.1
+		-- name, _, _, _, _, duration, expirationTime, _, _, _, _, _, _, _, value1, value2, value3 = UnitAura("target", self.auraName, nil, "PLAYER|HARMFUL") -- 5.1
 -- else
-		-- name, _, _, _, _, duration, expirationTime, _, _, _, _, _, _, value1, value2, value3 = UnitBuff("target", self.auraName, nil, "PLAYER|HARMFUL") -- 5.0
+		-- name, _, _, _, _, duration, expirationTime, _, _, _, _, _, _, value1, value2, value3 = UnitAura("target", self.auraName, nil, "PLAYER|HARMFUL") -- 5.0
 -- end
 --print("--->"..tostring(name).."  "..tostring(expTime).."  "..tostring(duration).."  "..tostring(self.auraName).."  "..tostring(value1).."  "..tostring(value2).."  "..tostring(value3))
 		if expTime ~= nil then
@@ -150,6 +178,7 @@ function plugin:Initialize()
 	self.settings.colors = self.settings.colors or DefaultColors
 	self.settings.latency = DefaultBoolean(self.settings.latency, false)
 	self.settings.threshold = self.settings.threshold or 0
+	if type(self.settings.threshold) ~= "number" then self.settings.threshold = 0 end
 	-- no default for spellID
 	--
 	self.dmg = 0
@@ -180,6 +209,7 @@ function plugin:Disable()
 end
 
 function plugin:SettingsModified()
+--print("THRESHOLD:"..tostring(self.settings.threshold))
 	--
 	self:Disable()
 	--

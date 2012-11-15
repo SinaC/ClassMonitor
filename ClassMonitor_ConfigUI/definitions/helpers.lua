@@ -96,7 +96,7 @@ D.Helpers.SetValue = function(info, value)
 end
 
 D.Helpers.GetNumberValue = function(info)
-	return tostring(info.arg.section[info.arg.key])
+	return tostring(info.arg.section[info.arg.key] or "")
 end
 
 D.Helpers.SetNumberValue = function(info, value)
@@ -142,6 +142,7 @@ end
 
 ----------------------------------------------------------------------------------------
 D.Helpers.ValidateNumber = function(info, value)
+--print("D.Helpers.ValidateNumber:"..tostring(value))
 	local asNumber = tonumber(value)
 --print("ValidateNumber:"..tostring(asNumber).."  "..type(value).."  "..type(asNumber))
 	if asNumber and type(asNumber) == "number" then

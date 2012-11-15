@@ -115,7 +115,7 @@ function plugin:Enable()
 	self:RegisterEvent("PLAYER_REGEN_ENABLED", plugin.UpdateVisibility)
 	if self.settings.unit == "focus" then self:RegisterEvent("PLAYER_FOCUS_CHANGED", plugin.UpdateVisibility) end
 	if self.settings.unit == "target" then self:RegisterEvent("PLAYER_TARGET_CHANGED", plugin.UpdateVisibility) end
-	if self.settings.unit == "pet" then cself:RegisterUnitEvent("UNIT_PET", "player", plugin.UpdateVisibility) end
+	if self.settings.unit == "pet" then self:RegisterUnitEvent("UNIT_PET", "player", plugin.UpdateVisibility) end
 	self:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player", plugin.UpdateVisibility)
 
 	--self:RegisterUnitEvent("UNIT_AURA", unit, plugin.UpdateValue)

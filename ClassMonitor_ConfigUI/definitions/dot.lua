@@ -31,7 +31,7 @@ D["DOT"] = {
 		type = "input",
 		get = D.Helpers.GetNumberValue, --D.Helpers.GetValue,
 		set = D.Helpers.SetNumberValue, --D.Helpers.SetValue,
-		validate = ValidateNumber,
+		validate = D.Helpers.ValidateNumber,
 		disabled = D.Helpers.IsDisabled
 	},
 	[12] = Colors,
