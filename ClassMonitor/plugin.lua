@@ -116,15 +116,16 @@ function Plugin:SettingsModified()
 end
 
 ------------------------------------------------
--- public ctor & getter
+-- Plugin factory
 ------------------------------------------------
-function Plugin:NewInstance(instanceName, settings)
-	assert(type(instanceName) == "string", "Instance name must be a string")
-	assert(not self.instances[instanceName], "Plugin instance "..tostring(instanceName).." already exists")
-	return self:new(instanceName, settings)
-end
+-- function Plugin:NewInstance(instanceName, settings)
+	-- assert(type(instanceName) == "string", "Instance name must be a string")
+	-- assert(not self.instances[instanceName], "Plugin instance "..tostring(instanceName).." already exists")
+	-- return self:new(instanceName, settings)
+-- end
 
 function Engine:NewPlugin(pluginName)
+--print("NEW PLUGIN CATEGORY:"..tostring(pluginName))
 	assert(type(pluginName) == "string", "Plugin name must be a string")
 	assert(not Plugins[pluginName], "Plugin "..tostring(pluginName).." already exists")
 
@@ -133,24 +134,29 @@ function Engine:NewPlugin(pluginName)
 	return p
 end
 
-function Engine:GetPlugin(pluginName, instanceName)
-	assert(type(pluginName) == "string", "Plugin name must be a string")
-	local p = Plugins[pluginName]
-	if instanceName then
-		assert(type(instanceName) == "string", "Instance name must be a string")
-		p = p.instances[instanceName]
-	end
-	assert(p, "Plugin "..tostring(pluginName).." not found")
-	return p
-end
+-- function Engine:GetPlugin(pluginName, instanceName)
+	-- assert(type(pluginName) == "string", "Plugin name must be a string")
+	-- local p = Plugins[pluginName]
+	-- assert(p, "Plugin "..tostring(pluginName).." not found")
+	-- if instanceName then
+		-- assert(type(instanceName) == "string", "Instance name must be a string")
+		-- p = p.instances[instanceName]
+	-- end
+	-- return p
+-- end
 
 function Engine:NewPluginInstance(pluginName, instanceName, settings)
+--print("NEW PLUGIN INSTANCE:"..tostring(pluginName).."  "..tostring(instanceName))
 	assert(type(pluginName) == "string", "Plugin name must be a string")
 	assert(type(instanceName) == "string", "Instance name must be a string")
 	assert(settings, "Settings cannot be null")
 	local category = Plugins[pluginName]
-	assert(category, "Plugin "..tostring(pluginName).." not found")
-	assert(not category.instances[instanceName], "Plugin instance "..tostring(instanceName).." already exists")
+	--assert(category, "Plugin "..tostring(pluginName).." not found")
+	--assert(not category.instances[instanceName], "Plugin instance "..tostring(instanceName).." already exists")
+	--return category:new(instanceName, settings)
+	if not category or category.instances[instanceName] then
+		return nil
+	end
 	return category:new(instanceName, settings)
 end
 
@@ -165,9 +171,11 @@ function Engine:UpdatePluginInstance(pluginName, instanceName)
 	assert(type(pluginName) == "string", "Plugin name must be a string")
 	assert(type(instanceName) == "string", "Instance name must be a string")
 	local category = Plugins[pluginName]
-	assert(category, "Plugin "..tostring(pluginName).." not found")
+	if not category then return true end
+	--assert(category, "Plugin "..tostring(pluginName).." not found")
 	local instance = category.instances[instanceName]
-	assert(instance, "Plugin instance "..tostring(instanceName).." not found")
+	--assert(instance, "Plugin instance "..tostring(instanceName).." not found")
+	if not instance then return true end
 	-- update instance
 	instance:SettingsModified()
 	return true
@@ -182,26 +190,54 @@ function Engine:UpdateAllPlugins()
 	end
 end
 
--- ----------------------------------------------
--- -- test
--- ----------------------------------------------
--- local testPlugin = Engine:NewPlugin("TEST")
--- function testPlugin:PLAYER_ENTERING_WORLD(event)
--- print("testPlugin:PLAYER_ENTERING_WORLD:"..tostring(event).."  "..tostring(self.testField))
--- end
--- function testPlugin:UNIT_AURA(event, unit)
--- print("testPlugin:UNIT_AURA:"..tostring(event).."  "..tostring(unit).."  "..tostring(self.testField))
--- end
--- function testPlugin:Initialize()
--- print("testPlugin:Initialize "..tostring(self.name))
-	-- self.testField = 5
--- end
--- function testPlugin:Enable()
-	-- self:RegisterEvent("PLAYER_ENTERING_WORLD", testPlugin.PLAYER_ENTERING_WORLD)
-	-- self:RegisterUnitEvent("UNIT_AURA", "player", testPlugin.UNIT_AURA)
--- end
+------------------------------------------------
+-- Create & Initialize plugin instance
+------------------------------------------------
+function Engine:CreatePluginInstance(pluginName, instanceName, settings)
+--print("CreatePluginInstance:"..tostring(pluginName).."  "..tostring(instanceName).."  "..tostring(settings))
+	local instance = Engine:NewPluginInstance(pluginName, instanceName, settings)
+	if instance then
+		instance:Initialize()
+		if settings.enable == true then
+			instance:Enable()
+		end
+	end
+	return instance
+end
 
--- local instance = Engine:NewPluginInstance("TEST", "testInstance", {})
--- instance:Initialize()
--- instance:Enable()
--- --instance:Disable()
+------------------------------------------------
+-- Build plugin category list (only plugin name)
+------------------------------------------------
+function Engine:GetPluginList()
+	local list = {}
+	for _, category in pairs(Plugins) do
+--print("PLUGIN LIST:"..tostring(category.pluginName))
+		list[category.pluginName] = true
+	end
+	return list
+end
+
+------------------------------------------------
+-- Delete a plugin instance
+------------------------------------------------
+function Engine:DeletePluginInstance(pluginName, instanceName)
+		-- TODO: remove this workaround
+	if pluginName == "MOVER" then return true end
+	-- get instance
+	assert(type(pluginName) == "string", "Plugin name must be a string")
+	assert(type(instanceName) == "string", "Instance name must be a string")
+	local category = Plugins[pluginName]
+	if not category then return false end
+	local instance = category.instances[instanceName]
+	if not instance then return false end
+	-- Disable instance, no real deletion
+	instance:Disable()
+	return true
+end
+
+------------------------------------------------
+-- Check if plugin category already exists
+------------------------------------------------
+function Engine:IsPluginAvailable(pluginName)
+	return Plugins[pluginName] ~= nil
+end

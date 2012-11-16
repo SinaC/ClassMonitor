@@ -10,6 +10,9 @@ local CheckSpec = Engine.CheckSpec
 local PixelPerfect = Engine.PixelPerfect
 local DefaultBoolean = Engine.DefaultBoolean
 local GetColor = Engine.GetColor
+local GetAnchor = Engine.GetAnchor
+local GetWidth = Engine.GetWidth
+local GetHeight = Engine.GetHeight
 
 --
 local plugin = Engine:NewPlugin("POWER")
@@ -46,7 +49,8 @@ function plugin:UpdateMaxValue(event, unit, powerType)
 --print("MAX:"..tostring(event).."  maxValue:"..tostring(maxValue).."  count:"..tostring(self.count).."  max:"..tostring(self.maxValue))
 	if maxValue ~= self.maxValue then
 		-- compute new width, spacing
-		local width, spacing = PixelPerfect(self.settings.width, maxValue)
+		--local width, spacing = PixelPerfect(self.settings.width, maxValue)
+		local width, spacing = PixelPerfect(GetWidth(self.settings), maxValue)
 		if maxValue > self.count then
 			self.count = maxValue
 		end
@@ -116,7 +120,8 @@ print("POWERTYPE:"..tostring(powerType).."  "..tostring(self.settings.powerType)
 			self.count = maxValue
 		end
 		-- update points (create any needed points)
-		local width, spacing = PixelPerfect(self.settings.width, maxValue)
+		--local width, spacing = PixelPerfect(self.settings.width, maxValue)
+		local width, spacing = PixelPerfect(GetWidth(self.settings), maxValue)
 		for i = 1, self.count do
 			self:UpdatePointGraphics(i, width, spacing)
 			self.points[i]:Hide()
@@ -181,10 +186,13 @@ function plugin:UpdateGraphics()
 		self.frame = frame
 	end
 	frame:ClearAllPoints()
-	frame:Point(unpack(self.settings.anchor))
-	frame:Size(self.settings.width, self.settings.height)
+	--frame:Point(unpack(self.settings.anchor))
+	--frame:Size(self.settings.width, self.settings.height)
+	frame:Point(unpack(GetAnchor(self.settings)))
+	frame:Size(GetWidth(self.settings), GetHeight(self.settings))
 	-- Create points
-	local width, spacing = PixelPerfect(self.settings.width, self.maxValue)
+	--local width, spacing = PixelPerfect(self.settings.width, self.maxValue)
+	local width, spacing = PixelPerfect(GetWidth(self.settings), self.maxValue)
 	self.points = self.points or {}
 	for i = 1, self.count do
 		self:UpdatePointGraphics(i, width, spacing)
@@ -236,25 +244,3 @@ function plugin:SettingsModified()
 		self:UpdateVisibility()
 	end
 end
-
--- ----------------------------------------------
--- -- test
--- ----------------------------------------------
--- local C = Engine.Config
--- local settings = C[UI.MyClass]
--- if not settings then return end
--- for i, pluginSettings in ipairs(settings) do
-	-- if pluginSettings.kind == "POWER" then
-		-- local setting = Engine.DeepCopy(pluginSettings)
-		-- setting.anchor = {"CENTER", UIParent, "CENTER", 0, i*30}
-		-- setting.specs = {SPEC_WARLOCK_AFFLICTION}
-		-- setting.enable = true
-		-- local color = setting.color or UI.PowerColor(setting.powerType) or UI.ClassColor()
-		-- setting.colors = setting.colors or {color, color,  color, color, color}
-		-- local instance = Engine:NewPluginInstance("POWER", "POWER"..tostring(i), setting)
-		-- instance:Initialize()
-		-- if setting.enable then
-			-- instance:Enable()
-		-- end
-	-- end
--- end

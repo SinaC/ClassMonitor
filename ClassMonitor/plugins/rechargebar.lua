@@ -18,8 +18,10 @@ It's a new way of thinking about cooldowns, and I personally am excited to see w
 
 local ToClock = Engine.ToClock
 local CheckSpec = Engine.CheckSpec
-local PixelPerfect = Engine.PixelPerfect
 local DefaultBoolean = Engine.DefaultBoolean
+local GetAnchor = Engine.GetAnchor
+local GetWidth = Engine.GetWidth
+local GetHeight = Engine.GetHeight
 
 --
 local plugin = Engine:NewPlugin("RECHARGEBAR")
@@ -41,6 +43,7 @@ function plugin:Update(elapsed)
 end
 
 function plugin:UpdateValue()
+	if not self.spellName then return end
 	local currentCharges, maxCharges, timeLastCast, cooldownDuration = GetSpellCharges(self.spellName)
 --print(tostring(event)..":"..tostring(currentCharges).."  "..tostring(maxCharges).."  "..tostring(timeLastCast).."  "..tostring(cooldownDuration))
 	maxCharges = maxCharges or 0
@@ -101,8 +104,10 @@ function plugin:UpdateGraphics()
 		self.bar = bar
 	end
 	bar:ClearAllPoints()
-	bar:Point(unpack(self.settings.anchor))
-	bar:Size(self.settings.width, self.settings.height)
+	-- bar:Point(unpack(self.settings.anchor))
+	-- bar:Size(self.settings.width, self.settings.height)
+	bar:Point(unpack(GetAnchor(self.settings)))
+	bar:Size(GetWidth(self.settings), GetHeight(self.settings))
 	--
 	if not bar.status then
 		bar.status = CreateFrame("StatusBar", nil, bar)
@@ -168,130 +173,3 @@ function plugin:SettingsModified()
 		self:UpdateVisibility()
 	end
 end
-
--- ----------------------------------------------
--- -- test
--- ----------------------------------------------
--- local C = Engine.Config
--- local settings = C[UI.MyClass]
--- if not settings then return end
--- for i, pluginSettings in ipairs(settings) do
-	-- if pluginSettings.kind == "RECHARGEBAR" then
-		-- local setting = Engine.DeepCopy(pluginSettings)
-		-- setting.anchor = {"CENTER", UIParent, "CENTER", 0, i*30}
-		-- setting.enable = true
-		-- setting.autohide = false
-		-- setting.text = true
-		-- setting.color = setting.color or UI.ClassColor()
-		-- local instance = Engine:NewPluginInstance("RECHARGEBAR", "RECHARGEBAR"..tostring(i), setting)
-		-- instance:Initialize()
-		-- if setting.enable then
-			-- instance:Enable()
-		-- end
-	-- end
--- end
-
---[[
--- Generic method to create Recharge Bar monitor
-Engine.CreateRechargeBarMonitor = function(name, enable, autohide, text, spellID, anchor, width, height, color, specs)
-	local spellName, _, spellIcon = GetSpellInfo(spellID)
-
-	local cmRecharge = CreateFrame("Frame", name, UI.PetBattleHider) -- name is used for 1st power point
-	cmRecharge:SetTemplate()
-	cmRecharge:SetFrameStrata("BACKGROUND")
-	cmRecharge:Size(width, height)
-	cmRecharge:Point(unpack(anchor))
-	cmRecharge.status = CreateFrame("StatusBar", name.."_status", cmRecharge)
-	cmRecharge.status:SetStatusBarTexture(UI.NormTex)
-	cmRecharge.status:SetFrameLevel(6)
-	cmRecharge.status:Point("TOPLEFT", cmRecharge, "TOPLEFT", 2, -2)
-	cmRecharge.status:Point("BOTTOMRIGHT", cmRecharge, "BOTTOMRIGHT", -2, 2)
-	cmRecharge.status:SetStatusBarColor(unpack(color))
-	cmRecharge.status:SetMinMaxValues(0, 300) -- dummy value
-	cmRecharge.status:SetValue(0)
-
-	if text == true then
-		cmRecharge.durationText = UI.SetFontString(cmRecharge.status, 12)
-		cmRecharge.durationText:Point("RIGHT", cmRecharge.status)
-	end
-
-	cmRecharge.chargeText = UI.SetFontString(cmRecharge.status, 12)
-	cmRecharge.chargeText:Point("CENTER", cmRecharge.status)
-
-	cmRecharge:Hide()
-
-	if not enable then
-		return
-	end
-
-	local function UpdateRechargeTimer(self, elapsed)
-		if not self.status.expirationTime then return end
-		self.status.expirationTime = self.status.expirationTime - elapsed
-
-		local timeLeft = self.status.expirationTime
-		local timeElapsed = self.status.cooldownDuration - timeLeft
-		if timeLeft > 0 then
-			--self.status:SetValue(timeLeft)
-			self.status:SetValue(timeElapsed)
-			if text == true then
-				self.durationText:SetText(ToClock(timeLeft))
-			end
-		else
-			self:SetScript("OnUpdate", nil)
-			if text == true then
-				self.durationText:SetText("")
-			end
-		end
-	end
-
-	cmRecharge:RegisterEvent("PLAYER_ENTERING_WORLD")
-	cmRecharge:RegisterEvent("PLAYER_REGEN_DISABLED")
-	cmRecharge:RegisterEvent("PLAYER_REGEN_ENABLED")
-	cmRecharge:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
-	cmRecharge:RegisterEvent("SPELLS_CHANGED") -- only valid event triggered after a talent is learned
-	cmRecharge:RegisterEvent("SPELL_UPDATE_COOLDOWN")
-	cmRecharge:SetScript("OnEvent", function(self, event)
-		local visible = true
-		if autohide == true then
-			if event == "PLAYER_REGEN_DISABLED" or InCombatLockdown() then
-				visible = true
-			else
-				visible = false
-			end
-		end
-		if CheckSpec(specs) and visible then
-			local currentCharges, maxCharges, timeLastCast, cooldownDuration = GetSpellCharges(spellName)
---print(tostring(event)..":"..tostring(currentCharges).."  "..tostring(maxCharges).."  "..tostring(timeLastCast).."  "..tostring(cooldownDuration))
-			currentCharges = currentCharges or 0
-			cmRecharge.chargeText:SetText(tostring(currentCharges).."/"..tostring(maxCharges))
-			if currentCharges ~= maxCharges and timeLastCast ~= nil then
-				-- set cooldown on bar
-				local timeLeft = (timeLastCast+cooldownDuration) - GetTime()
-				self.status.cooldownDuration = cooldownDuration
-				self.status.expirationTime = timeLeft
-				self.status:SetMinMaxValues(0, cooldownDuration)
-				self:SetScript("OnUpdate", UpdateRechargeTimer)
-			else
-				-- fill bar
-				self.status.expirationTime = nil
-				self.status:SetMinMaxValues(0, 1)
-				self.status:SetValue(1)
-				if text == true then
-					self.durationText:SetText("")
-				end
-				self:Show()
-			end
-		else
-			self:Hide()
-			self.status:SetValue(0)
-			self:SetScript("OnUpdate", nil)
-			if text == true then
-				self.durationText:SetText("")
-			end
-			self:Hide()
-		end
-	end)
-
-	return cmRecharge
-end
---]]

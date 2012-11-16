@@ -8,6 +8,9 @@ local UI = Engine.UI
 
 local CheckSpec = Engine.CheckSpec
 local DefaultBoolean = Engine.DefaultBoolean
+local GetAnchor = Engine.GetAnchor
+local GetWidth = Engine.GetWidth
+local GetHeight = Engine.GetHeight
 
 --
 local plugin = Engine:NewPlugin("ENERGIZE")
@@ -84,8 +87,10 @@ function plugin:UpdateGraphics()
 		self.bar = bar
 	end
 	bar:ClearAllPoints()
-	bar:Point(unpack(self.settings.anchor))
-	bar:Size(self.settings.width, self.settings.height)
+	--bar:Point(unpack(self.settings.anchor))
+	--bar:Size(self.settings.width, self.settings.height)
+	bar:Point(unpack(GetAnchor(self.settings)))
+	bar:Size(GetWidth(self.settings), GetHeight(self.settings))
 
 	if not bar.status then
 		bar.status = CreateFrame("StatusBar", nil, bar)
@@ -133,91 +138,3 @@ function plugin:SettingsModified()
 		self:Enable()
 	end
 end
-
--- ----------------------------------------------
--- -- test
--- ----------------------------------------------
--- local C = Engine.Config
--- local settings = C[UI.MyClass]
--- if not settings then return end
--- for i, pluginSettings in ipairs(settings) do
-	-- if pluginSettings.kind == "ENERGIZE" then
-		-- local setting = Engine.DeepCopy(pluginSettings)
-		-- setting.anchor = {"CENTER", UIParent, "CENTER", 0, i*30}
-		-- setting.enable = true
-		-- setting.autohide = false
-		-- setting.filling = true
-		-- setting.color = setting.color or UI.ClassColor()
-		-- local instance = Engine:NewPluginInstance("ENERGIZE", "ENERGIZE"..tostring(i), setting)
-		-- instance:Initialize()
-		-- if setting.enable then
-			-- instance:Enable()
-		-- end
-	-- end
--- end
-
---[[
--- Create a buff spell_energize monitor
-Engine.CreateEnergizeMonitor = function(name, enable, spelltracked, anchor, width, height, color, duration, filling)
-	local cmEnergize = CreateFrame("Frame", name, UI.PetBattleHider)
-	cmEnergize:SetTemplate()
-	cmEnergize:SetFrameStrata("BACKGROUND")
-	cmEnergize:Size(width, height)
-	cmEnergize:Point(unpack(anchor))
-
-	cmEnergize.status = CreateFrame("StatusBar", "cmEnergizeStatus", cmEnergize)
-	cmEnergize.status:SetStatusBarTexture(UI.NormTex)
-	cmEnergize.status:SetFrameLevel(6)
-	cmEnergize.status:Point("TOPLEFT", cmEnergize, "TOPLEFT", 1, -1)
-	cmEnergize.status:Point("BOTTOMRIGHT", cmEnergize, "BOTTOMRIGHT", -1, 1)
-	cmEnergize.status:SetMinMaxValues(0, duration)
-	cmEnergize.status:SetStatusBarColor(unpack(color))
-	cmEnergize:Hide()
-
-	if not enable then
-		cmEnergize:Hide()
-		return
-	end
-
-	cmEnergize.timeSinceLastUpdate = GetTime()
-	local function OnUpdate(self, elapsed)
-		cmEnergize.timeSinceLastUpdate = cmEnergize.timeSinceLastUpdate + elapsed
-		if cmEnergize.timeSinceLastUpdate > 0.05 then
-			local timeLeft = cmEnergize.status:GetValue()
-			if filling then
-				cmEnergize.status:SetValue(timeLeft + cmEnergize.timeSinceLastUpdate)
-			else
-				cmEnergize.status:SetValue(timeLeft - cmEnergize.timeSinceLastUpdate)
-			end
-			if cmEnergize.status:GetValue() == 0 or cmEnergize.status:GetValue() == duration then cmEnergize:Hide() end
-			cmEnergize.timeSinceLastUpdate = 0
-		end
-	end
-
-	cmEnergize:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
-	cmEnergize:SetScript("OnEvent", function(self, event, arg1, ...)
-		local  eventType, _,caster,_,_,_,target,_,_, _, spellID =...
-		if eventType == "SPELL_ENERGIZE" and spellID == spelltracked and target == UnitGUID("player") and caster == UnitGUID("player") then 
-			cmEnergize:Show()
-			if filling then
-				cmEnergize.status:SetValue(0)
-			else
-				cmEnergize.status:SetValue(duration)
-			end
-		elseif eventType == "SPELL_PERIODIC_ENERGIZE" and spellID == spelltracked and target == UnitGUID("player") then 
-			cmEnergize:Show()
-			if filling then
-				cmEnergize.status:SetValue(0)
-			else
-				cmEnergize.status:SetValue(duration)
-			end
-		end
-	end)
-
-	-- This is what stops constant OnUpdate
-	cmEnergize:SetScript("OnShow", function(self) self:SetScript("OnUpdate", OnUpdate) end)
-	cmEnergize:SetScript("OnHide", function (self) self:SetScript("OnUpdate", nil) end)
-	
-	return cmEnergize
-end
---]]

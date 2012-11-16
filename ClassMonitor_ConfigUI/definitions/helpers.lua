@@ -7,69 +7,44 @@ local G = Engine.Globals
 D.Helpers = {}
 
 ----------------------------------------------------------------------------------------
--- Create an Ace3 config from definition, add arg with keyName, sectionName, config, savedVariables and parent
-local function SetArgRecursively(option, keyValue, sectionNode, parentNode)
-	option.arg = {key = keyValue, section = sectionNode, parent = parentNode}
-	if option.args then
-		for k, v in pairs(option.args) do
-			SetArgRecursively(v, keyValue, sectionNode, option)
-		end
-	end
-end
-
-D.Helpers.CreateOptionsFromDefinitions = function(definition, orderID, sectionNode, ...)
-	local options = {
-		order = orderID,
-		type = "group",
-		name = sectionNode.displayName or sectionNode.name,
-		args = {
-		}
-	}
-	for k, v in pairs(definition) do
-		-- clone
-		local option = D.Helpers.DeepCopy(v)
-		-- remove key
-		option.key = nil
-		-- add order
-		option.order = k
-		-- add arg
-		SetArgRecursively(option, v.key, sectionNode, options)
-		-- change entries
-		for i = 1, select("#", ...), 2 do
-			local entry, value = select(i, ...)
-			if not entry then break end
-			option[entry] = value
-		end
-		-- save copy
-		options.args[v.key] = option
-	end
-	return options
+function D.Helpers:NewPluginDefinition(pluginName, definition, shortDescription, longDescription)
+	if Engine.Definitions[pluginName] then return false end
+--print("ADD PLUGIN DEFINITION:"..tostring(pluginName).."  "..tostring(shortDescription))
+	Engine.Definitions[pluginName] = definition
+	Engine.Descriptions[pluginName] = {short = shortDescription, long = longDescription}
 end
 
 ----------------------------------------------------------------------------------------
-D.Helpers.DeepCopy = function(object)
-	local lookup_table = {}
-	local function _copy(object)
-		if type(object) ~= "table" then
-			return object
-		elseif lookup_table[object] then
-			return lookup_table[object]
-		end
-		local new_table = {}
-		lookup_table[object] = new_table
-		for index, value in pairs(object) do
-			new_table[_copy(index)] = _copy(value)
-		end
-		return new_table
+D.Helpers.SaveValueUsingInfo = function(section, info, value)
+--print("SAVEINFO:"..tostring(info.arg.key).."  "..tostring(section.name).."  "..tostring(G.SavedPerChar.Plugins).."  "..tostring(G.SavedPerChar.Plugins[section.name]).."  "..tostring(info[#info]))
+-- for k, v in pairs(G.SavedPerChar.Plugins) do
+	-- print(tostring(k).."=>"..tostring(v))
+-- end
+	G.SavedPerChar.Plugins[section.name] = G.SavedPerChar.Plugins[section.name] or {}
+	G.SavedPerChar.Plugins[section.name][info[#info]] = value
+
+	local updated = G.PluginUpdateFunction and G:PluginUpdateFunction(section.kind, section.name) or false
+
+	if not updated then
+		-- something modified, -> /reloadui
+		G.ConfigModified = true
 	end
-	return _copy(object)
 end
 
+D.Helpers.GetValueUsingInfo = function(info)
+	local value = info.arg.section[info[#info]]
+--print("GETINFO "..tostring(info.type)..":"..tostring(info.arg.key).."  "..tostring(info.arg.section[info.arg.key]).."  "..tostring(info[#info]).." : "..tostring(value))
+	return value
+end
 
+D.Helpers.SetValueUsingInfo = function(info, value)
+--print("SETINFO "..tostring(info.type)..":"..tostring(info.arg.key).."  "..tostring(info.arg.section[info.arg.key]).."  "..tostring(value).."  "..tostring(info[#info]))
+	info.arg.section[info[#info]] = value
+	D.Helpers.SaveValueUsingInfo(info.arg.section, info, info.arg.section[info[#info]])
+end
 
-----------------------------------------------------------------------------------------
 D.Helpers.SaveValue = function(section, info, value)
---print("SaveValue:"..tostring(info.arg.key).."  "..tostring(section.name).."  "..tostring(G.SavedPerChar.Plugins).."  "..tostring(G.SavedPerChar.Plugins[section.name]))
+--print("SAVE:"..tostring(info.arg.key).."  "..tostring(section.name).."  "..tostring(G.SavedPerChar.Plugins).."  "..tostring(G.SavedPerChar.Plugins[section.name]))
 -- for k, v in pairs(G.SavedPerChar.Plugins) do
 	-- print(tostring(k).."=>"..tostring(v))
 -- end
@@ -85,8 +60,9 @@ D.Helpers.SaveValue = function(section, info, value)
 end
 
 D.Helpers.GetValue = function(info)
---print("GET "..tostring(info.type)..":"..tostring(info.arg.key).."  "..tostring(info.arg.section[info.arg.key]))
-	return info.arg.section[info.arg.key]
+	local value = info.arg.section[info.arg.key]
+--print("GET "..tostring(info.type)..":"..tostring(info.arg.key).."  "..tostring(info.arg.section[info.arg.key]).." : "..tostring(value))
+	return value
 end
 
 D.Helpers.SetValue = function(info, value)
@@ -135,14 +111,13 @@ D.Helpers.SetMultiValue = function(info, key, value)
 end
 
 ----------------------------------------------------------------------------------------
-D.Helpers.IsDisabled = function(info)
+D.Helpers.IsPluginDisabled = function(info)
 --print("IsDisabled:"..tostring(info.arg.key).."  "..tostring(not info.arg.section.enable))
 	return not info.arg.section.enable
 end
 
 ----------------------------------------------------------------------------------------
 D.Helpers.ValidateNumber = function(info, value)
---print("D.Helpers.ValidateNumber:"..tostring(value))
 	local asNumber = tonumber(value)
 --print("ValidateNumber:"..tostring(asNumber).."  "..type(value).."  "..type(asNumber))
 	if asNumber and type(asNumber) == "number" then
@@ -160,40 +135,63 @@ D.Helpers.Name = {
 	type = "input",
 	get = D.Helpers.GetValue,
 	disabled = true,
+	hidden = D.Globals.IsInReleaseMode,
 }
 
+local function ValidateDisplayName(info, value)
+	for _, setting in pairs(G.Config) do
+		if setting.displayName == value and setting.deleted ~= true then
+			return string.format(L.PluginNameAlreadyExists, value)
+		end
+	end
+	return true
+end
 D.Helpers.DisplayName = {
 	key = "displayName",
 	name = L.DisplayName,
 	desc = L.DisplayNameDesc,
 	type = "input",
 	get = D.Helpers.GetValue,
-	disabled = true,
+	set = D.Helpers.SetValue,
+	validate = ValidateDisplayName,
+	disabled = D.Helpers.IsPluginDisabled
 }
 
-local kindValues = {
-	["MOVER"] = L.KindValueMover,
-	["AURA"] = L.KindValueAura,
-	["AURABAR"] = L.KindValueAuraBar,
-	["RESOURCE"] = L.KindValueResource,
-	["COMBO"] = L.KindValueCombo,
-	["POWER"] = L.KindValuePower,
-	["RUNES"] = L.KindValueRunes,
-	["ECLIPSE"] = L.KindValueEclipse,
-	["ENERGIZE"] = L.KindValueEnergize,
-	["HEALTH"] = L.KindValueHealth,
-	["DOT"] = L.KindValueDot,
-	["TOTEMS"] = L.KindValueTotems,
-	["BANDITSGUILE"] = L.KindValueBanditsGuile,
-	["STAGGER"] = L.KindValueStagger,
-	["TANKSHIELD"] = L.KindValueTankShield,
-	["BURNINGEMBERS"] = L.KindValueBurningEmbers,
-	["DEMONICFURY"] = L.KindValueDemonicFury,
-	["RECHARGE"] = L.KindValueRecharge,
-	["RECHARGEBAR"] = L.KindValueRechargeBar,
-	["CD"] = L.KindValueCD,
-}
+-- TODO: only display available plugin
+-- local kindValues = {
+	-- --["MOVER"] = L.PluginShortDescription_Mover,
+	-- ["AURA"] = L.PluginShortDescription_Aura,
+	-- ["AURABAR"] = L.PluginShortDescription_AuraBar,
+	-- ["RESOURCE"] = L.PluginShortDescription_Resource,
+	-- ["COMBO"] = L.PluginShortDescription_Combo,
+	-- ["POWER"] = L.PluginShortDescription_Power,
+	-- ["RUNES"] = L.PluginShortDescription_Runes,
+	-- ["ECLIPSE"] = L.PluginShortDescription_Eclipse,
+	-- ["ENERGIZE"] = L.PluginShortDescription_Energize,
+	-- ["HEALTH"] = L.PluginShortDescription_Health,
+	-- ["DOT"] = L.PluginShortDescription_Dot,
+	-- ["TOTEMS"] = L.PluginShortDescription_Totems,
+	-- ["BANDITSGUILE"] = L.PluginShortDescription_BanditsGuile,
+	-- ["STAGGER"] = L.PluginShortDescription_Stagger,
+	-- ["TANKSHIELD"] = L.PluginShortDescription_TankShield,
+	-- ["BURNINGEMBERS"] = L.PluginShortDescription_BurningEmbers,
+	-- ["DEMONICFURY"] = L.PluginShortDescription_DemonicFury,
+	-- ["RECHARGE"] = L.PluginShortDescription_Recharge,
+	-- ["RECHARGEBAR"] = L.PluginShortDescription_RechargeBar,
+	-- ["CD"] = L.PluginShortDescription_CD,
+-- }
+local kindValues = nil
 local function GetKindValues()
+	if not kindValues then
+		kindValues = {}
+		if G.GetPluginListFunction and type(G.GetPluginListFunction) == "function" then
+			local pluginList = G:GetPluginListFunction()
+			for kind in pairs(pluginList) do
+--print("KIND:"..tostring(kind).."  "..tostring(Engine.Descriptions[kind].short).."  "..tostring(Engine.Descriptions[kind].long))
+				kindValues[kind] = Engine.Descriptions[kind].short or kind
+			end
+		end
+	end
 	return kindValues
 end
 D.Helpers.Kind =  {
@@ -206,13 +204,23 @@ D.Helpers.Kind =  {
 	disabled = true,
 }
 
+local function SetEnable(info, value)
+	D.Helpers.SetValue(info, value)
+	if G.SavedPerChar.Global.autogridanchor == true then
+		if G.AutoGridAnchorFunction and type(G.AutoGridAnchorFunction) == "function" then
+			G:AutoGridAnchorFunction(G.Config, G.SavedPerChar.Global.width, G.SavedPerChar.Global.height, G.SavedPerChar.Global.autogridanchorspacing, "anchor", "width", "height")
+		end
+	end
+end
+
 D.Helpers.Enable = {
 	key = "enable",
 	name = L.Enable,
 	desc = L.EnableDesc,
 	type = "toggle",
 	get = D.Helpers.GetValue,
-	set = D.Helpers.SetValue,
+	--set = D.Helpers.SetValue,
+	set = SetEnable
 }
 
 D.Helpers.Autohide = {
@@ -222,30 +230,59 @@ D.Helpers.Autohide = {
 	type = "toggle",
 	get = D.Helpers.GetValue,
 	set = D.Helpers.SetValue,
-	disabled = D.Helpers.IsDisabled
+	disabled = D.Helpers.IsPluginDisabled
 }
 
-D.Helpers.Width = {
-	key = "width",
-	name = L.Width,
-	desc = L.WidthDesc,
-	type = "range",
-	min = 80, max = 300, step = 1,
-	get = D.Helpers.GetValue,
-	set = D.Helpers.SetValue,
-	disabled = D.Helpers.IsDisabled
+D.Helpers.WidthAndHeight = {
+	key = "size",
+	name = L.Size,
+	desc = L.SizeDesc,
+	type = "group",
+	guiInline = true,
+	disabled = D.Helpers.IsPluginDisabled,
+	hidden = D.Globals.IsNormalAnchorDisabled, -- shown only when anchor is shown
+	args = {
+		width = {
+			order = 1,
+			name = L.Width,
+			desc = L.WidthDesc,
+			type = "range",
+			min = 80, max = 300, step = 1,
+			get = D.Helpers.GetValueUsingInfo,
+			set = D.Helpers.SetValueUsingInfo,
+		},
+		height = {
+			order = 2,
+			name = L.Height,
+			desc = L.HeightDesc,
+			type = "range",
+			min = 80, max = 300, step = 1,
+			get = D.Helpers.GetValueUsingInfo,
+			set = D.Helpers.SetValueUsingInfo,
+		}
+	}
 }
+-- D.Helpers.Width = {
+	-- key = "width",
+	-- name = L.Width,
+	-- desc = L.WidthDesc,
+	-- type = "range",
+	-- min = 80, max = 300, step = 1,
+	-- get = D.Helpers.GetValue,
+	-- set = D.Helpers.SetValue,
+	-- disabled = D.Helpers.IsPluginDisabled
+-- }
 
-D.Helpers.Height = {
-	key = "height",
-	name = L.Height,
-	desc = L.HeightDesc,
-	type = "range",
-	min = 10, max = 50, step = 1,
-	get = D.Helpers.GetValue,
-	set = D.Helpers.SetValue,
-	disabled = D.Helpers.IsDisabled
-}
+-- D.Helpers.Height = {
+	-- key = "height",
+	-- name = L.Height,
+	-- desc = L.HeightDesc,
+	-- type = "range",
+	-- min = 10, max = 50, step = 1,
+	-- get = D.Helpers.GetValue,
+	-- set = D.Helpers.SetValue,
+	-- disabled = D.Helpers.IsPluginDisabled
+-- }
 
 local filterValues = {
 	["HELPFUL"] = L.FilterValueHelpful,
@@ -262,7 +299,7 @@ D.Helpers.Filter = {
 	get = D.Helpers.GetValue,
 	set = D.Helpers.SetValue,
 	values = GetFilterValues,
-	disabled = D.Helpers.IsDisabled
+	disabled = D.Helpers.IsPluginDisabled
 }
 
 local unitValues = {
@@ -282,7 +319,7 @@ D.Helpers.Unit = {
 	values = GetUnitValues,
 	get = D.Helpers.GetValue,
 	set = D.Helpers.SetValue,
-	disabled = D.Helpers.IsDisabled
+	disabled = D.Helpers.IsPluginDisabled
 }
 
 ----------------------------------------------------------------------------------------
@@ -348,33 +385,21 @@ D.Helpers.Specs = {
 	get = GetSpecsValue,
 	set = SetSpecsValue,
 	values = GetSpecsValues,
-	disabled = D.Helpers.IsDisabled
+	disabled = D.Helpers.IsPluginDisabled
 }
 
 -------------------------------
 -- Spell ID
-local function GetSpellIDAndSetSpellIcon(info)
-	local value = D.Helpers.GetValue(info)
---print("GetSpellIDAndSetSpellIcon:"..tostring(value))
-	local parent = info.arg.parent -- get Spell option (parent of spellID and spellIcon)
---print("GetSpellIDAndSetSpellIcon:parent:"..tostring(parent))
-	local spellIcon = parent and parent.args and parent.args.spellIcon -- get spellIcon option from Spell option
---print("GetSpellIDAndSetSpellIcon:icon:"..tostring(spellIcon))
-	if spellIcon then
--- print("SPELLICON:"..tostring(spellIcon))
-		local name, _, icon = GetSpellInfo(tonumber(value))
-		if name and icon then
-			spellIcon.name = name
-			spellIcon.image = icon
-			spellIcon.desc = name
-			-- TODO: set tooltip
-		else
-			spellIcon.name = "Invalid"
-			spellIcon.image = "INTERFACE/ICONS/INV_MISC_QUESTIONMARK"
-		end
-	end
-	--
-	return tostring(value) --
+local function GetSpellName(info)
+	local spellID = tonumber(D.Helpers.GetValue(info) or 0)
+	local spellName = GetSpellInfo(spellID)
+	return spellName or "Invalid"
+end
+
+local function GetSpellIcon(info)
+	local spellID = tonumber(D.Helpers.GetValue(info) or 0)
+	local _, _, icon = GetSpellInfo(spellID)
+	return icon or "INTERFACE/ICONS/INV_MISC_QUESTIONMARK"
 end
 
 local function ValidateSpellID(info, value)
@@ -391,6 +416,16 @@ local function ValidateSpellID(info, value)
 	end
 end
 
+local function ValidateSpellName(info, value)
+	local spellName = GetSpellInfo(value)
+--print("ValidateSpellName:"..tostring(value).."  "..tostring(spellName))
+	if not spellName then
+		return L.InvalidSpellName
+	else
+		return true
+	end
+end
+
 D.Helpers.Spell = {
 	key = "spellID",
 	name = L.Spell,
@@ -404,51 +439,93 @@ D.Helpers.Spell = {
 			desc = L.SpellSpellIDDesc,
 			type = "input",
 			validate = ValidateSpellID,
-			get = GetSpellIDAndSetSpellIcon,
-			set = D.Helpers.SetNumberValue--D.Helpers.SetValue,
+			--get = GetSpellIDAndSetSpellIcon,
+			get = D.Helpers.GetNumberValue,
+			set = D.Helpers.SetNumberValue, --D.Helpers.SetValue,
 		},
-		spellIcon = {
+		--[[
+		spellName = {
 			order = 2,
-			name = "Invalid",
+			name = L.SpellSpellName,
+			desc = L.SpellSpellNameDesc,
+			type = "input",
+			validate = ValidateSpellName,
+			get = GetSpellName,
+			set = SetSpellName,
+		},
+		--]]
+		spellIcon = {
+			order = 3,
+			name = GetSpellName, --"Invalid",
 			type = "description",
-			image = "INTERFACE/ICONS/INV_MISC_QUESTIONMARK",
+			--image = "INTERFACE/ICONS/INV_MISC_QUESTIONMARK",
+			image = GetSpellIcon,
 		},
 	},
-	disabled = D.Helpers.IsDisabled
+	disabled = D.Helpers.IsPluginDisabled
 }
 
 -----------------------------
 -- Auto Grid Anchor
 local function SetAutoGridValue(info, value)
-	D.Helpers.SetValue(info, value)
+	D.Helpers.SetValueUsingInfo(info, value)
 	if G.SavedPerChar.Global.autogridanchor == true then
-		if G.AutoGridAnchor and type(G.AutoGridAnchor) == "function" then
-			G.AutoGridAnchor(G.Config, G.SavedPerChar.Global.width, G.SavedPerChar.Global.height, 3, "anchor", "width", "height") -- TODO: spacing from settings
+		if G.AutoGridAnchorFunction and type(G.AutoGridAnchorFunction) == "function" then
+			G:AutoGridAnchorFunction(G.Config, G.SavedPerChar.Global.width, G.SavedPerChar.Global.height, G.SavedPerChar.Global.autogridanchorspacing, "anchor", "width", "height")
 		end
 	end
 end
-D.Helpers.AutoGridVerticalIndex = {
-	key = "verticalIndex",
-	name = L.AutoGridAnchorVerticalIndex,
-	desc = L.AutoGridAnchorVerticalIndexDesc,
-	type = "range",
-	min = -20, max = 20, step = 1,
-	get = D.Helpers.GetValue,
-	set = SetAutoGridValue,
-	disabled = D.Helpers.IsDisabled,
-	hidden = D.Globals.IsAutoAnchorHidden
+D.Helpers.AutoGridAnchor = {
+	key = "autogridAnchor",
+	name = L.AutoGridAnchor,
+	desc = L.AutoGridAnchorDesc,
+	type = "group",
+	guiInline = true,
+	hidden = D.Globals.IsAutoAnchorDisabled,
+	disabled = D.Helpers.IsPluginDisabled,
+	args = {
+		verticalIndex = {
+			order = 1,
+			name = L.AutoGridAnchorVerticalIndex,
+			desc = L.AutoGridAnchorVerticalIndexDesc,
+			type = "range",
+			min = -20, max = 20, step = 1,
+			get = D.Helpers.GetValueUsingInfo,
+			set = SetAutoGridValue,
+		},
+		horizontalIndex = {
+			order = 2,
+			name = L.AutoGridAnchorHorizontalIndex,
+			desc = L.AutoGridAnchorHorizontalIndexDesc,
+			type = "range",
+			min = 0, max = 9, step = 1,
+			get = D.Helpers.GetValueUsingInfo,
+			set = SetAutoGridValue,
+		}
+	}
 }
-D.Helpers.AutoGridHorizontalIndex = {
-	key = "horizontalIndex",
-	name = L.AutoGridAnchorHorizontalIndex,
-	desc = L.AutoGridAnchorHorizontalIndexDesc,
-	type = "range",
-	min = 0, max = 9, step = 1,
-	get = D.Helpers.GetValue,
-	set = SetAutoGridValue,
-	disabled = D.Helpers.IsDisabled,
-	hidden = D.Globals.IsAutoAnchorHidden
-}
+-- D.Helpers.AutoGridVerticalIndex = {
+	-- key = "verticalIndex",
+	-- name = L.AutoGridAnchorVerticalIndex,
+	-- desc = L.AutoGridAnchorVerticalIndexDesc,
+	-- type = "range",
+	-- min = -20, max = 20, step = 1,
+	-- get = D.Helpers.GetValue,
+	-- set = SetAutoGridValue,
+	-- disabled = D.Helpers.IsPluginDisabled,
+	-- hidden = D.Globals.IsAutoAnchorDisabled
+-- }
+-- D.Helpers.AutoGridHorizontalIndex = {
+	-- key = "horizontalIndex",
+	-- name = L.AutoGridAnchorHorizontalIndex,
+	-- desc = L.AutoGridAnchorHorizontalIndexDesc,
+	-- type = "range",
+	-- min = 0, max = 9, step = 1,
+	-- get = D.Helpers.GetValue,
+	-- set = SetAutoGridValue,
+	-- disabled = D.Helpers.IsPluginDisabled,
+	-- hidden = D.Globals.IsAutoAnchorDisabled
+-- }
 
 -----------------------------
 -- Anchor
@@ -473,7 +550,7 @@ end
 
 local function SetAnchor(info, value)
 	local section = info.arg.section
-	--print("SetAnchor "..tostring(info.type)..":"..tostring(info.arg.key).."  "..tostring(info.arg.section[info.arg.key]).."  "..tostring(value).."  "..tostring(info[#info]))
+--print("SetAnchor "..tostring(info.type)..":"..tostring(info.arg.key).."  "..tostring(info.arg.section[info.arg.key]).."  "..tostring(value).."  "..tostring(info[#info]))
 	local option = info[#info]
 	if option == "point" then
 		section[info.arg.key][1] = tostring(value)
@@ -488,7 +565,7 @@ local function SetAnchor(info, value)
 	end
 	-- save
 	G.SavedPerChar.Plugins[section.name] = G.SavedPerChar.Plugins[section.name] or {}
-	G.SavedPerChar.Plugins[section.name][info.arg.key] = D.Helpers.DeepCopy(section[info.arg.key])
+	G.SavedPerChar.Plugins[section.name][info.arg.key] = Engine.DeepCopy(section[info.arg.key])
 
 	local updated = G.PluginUpdateFunction and G:PluginUpdateFunction(section.kind, section.name) or false
 
@@ -570,8 +647,8 @@ D.Helpers.Anchor = {
 			min = -400, max = 400, step = 1,
 		},
 	},
-	disabled = D.Helpers.IsDisabled,
-	hidden = D.Globals.IsAnchorHidden
+	disabled = D.Helpers.IsPluginDisabled,
+	hidden = D.Globals.IsNormalAnchorDisabled
 }
 
 -----------------------------
@@ -602,7 +679,7 @@ local function SetColors(info, r, g, b)
 	local section = info.arg.section
 	section[info.arg.key][index] = {r, g, b}
 	G.SavedPerChar.Plugins[section.name] = G.SavedPerChar.Plugins[section.name] or {}
-	G.SavedPerChar.Plugins[section.name][info.arg.key] = D.Helpers.DeepCopy(section[info.arg.key])
+	G.SavedPerChar.Plugins[section.name][info.arg.key] = Engine.DeepCopy(section[info.arg.key])
 
 	local updated = G.PluginUpdateFunction and G:PluginUpdateFunction(section.kind, section.name) or false
 
@@ -623,7 +700,7 @@ D.Helpers.CreateColorsDefinition = function(key, count, names)
 			type = "color",
 			get = GetColor,
 			set = SetColor,
-			disabled = D.Helpers.IsDisabled
+			disabled = D.Helpers.IsPluginDisabled
 		}
 	else
 		local args = {}
@@ -643,7 +720,7 @@ D.Helpers.CreateColorsDefinition = function(key, count, names)
 			get = GetColors,
 			set = SetColors,
 			args = args,
-			disabled = D.Helpers.IsDisabled
+			disabled = D.Helpers.IsPluginDisabled
 		}
 	end
 end

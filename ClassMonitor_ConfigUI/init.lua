@@ -1,10 +1,9 @@
 local _, Engine = ...
 
-Engine.Locales = {}
-Engine.Definitions = {}
-Engine.Globals = {} -- contains config, saved variables and plugin update func
-
-ClassMonitor_ConfigUI = {} -- Expose methods for ClassMonitor
+Engine.Locales = {} -- Localized strings
+Engine.Globals = {} -- Variables/functions from ClassMonitor received with InitializeConfigUI
+Engine.Definitions = {} -- Plugins options
+Engine.Descriptions = {} -- Plugins descriptions
 
 --[[
 TODO:
@@ -21,6 +20,9 @@ TODO:
 	[DONE]dont recreate options everytime config panel is opened
 	[DONE]add an option to reset to original config
 	[DONE]input on number get/set must handle string  (check validatenumber to find them)
-	[TO TEST]auto grid anchor  +  vertical/horizontalIndex in the same group --> dummy key, real key is set in getValue/setValue
-	width, height in the same group --> dummy key, real key is set in getValue/setValue
+	[DONE]auto grid anchor  +  vertical/horizontalIndex in the same group --> dummy key, real key is set in getValue/setValue
+	[DONE]width, height in the same group --> dummy key, real key is set in getValue/setValue
+	[REMOVED]add spellName input in addition to spellID + add a function to get image instead of using GetSpellIDAndSetSpellIcon
+	in plugin kind list, only display available plugin
+	french traduction of kind definition/explanation
 --]]

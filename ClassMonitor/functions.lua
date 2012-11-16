@@ -1,6 +1,26 @@
 local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
 
+
+-- Return current anchor in function of anchoring mode
+Engine.GetAnchor = function(settings)
+--print("GetAnchor:"..tostring(ClassMonitorDataPerChar.Global.autogridanchor).."  "..tostring(settings.autogridanchor).."  "..tostring(settings.anchor))
+	return (ClassMonitorDataPerChar.Global.autogridanchor == true and settings.autogridanchor) or settings.anchor
+end
+
+-- Return current width in function of anchoring mode
+Engine.GetWidth = function(settings)
+--print("GetWidth:"..tostring(ClassMonitorDataPerChar.Global.autogridanchor).."  "..tostring(settings.autogridwidth).."  "..tostring(settings.width))
+	return (ClassMonitorDataPerChar.Global.autogridanchor == true and settings.autogridwidth) or settings.width
+end
+
+-- Return current height in function of anchoring mode
+Engine.GetHeight = function(settings)
+--print("GetHeight:"..tostring(ClassMonitorDataPerChar.Global.autogridanchor).."  "..tostring(settings.autogridheight).."  "..tostring(settings.height))
+	return (ClassMonitorDataPerChar.Global.autogridanchor == true and settings.autogridheight) or settings.height
+end
+
+
 -- Return colors[index] or default color colors is nil or colors[index] doesn't exist
 Engine.GetColor = function(colors, index, default)
 	if not colors then return default end -- colors is nil
@@ -41,6 +61,7 @@ Engine.PixelPerfect = function(totalWidth, count)
 	end
 end
 
+-- Format a number
 Engine.FormatNumber = function(val)
 	if val >= 1e6 then
 		return ("%.1fm"):format(val / 1e6)
@@ -51,6 +72,7 @@ Engine.FormatNumber = function(val)
 	end
 end
 
+-- Format a time
 Engine.ToClock = function(seconds)
 	local ceilSeconds = ceil(tonumber(seconds))
 	if ceilSeconds <= 0 then
@@ -68,6 +90,7 @@ Engine.ToClock = function(seconds)
 	end
 end
 
+-- Check if current spec match specs list ("any" for any spec)
 Engine.CheckSpec = function(specs)
 	local activeSpec = GetSpecialization()
 	for _, spec in pairs(specs) do
@@ -78,6 +101,7 @@ Engine.CheckSpec = function(specs)
 	return false
 end
 
+-- Return a section from class config
 Engine.GetConfig = function(c, n)
 	local class = string.upper(c)
 	local name = string.upper(n)
@@ -93,6 +117,7 @@ Engine.GetConfig = function(c, n)
 	return nil
 end
 
+-- Add a section in class config
 Engine.AddConfig = function(c, config)
 	local class = string.upper(c)
 	local classEntry = Engine.Config[class]

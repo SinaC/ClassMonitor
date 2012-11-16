@@ -1,0 +1,191 @@
+3.4.2
+Auto-grid anchor activated (still experimental)
+Add new plugin instance implemented
+Delete plugin instance implemented
+External plugin allowed (see README)
+Old plugin code removed
+Bug fixed in TANKSHIELD plugin
+Bug fixed in CD plugin (graphical glitch)
+Typo in french localization
+
+3.4.1.1
+Bug fixed with buff/debuff on pets
+
+3.4.1
+New version release (3.4.0.0 -> 3.4.0.2)
+
+3.4.0.2
+Auto-grid anchor added (experimental)
+Bug fixed in Eclipse:UpdateGraphics
+Default values set in plugin instead of main loop
+Color defaulting added
+
+3.4.0.1
+New version check fixed
+Unused code removed
+
+3.4.0
+Plugins rewritten to allow on-the-fly settings modification without reloadUI (==>no more reloadUI when modifying options)
+Anchor added in config UI
+Code refactored
+Default height set to 16 (stupid workaround for multisampling and pixel perfect)
+Popup to inform about problems with multisampling and pixel perfectness
+CD and Recharge/RechargeBar plugin added (must be added manually)
+UI namespace cleaned
+Bug fixed in Tukui skin
+Use ElvUI colors when possible
+Bugs fixed in DOT and ENERGIZE plugin
+hideifmax option added in RESOURCE plugin
+Default color for Demonic Fury and Burning Embers
+SendAddonMessage added to check if a new version is available
+
+3.3.3b
+Bug fixed in Tukui Ace3 skin
+
+3.3.3a
+Bug fixed with ElvUI
+
+3.3.3
+Config UI Tukui skin bug fixed
+Reload UI less spammy
+Global width/height setter
+
+3.3.2
+IG config continued, edit panel done except anchor/colors
+Bug fixed in ElvUI skin
+Plugin with count doesn't specify point width+spacing anymore but total bar width (point width and spacing are computed dynamically)
+spec replaced with specs (table instead of value)
+anchors removed, only one anchor
+Tank shield plugin (more shields will come later)
+TOTEM kind renamed to TOTEMS
+Demonic fury and burning embers config has been removed from power config
+Bug fixed in Runes and Stagger plugin
+
+3.3.1
+Bug fixed in Stagger plugin
+
+3.3.0beta
+Basic config UI
+Shadow removed from from bar/points
+Bug fixed in Health plugin
+
+3.2.6
+Stagger added
+Regen renamed to Energize
+
+3.2.5
+Bug fixed with autohide on resource/eclipse/demonic fury/health
+New plugin: Bandit's Guile (Rogue combat)
+Bone shield added in DK config
+Frenzy added to Hunter config
+Add event to handle unit = "pet"
+Mana Tea/Elusive Brew/Tigereye Brew reactivated
+
+3.2.4
+Engine.GetConfig function added, it makes easier to edit profiles.lua
+profiles_template.lua modified
+Bug fixed with Eclipse, power max was set to 0 while connecting (and not after /console reloadui)
+autohide added for each plugin
+
+3.2.3
+Shadow can be disabled by setting Engine.UIConfig.shadow = false in your profiles.lua
+Elusive brew and Tigereye brew added for monk (thanks Soulshard)
+
+3.2.2
+Default bool value overwriting set value bug fixed
+Additional option 'unit' in Aura plugin
+Typo fixed in config explanation
+Another pixel perfect bug fixed :)
+Missing method in native UI
+
+3.2.1
+Pixel perfect bug fixed
+Addon structure modified a little bit
+
+3.2 beta
+Doesn't need Tukui or ElvUI anymore but still compatible with them
+
+3.1
+Bug fixed in Health plugin
+Additional option 'unit' on Health plugin
+profiles.lua added to .gitignore + profiles_template.lua added
+
+3.0
+ElvUI compatible
+Shadow infusion aura added for DK
+
+2.7.5
+Additional info in config file
+Totem plugin rewritten to be more generic and include wild mushrooms
+Multi spec restriction added
+
+2.7.4
+Additional layout for aura plugin, bar+text+duration instead of points (useful to track mana tea)
+
+2.7.3
+Shadow orbs, Shaman maelstrom/fulmination fixed
+RSA removed
+
+2.7.2
+Eclipse fixed
+Unused code removed
+
+2.7.1
+Movers added
+
+2.6.2
+Bug fixed
+Unused code removed
+
+2.6.1
+Plugins are now in addon namespace instead of global one
+Wildmushrooms and Regen readded
+Framestrata fixed for every plugin
+RegisterUnitEvent used when possible (instead of RegisterEvent)
+
+2.5.2
+Demonic Fury, Burning Embers added
+Number of power unit handled dynamically
+Bug fixes
+
+2.5.1
+Monk config added
+dynamic power unit
+
+2.5.0
+MoP ready
+
+2.4.6
+Regen plugin by Ildyria
+
+2.4.5
+Dot plugin by Ildyria
+
+2.4.4
+Shaman config
+Bug fixed
+
+2.4.3
+Totems plugin by Ildyria
+
+2.4.2
+Health plugin by Ildyria
+Movers out of Tukui added
+
+2.4.1
+Runes fixed
+
+2.3.0
+Patch 4.3 ready
+
+2.2.0
+Config structure modified
+
+2.1
+Aura, power, resource bug fixed
+
+2.0
+Totally rewritten
+
+1.0
+First commit

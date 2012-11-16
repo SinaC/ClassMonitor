@@ -49,79 +49,37 @@ local function BuildAce3Options()
 		args = {
 		},
 	}
-	-- local generalOptions = {
-		-- order = 0,
-		-- type = "group",
-		-- guiInline = true,
-		-- name = "General Options",
-		-- args = {
-			-- globalWidth = D.Helpers.CreateGlobalWidthOption(1),
-			-- globalHeight = D.Helpers.CreateGlobalHeightOption(2),
-			-- reset = D.Helpers.CreateResetOption(3)
-		-- }
-	-- }
-	-- options.args["general"] = generalOptions
 	local index = 1
 	-- Add global width option
-	options.args["GlobalWidth"] = D.Globals.CreateGlobalWidthOption(1) -- index 1
+	options.args["GlobalWidth"] = D.Globals.CreateGlobalWidthOption(index)
 	index = index + 1
 	-- Add global width option
-	options.args["GlobalHeight"] = D.Globals.CreateGlobalHeightOption(2) -- index 2
+	options.args["GlobalHeight"] = D.Globals.CreateGlobalHeightOption(index)
 	index = index + 1
 	-- Add reset option
-	options.args["Reset"] = D.Globals.CreateResetOption(3) -- index 3
+	options.args["Reset"] = D.Globals.CreateResetOption(index)
 	index = index + 1
-	-- Add autogrid anchor
-	if G.AutoGridAnchor and type(G.AutoGridAnchor) == "function" then
-		options.args["AutoGridAnchor"] = D.Globals.CreateAutoGridAnchorOption(4)
+	-- Add create new plugin option
+	if G.PluginCreateFunction and type(G.PluginCreateFunction) == "function" then
+		options.args["NewInstance"] = D.Globals.CreateNewPluginInstanceOption(index)
 		index = index + 1
 	end
+	-- Add autogrid anchor option
+	if G.AutoGridAnchorFunction and type(G.AutoGridAnchorFunction) == "function" then
+		options.args["AutoGridAnchor"] = D.Globals.CreateAutoGridAnchorOption(index)
+		index = index + 1
+	end
+	-- Add debug/release
+	options.args["Debug"] = D.Globals.CreateDebugModeOption(index)
 	-- Add options for every section in config
-	-- options.args["plugins"] = {
-		-- order = 1,
-		-- type = "group",
-		-- childGroups = "tab",
-		-- name = "Plugins",
-		-- args = {
-		-- }
-	-- }
-	for i, section in ipairs(G.Config) do
+	for i, section in pairs(G.Config) do
 		if section.kind ~= "MOVER" then -- can't configure MOVER
 			local definition = D[section.kind] or D.DefaultPluginDefinition
 			-- create new entry
-			options.args[section.name] = D.Helpers.CreateOptionsFromDefinitions(definition, index, section)
-			-- options.args["plugins"].args[section.name] = D.Helpers.CreateOptionsFromDefinitions(definition, i, section)
+			options.args[section.name] = D.Globals.CreateOptionFromDefinition(definition, index, section)
 			index = index + 1
 		end
 	end
---[[
-	local options = {
-		name = "ClassMonitor",
-		type = "group",
-		args = {
-			GeneralOptions = {
-				type = "group",
-				--childGroups = 'tab',
-				inline = true,
-				name = "General Options",
-				args = {
-					["GlobalWidth"] = D.Helpers.CreateGlobalWidthOption(1),
-					["GlobalHeight"] = D.Helpers.CreateGlobalHeightOption(2),
-					["Reset"] = D.Helpers.CreateResetOption(3)
-				},
-			},
-			-- plugins are added in next loop
-		}
-	}
-
-	for i, section in ipairs(G.Config) do
-		if section.kind ~= "MOVER" then -- can't configure MOVER
-			local definition = D[section.kind] or D.DefaultPluginDefinition
-			-- create new entry
-			options.args[section.name] = D.Helpers.CreateOptionsFromDefinitions(definition, i, section)
-		end
-	end
---]]
 	return options
 end
 
@@ -129,16 +87,21 @@ if ElvUI then
 	local E, _, _, _, _, _ = unpack(ElvUI) --Import: Engine, Locales, PrivateDB, ProfileDB, GlobalDB, Localize Underscore
 
 	--
-	Engine.BuildOptionsTree = function(config, savedPerChar, savedPerAccount, updatePluginFunction, autoGridAnchor)
+	Engine.InitializeConfigUI = function(config, savedPerChar, savedPerAccount, updatePluginFunction, createPluginFunction, deletePluginFunction, autoGridAnchorFunction, getPluginListFunction)
 		-- Set globals
 		G.Config = config
 		G.SavedPerChar = savedPerChar
 		G.SavedPerAccount = savedPerAccount
 		G.PluginUpdateFunction = updatePluginFunction
-		G.AutoGridAnchor = autoGridAnchor
+		G.PluginCreateFunction = createPluginFunction
+		G.PluginDeleteFunction = deletePluginFunction
+		G.AutoGridAnchorFunction = autoGridAnchorFunction
+		G.GetPluginListFunction = getPluginListFunction
 		--
-		E.Options.args.ClassMonitor = BuildAce3Options()
+		E.Options.args.ClassMonitor = BuildAce3Options() -- no need to add a root node, ElvUI config panel is our root node
 		HookAce3OnHide(ACD, "ElvUI")
+		--
+		G.Options = E.Options.args.ClassMonitor
 	end
 	--
 	Engine.DisplayConfigFrame = function()
@@ -151,49 +114,16 @@ if ElvUI then
 elseif Tukui then
 	local blizOptions = nil
 
-	Engine.BuildOptionsTree = function(config, savedPerChar, savedPerAccount, updatePluginFunction, autoGridAnchor)
+	Engine.InitializeConfigUI = function(config, savedPerChar, savedPerAccount, updatePluginFunction, createPluginFunction, deletePluginFunction, autoGridAnchorFunction, getPluginListFunction)
 		-- Set globals
 		G.Config = config
 		G.SavedPerChar = savedPerChar
 		G.SavedPerAccount = savedPerAccount
 		G.PluginUpdateFunction = updatePluginFunction
-		G.AutoGridAnchor = autoGridAnchor
-		--[[
-		--
-		local options = {
-			type = "group",
-			args = {
-				GeneralOptions = {
-					type = "group",
-					childGroups = 'tab',
-					inline = true,
-					name = "Class Monitor",
-					args = {
-						["GlobalWidth"] = D.Helpers.CreateGlobalWidthOption(1),
-						["GlobalHeight"] = D.Helpers.CreateGlobalHeightOption(2),
-						["Reset"] = D.Helpers.CreateResetOption(3)
-					},
-				},
-				-- plugins are added in next loop
-			}
-		}
-
-		-- add to AceConfig and blizzard menu
-		--                       addon name
-		ACR:RegisterOptionsTable("ClassMonitor", options)
-		--                                 addon name       display name
-		blizOptions = ACD:AddToBlizOptions("ClassMonitor", "Class Monitor", nil, "GeneralOptions") -- save blizzard options entry point to be used in DisplayConfigFrame
-
-		for i, section in ipairs(G.Config) do
-			if section.kind ~= "MOVER" then -- can't configure MOVER
-				local definition = D[section.kind] or D.DefaultPluginDefinition
-				-- create new entry
-				options.args[section.name] = D.Helpers.CreateOptionsFromDefinitions(definition, i, section)
-				--                                 addon name                                            parent display name
-				ACD:AddToBlizOptions("ClassMonitor", section.displayName or section.name, "Class Monitor", section.name)
-			end
-		end
-		--]]
+		G.PluginCreateFunction = createPluginFunction
+		G.PluginDeleteFunction = deletePluginFunction
+		G.AutoGridAnchorFunction = autoGridAnchorFunction
+		G.GetPluginListFunction = getPluginListFunction
 		--[[
 print("NEW CONFIG")
 		-- create options
@@ -212,8 +142,21 @@ print("SUB MENU:"..tostring(k))
 			end
 		end
 		--]]
+		--
 		local options = BuildAce3Options()
-		AC:RegisterOptionsTable("ClassMonitor", options)
+		local rootNode = { -- add a root node, to get a tree with general/global options on ClassMonitor and plugins as children of ClassMonitor
+			type = "group",
+			--childGroups = "tree", -- default
+			--childGroups = "select",
+			--childGroups = "tab",
+			name = "Class Monitor",
+			args = {
+				ClassMonitor = options,
+			}
+		}
+		AC:RegisterOptionsTable("ClassMonitor", rootNode)
+		--
+		G.Options = rootNode.args.ClassMonitor
 	end
 	--
 	Engine.DisplayConfigFrame = function()
@@ -226,16 +169,29 @@ print("SUB MENU:"..tostring(k))
 		HookAce3OnHide(ACD, "ClassMonitor")
 	end
 else
-	Engine.BuildOptionsTree = function(config, savedPerChar, savedPerAccount, updatePluginFunction, autoGridAnchor)
+	Engine.InitializeConfigUI = function(config, savedPerChar, savedPerAccount, updatePluginFunction, createPluginFunction, deletePluginFunction, autoGridAnchorFunction, getPluginListFunction)
 		-- Set globals
 		G.Config = config
 		G.SavedPerChar = savedPerChar
 		G.SavedPerAccount = savedPerAccount
 		G.PluginUpdateFunction = updatePluginFunction
-		G.AutoGridAnchor = autoGridAnchor
+		G.PluginCreateFunction = createPluginFunction
+		G.PluginDeleteFunction = deletePluginFunction
+		G.AutoGridAnchorFunction = autoGridAnchorFunction
+		G.GetPluginListFunction = getPluginListFunction
 		--
 		local options = BuildAce3Options()
-		AC:RegisterOptionsTable("ClassMonitor", options)
+		local rootNode = { -- add a root node, to get a tree with general/global options on ClassMonitor and plugins as children of ClassMonitor
+			type = "group",
+			name = "Class Monitor",
+			args = {
+				ClassMonitor = options,
+			}
+		}
+		AC:RegisterOptionsTable("ClassMonitor", rootNode)
+		--AC:RegisterOptionsTable("ClassMonitor", options)
+		--
+		G.Options = rootNode.args.ClassMonitor
 	end
 	--
 	Engine.DisplayConfigFrame = function()
@@ -247,7 +203,3 @@ else
 		HookAce3OnHide(ACD, "ClassMonitor")
 	end
 end
-
---print("Exposing ClassMonitor_DisplayConfigFrame..."..tostring(Engine.BuildOptionsTree).."  "..tostring(Engine.BuildOptionsTree))
-ClassMonitor_ConfigUI.BuildOptionsTree = Engine.BuildOptionsTree
-ClassMonitor_ConfigUI.DisplayConfigPanel = Engine.DisplayConfigFrame

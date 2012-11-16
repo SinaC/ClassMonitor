@@ -11,17 +11,16 @@ local function GetOrientationValues()
 	return orientationValues
 end
 
-local Colors = D.Helpers.CreateColorsDefinition("colors", 4, {L.RunesBlood, L.RunesUnholy, L.RunesFrost, L.RunesDeath} )
+local colors = D.Helpers.CreateColorsDefinition("colors", 4, {L.RunesBlood, L.RunesUnholy, L.RunesFrost, L.RunesDeath} )
 
-D["RUNES"] = {
+local options = {
 	[1] = D.Helpers.Name,
 	[2] = D.Helpers.DisplayName,
 	[3] = D.Helpers.Kind,
 	[4] = D.Helpers.Enable,
 	[5] = D.Helpers.Autohide,
-	[6] = D.Helpers.Width,
-	[7] = D.Helpers.Height,
-	[8] = {
+	[6] = D.Helpers.WidthAndHeight,
+	[7] = {
 		key = "updatethreshold",
 		name = L.Threshold,
 		desc = L.RunesThresholdDesc,
@@ -29,9 +28,9 @@ D["RUNES"] = {
 		min = 0.1, max = 1, step = 0.1,
 		get = D.Helpers.GetValue,
 		set = D.Helpers.SetValue,
-		disabled = D.Helpers.IsDisabled
+		disabled = D.Helpers.IsPluginDisabled
 	},
-	[9] = {
+	[8] = {
 		key = "orientation",
 		name = L.RunesOrientation,
 		desc = L.RunesOrientationDesc,
@@ -39,11 +38,12 @@ D["RUNES"] = {
 		values = GetOrientationValues,
 		get = D.Helpers.GetValue,
 		set = D.Helpers.SetValue,
-		disabled = D.Helpers.IsDisabled
+		disabled = D.Helpers.IsPluginDisabled
 	},
 	-- TODO: runemap
-	[10] = Colors,
+	[10] = colors,
 	[11] = D.Helpers.Anchor,
-	[12] = D.Helpers.AutoGridVerticalIndex,
-	[13] = D.Helpers.AutoGridHorizontalIndex,
+	[12] = D.Helpers.AutoGridAnchor,
 }
+
+D.Helpers:NewPluginDefinition("RUNES", options, L.PluginShortDescription_RUNES, L.PluginDescription_RUNES)

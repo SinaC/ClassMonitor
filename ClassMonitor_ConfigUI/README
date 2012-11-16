@@ -1,23 +1,64 @@
-1.0.4
-Config integrated in ElvUI, no need to use /clm config at least once to embed config
-Bug fixed with ElvUI/Tukui config panel
-Code refactoring
-French localization
-Reset config button added
-Color(s) added for combo, eclipse, demonic fury, bandit's guile, runes, aurabar, cd, dot, rechargebar, stagger, tankshield
-No more reloadUI needed to modify plugin settings
+This is the config UI for addon ClassMonitor
 
-1.0.3
-Global width/height option added
-LibStub/CallbackHandler were missing
-bug fixed in Tukui skin
-ReloadUI dialog box only shown when closing dialog box
+TO COMPLETE
 
-1.0.2
-Rewritten with Ace3Config
+***********************************************************************************
+******************************** NOT YET AVAILABLE ********************************
+***********************************************************************************
+If you add a new plugin in ClassMonitor, you can also add your plugin options definition using ClassMonitor_ConfigUI:NewPluginDefinition
+The new plugin must be created before adding its options definition and before ADDON_LOADED event
 
-1.0.1
-Configuration panel continued. Anchor and color not yet configurable
+Sample:
 
-1.0.0
-Basic configuration panel (only enable/disable + autohide options)
+local myPluginName = "MYPLUGIN"
+local myPlugin = ClassMonitor:NewPlugin(myPluginName) -- create new plugin entry point in ClassMonitor
+
+function myPlugin:Initialize() -- MANDATORY
+	-- set default value for self.settings.mypluginfirstoption
+end
+
+function myPlugin:Enable() -- MANDATORY
+	--
+end
+
+function myPlugin:Disable() -- MANDATORY
+	--
+end
+
+function myPlugin:SettingsModified() -- MANDATORY
+	self:Disable()
+	-- update graphics
+	--
+	if self.settings.enable then
+		self:Enable()
+	end
+end
+
+function myPlugin:UpdateValue()
+	-- update status bar for example
+end
+
+
+local myPluginOptions = {
+	[1] = ClassMonitor_ConfigUI.Helpers.Name, -- MANDATORY
+	[2] = ClassMonitor_ConfigUI.Helpers.DisplayName, -- MANDATORY
+	[3] = ClassMonitor_ConfigUI.Helpers.Kind, -- MANDATORY
+	[4] = ClassMonitor_ConfigUI.Helpers.Enable, -- MANDATORY
+	[5] = ClassMonitor_ConfigUI.Helpers.Autohide, -- MANDATORY
+	[6] = ClassMonitor_ConfigUI.Helpers.WidthAndHeight, -- MANDATORY
+	[7] = ClassMonitor_ConfigUI.Helpers.Specs, -- OPTIONAL
+	[8] = {
+		key = "mypluginfirstoption", -- use  self.settings.mypluginfirstoption in plugin methods to access current value
+		name = "My Plugin First Option",
+		desc = "This is the first option of my own plugin",
+		type = "select", -- Ace3 option type
+		get = ClassMonitor_ConfigUI.Helpers.GetValue, -- generic get value
+		set = ClassMonitor_ConfigUI.Helpers.SetValue, -- generic set value
+		disabled = ClassMonitor_ConfigUI.Helpers.IsPluginDisabled -- when plugin.enable is false, option is disabled
+	},
+	-- add other options
+}
+
+local myPluginDescription = "Display nothing because it's a dummy plugin :)"
+
+ClassMonitor_ConfigUI:NewPluginDefinition(myPluginName, myPluginOptions, myPluginDescription)

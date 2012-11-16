@@ -4,32 +4,35 @@
 	<Script file="locales\english.lua"/>
 	<Script file="locales\french.lua"/>
 
+	<Script file="functions.lua"/>
+
 	<Script file="definitions\globals.lua"/>
 	<Script file="definitions\helpers.lua"/>
-	<Script file="definitions\default.lua"/>
 
-	<Script file="definitions\aura.lua"/>
-	<Script file="definitions\aurabar.lua"/>
-	<Script file="definitions\power.lua"/>
-	<Script file="definitions\combo.lua"/>
-	<Script file="definitions\resource.lua"/>
-	<Script file="definitions\health.lua"/>
-	<Script file="definitions\runes.lua"/>
-	<Script file="definitions\eclipse.lua"/>
-	<Script file="definitions\totems.lua"/>
-	<Script file="definitions\burningembers.lua"/>
-	<Script file="definitions\demonicfury.lua"/>
-	<Script file="definitions\dot.lua"/>
-	<Script file="definitions\energize.lua"/>
-	<Script file="definitions\banditsguile.lua"/>
-	<Script file="definitions\stagger.lua"/>
-	<Script file="definitions\tankshield.lua"/>
-	<Script file="definitions\recharge.lua"/>
-	<Script file="definitions\rechargebar.lua"/>
-	<Script file="definitions\cd.lua"/>
+	<Script file="definitions\plugins\default.lua"/>
+
+	<Script file="definitions\plugins\aura.lua"/>
+	<Script file="definitions\plugins\aurabar.lua"/>
+	<Script file="definitions\plugins\power.lua"/>
+	<Script file="definitions\plugins\combo.lua"/>
+	<Script file="definitions\plugins\resource.lua"/>
+	<Script file="definitions\plugins\health.lua"/>
+	<Script file="definitions\plugins\runes.lua"/>
+	<Script file="definitions\plugins\eclipse.lua"/>
+	<Script file="definitions\plugins\totems.lua"/>
+	<Script file="definitions\plugins\burningembers.lua"/>
+	<Script file="definitions\plugins\demonicfury.lua"/>
+	<Script file="definitions\plugins\dot.lua"/>
+	<Script file="definitions\plugins\energize.lua"/>
+	<Script file="definitions\plugins\banditsguile.lua"/>
+	<Script file="definitions\plugins\stagger.lua"/>
+	<Script file="definitions\plugins\tankshield.lua"/>
+	<Script file="definitions\plugins\recharge.lua"/>
+	<Script file="definitions\plugins\rechargebar.lua"/>
+	<Script file="definitions\plugins\cd.lua"/>
 
 	<Script file="tukuiAce3Skin.lua"/>
 
 	<Script file="core.lua"/>
-	<Script file="test.lua"/>
+	<Script file="public.lua"/>
 </Ui>

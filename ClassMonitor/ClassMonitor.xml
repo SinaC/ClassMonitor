@@ -38,9 +38,12 @@
 	<Script file="plugins\recharge.lua"/>
 	<Script file="plugins\rechargebar.lua"/>
 
+	<Script file="autoanchor.lua"/>
 	<Script file="core.lua"/>
 	<Script file="commands.lua"/>
 	<Script file="update.lua"/>
+
+	<Script file="public.lua"/>
 
 	<Include file="test\test.xml"/>
 </Ui>

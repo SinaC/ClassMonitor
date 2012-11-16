@@ -3,6 +3,8 @@ local ADDON_NAME, Engine = ...
 local L = Engine.Locales
 local D = Engine.Definitions
 
+-- Definition
+--[[
 local default = {1, 1, 1}
 
 local config = {
@@ -140,22 +142,22 @@ local __TestDefinition = {
 			}
 		}
 	},
-	disabled = D.Helpers.IsDisabled
+	disabled = D.Helpers.IsPluginDisabled
 }
+--]]
 
-D["AURA"] = {
+local options = {
 	[1] = D.Helpers.Name,
 	[2] = D.Helpers.DisplayName,
 	[3] = D.Helpers.Kind,
 	[4] = D.Helpers.Enable,
 	[5] = D.Helpers.Autohide,
-	[6] = D.Helpers.Width,
-	[7] = D.Helpers.Height,
+	[6] = D.Helpers.WidthAndHeight,
 	[8] = D.Helpers.Specs,
-	[9] = D.Helpers.Unit,
-	[10] = D.Helpers.Spell,
-	[11] = D.Helpers.Filter,
-	[12] = {
+	[8] = D.Helpers.Unit,
+	[9] = D.Helpers.Spell,
+	[10] = D.Helpers.Filter,
+	[11] = {
 		key = "count",
 		name = L.AuraCount,
 		desc = L.AuraCountDesc,
@@ -163,20 +165,21 @@ D["AURA"] = {
 		min = 1, max = 10, step = 1,
 		get = D.Helpers.GetValue,
 		set = D.Helpers.SetValue,
-		disabled = D.Helpers.IsDisabled
+		disabled = D.Helpers.IsPluginDisabled
 	},
-	[13] = {
+	[12] = {
 		key = "filled",
 		name = L.Filled,
 		desc = L.AuraFilledDesc,
 		type = "toggle",
 		get = D.Helpers.GetValue,
 		set = D.Helpers.SetValue,
-		disabled = D.Helpers.IsDisabled
+		disabled = D.Helpers.IsPluginDisabled
 	},
 	-- TODO: colors
 	[14] = D.Helpers.Anchor,
-	[15] = D.Helpers.AutoGridVerticalIndex,
-	[16] = D.Helpers.AutoGridHorizontalIndex,
+	[15] = D.Helpers.AutoGridAnchor,
 --	[0] = __TestDefinition
 }
+
+D.Helpers:NewPluginDefinition("AURA", options, L.PluginShortDescription_AURA, L.PluginDescription_AURA)

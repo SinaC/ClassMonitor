@@ -9,6 +9,9 @@ local UI = Engine.UI
 local ToClock = Engine.ToClock
 local CheckSpec = Engine.CheckSpec
 local DefaultBoolean = Engine.DefaultBoolean
+local GetAnchor = Engine.GetAnchor
+local GetWidth = Engine.GetWidth
+local GetHeight = Engine.GetHeight
 
 --
 local plugin = Engine:NewPlugin("AURABAR")
@@ -29,7 +32,7 @@ function plugin:Update(elapsed)
 end
 
 function plugin:UpdateVisibilityAndValue(event)
---print("AURABAR:UpdateVisibilityAndValue")
+--print("AURABAR:UpdateVisibilityAndValue:"..tostring(self.auraName))
 	local inCombat = true
 	if event == "PLAYER_REGEN_DISABLED" or InCombatLockdown() then
 		inCombat = true
@@ -69,8 +72,10 @@ function plugin:UpdateGraphics()
 		self.bar = bar
 	end
 	bar:ClearAllPoints()
-	bar:Point(unpack(self.settings.anchor))
-	bar:Size(self.settings.width, self.settings.height)
+	--bar:Point(unpack(self.settings.anchor))
+	--bar:Size(self.settings.width, self.settings.height)
+	bar:Point(unpack(GetAnchor(self.settings)))
+	bar:Size(GetWidth(self.settings), GetHeight(self.settings))
 	--
 	if not bar.status then
 		bar.status = CreateFrame("StatusBar", nil, bar)
@@ -141,28 +146,3 @@ function plugin:SettingsModified()
 		self:UpdateVisibilityAndValue()
 	end
 end
-
--- ----------------------------------------------
--- -- test
--- ----------------------------------------------
--- local C = Engine.Config
--- local settings = C[UI.MyClass]
--- if not settings then return end
--- for i, pluginSettings in ipairs(settings) do
-	-- if pluginSettings.kind == "AURABAR" then
-		-- local setting = Engine.DeepCopy(pluginSettings)
-		-- setting.anchor = {"CENTER", UIParent, "CENTER", 0, i*30}
-		-- setting.specs = {"any"}
-		-- setting.enable = true
-		-- setting.autohide = false
-		-- setting.unit = setting.unit or "player"
-		-- setting.text = true
-		-- setting.duration = true
-		-- setting.filter = setting.filter or "HELPFUL"
-		-- local instance = Engine:NewPluginInstance("AURABAR", "AURABAR"..tostring(i), setting)
-		-- instance:Initialize()
-		-- if setting.enable then
-			-- instance:Enable()
-		-- end
-	-- end
--- end

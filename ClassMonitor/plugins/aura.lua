@@ -10,6 +10,9 @@ local CheckSpec = Engine.CheckSpec
 local PixelPerfect = Engine.PixelPerfect
 local DefaultBoolean = Engine.DefaultBoolean
 local GetColor = Engine.GetColor
+local GetAnchor = Engine.GetAnchor
+local GetWidth = Engine.GetWidth
+local GetHeight = Engine.GetHeight
 
 --
 local plugin = Engine:NewPlugin("AURA")
@@ -33,6 +36,7 @@ function plugin:UpdateVisibility(event)
 end
 
 function plugin:UpdateValue()
+	if not self.auraName then return end
 	local name, _, _, stack, _, _, expirationTime, unitCaster = UnitAura(self.settings.unit, self.auraName, nil, self.settings.filter)
 	if name == self.auraName and (unitCaster == "player" or (self.settings.unit == "pet" and unitCaster == "pet")) and stack > 0 then
 		assert(stack <= self.settings.count, "Too many stacks:"..tostring(stack)..", maximum has been set to "..tostring(self.settings.count))
@@ -52,10 +56,13 @@ function plugin:UpdateGraphics()
 		self.frame = frame
 	end
 	frame:ClearAllPoints()
-	frame:Point(unpack(self.settings.anchor))
-	frame:Size(self.settings.width, self.settings.height)
+	-- frame:Point(unpack(self.settings.anchor))
+	-- frame:Size(self.settings.width, self.settings.height)
+	frame:Point(unpack(GetAnchor(self.settings)))
+	frame:Size(GetWidth(self.settings), GetHeight(self.settings))
 	-- Create stacks
-	local width, spacing = PixelPerfect(self.settings.width, self.settings.count)
+	--local width, spacing = PixelPerfect(self.settings.width, self.settings.count)
+	local width, spacing = PixelPerfect(GetWidth(self.settings), self.settings.count)
 	self.stacks = self.stacks or {}
 	for i = 1, self.settings.count do
 		local stack = self.stacks[i]
@@ -141,176 +148,3 @@ function plugin:SettingsModified()
 		self:UpdateVisibility()
 	end
 end
-
--- ----------------------------------------------
--- -- test
--- ----------------------------------------------
--- local C = Engine.Config
--- local settings = C[UI.MyClass]
--- if not settings then return end
--- for i, pluginSettings in ipairs(settings) do
-	-- if pluginSettings.kind == "AURA" then
-		-- local setting = Engine.DeepCopy(pluginSettings)
-		-- setting.anchor = {"CENTER", UIParent, "CENTER", 0, i*30}
-		-- setting.enable = true
-		-- setting.autohide = false
-		-- setting.filled = true
-		-- setting.specs = {"any"}
-		-- setting.unit = setting.unit or "player"
-		-- setting.colors = setting.colors or { {0, 0, 1}, {0, 1, 0}, {0, 1, 1}, {1, 0, 0}, {1, 0, 1}, {1, 1, 0}, {1, 1, 1} }
-		-- local instance = Engine:NewPluginInstance("AURA", "AURA"..tostring(i), setting)
-		-- instance:Initialize()
-		-- if setting.enable then
-			-- instance:Enable()
-		-- end
-	-- end
--- end
-
---[[
--- Generic method to create BUFF/DEBUFF stack monitor
-Engine.CreateAuraMonitor = function(name, enable, autohide, unit, spellID, filter, count, anchor, totalWidth, height, colors, filled, specs)
-	local aura = GetSpellInfo(spellID)
-	local cmAMs = {}
-	local width, spacing = PixelPerfect(totalWidth, count)
-	for i = 1, count do
-		local cmAM = CreateFrame("Frame", name, UI.PetBattleHider) -- name is used for 1st power point
-		cmAM:SetTemplate()
-		cmAM:SetFrameStrata("BACKGROUND")
-		cmAM:Size(width, height)
-		if i == 1 then
-			cmAM:Point(unpack(anchor))
-		else
-			cmAM:Point("LEFT", cmAMs[i-1], "RIGHT", spacing, 0)
-		end
-		if filled then
-			cmAM.status = CreateFrame("StatusBar", name.."_status_"..i, cmAM)
-			cmAM.status:SetStatusBarTexture(UI.NormTex)
-			cmAM.status:SetFrameLevel(6)
-			cmAM.status:Point("TOPLEFT", cmAM, "TOPLEFT", 2, -2)
-			cmAM.status:Point("BOTTOMRIGHT", cmAM, "BOTTOMRIGHT", -2, 2)
-			cmAM.status:SetStatusBarColor(unpack(colors[i]))
-		else
-			cmAM:SetBackdropBorderColor(unpack(colors[i]))
-		end
-		cmAM:Hide()
-
-		tinsert(cmAMs, cmAM)
-	end
-
-	if not enable then
-		for i = 1, count do cmAMs[i]:Hide() end
-		return
-	end
-
-	cmAMs[1]:RegisterEvent("PLAYER_ENTERING_WORLD")
-	cmAMs[1]:RegisterEvent("PLAYER_REGEN_DISABLED")
-	cmAMs[1]:RegisterEvent("PLAYER_REGEN_ENABLED")
-	if unit == "focus" then cmAMs[1]:RegisterEvent("PLAYER_FOCUS_CHANGED") end
-	if unit == "target" then cmAMs[1]:RegisterEvent("PLAYER_TARGET_CHANGED") end
-	if unit == "pet" then cmAMs[1]:RegisterUnitEvent("UNIT_PET", "player") end
-	cmAMs[1]:RegisterUnitEvent("UNIT_AURA", unit)
-	cmAMs[1]:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
-	cmAMs[1]:SetScript("OnEvent", function(self, event)
-		local visible = true
-		if autohide == true then
-			if event == "PLAYER_REGEN_DISABLED" or InCombatLockdown() then
-				visible = true
-			else
-				visible = false
-			end
-		end
-		local found = false
-		if CheckSpec(specs) and visible then
-			for i = 1, 40, 1 do
-				local name, _, _, stack, _, _, _, unitCaster = UnitAura(unit, i, filter)
-				if not name then break end
-				if name == aura and (unitCaster == "player" or (unit == "pet" and unitCaster == "pet")) and stack > 0 then
-					for i = 1, stack do cmAMs[i]:Show() end
-					for i = stack+1, count do cmAMs[i]:Hide() end
-					found = true
-					break
-				end
-			end
-		end
-		if found == false then
-			for i = 1, count do cmAMs[i]:Hide() end
-		end
-	end)
-
-	return cmAMs[1]
-end
---]]
-
---[[
--- Generic method to create BUFF/DEBUFF monitor
-Engine.CreateAuraMonitor = function(name, enable, autohide, unit, spellID, filter, count, anchor, width, height, spacing, colors, filled, specs)
-	local aura = GetSpellInfo(spellID)
-	local cmAMs = {}
-	for i = 1, count do
-		local cmAM = CreateFrame("Frame", name, UI.PetBattleHider) -- name is used for 1st power point
-		cmAM:SetTemplate()
-		cmAM:SetFrameStrata("BACKGROUND")
-		cmAM:Size(width, height)
-		if i == 1 then
-			cmAM:Point(unpack(anchor))
-		else
-			cmAM:Point("LEFT", cmAMs[i-1], "RIGHT", spacing, 0)
-		end
-		if filled then
-			cmAM.status = CreateFrame("StatusBar", name.."_status_"..i, cmAM)
-			cmAM.status:SetStatusBarTexture(UI.NormTex)
-			cmAM.status:SetFrameLevel(6)
-			cmAM.status:Point("TOPLEFT", cmAM, "TOPLEFT", 2, -2)
-			cmAM.status:Point("BOTTOMRIGHT", cmAM, "BOTTOMRIGHT", -2, 2)
-			cmAM.status:SetStatusBarColor(unpack(colors[i]))
-		else
-			cmAM:SetBackdropBorderColor(unpack(colors[i]))
-		end
-		cmAM:Hide()
-
-		tinsert(cmAMs, cmAM)
-	end
-
-	if not enable then
-		for i = 1, count do cmAMs[i]:Hide() end
-		return
-	end
-
-	cmAMs[1]:RegisterEvent("PLAYER_ENTERING_WORLD")
-	cmAMs[1]:RegisterEvent("PLAYER_REGEN_DISABLED")
-	cmAMs[1]:RegisterEvent("PLAYER_REGEN_ENABLED")
-	if unit == "focus" then cmAMs[1]:RegisterEvent("PLAYER_FOCUS_CHANGED") end
-	if unit == "target" then cmAMs[1]:RegisterEvent("PLAYER_TARGET_CHANGED") end
-	if unit == "pet" then cmAMs[1]:RegisterUnitEvent("UNIT_PET", "player") end
-	cmAMs[1]:RegisterUnitEvent("UNIT_AURA", unit)
-	cmAMs[1]:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
-	cmAMs[1]:SetScript("OnEvent", function(self, event)
-		local visible = true
-		if autohide == true then
-			if event == "PLAYER_REGEN_DISABLED" or InCombatLockdown() then
-				visible = true
-			else
-				visible = false
-			end
-		end
-		local found = false
-		if CheckSpec(specs) and visible then
-			for i = 1, 40, 1 do
-				local name, _, _, stack, _, _, _, unitCaster = UnitAura(unit, i, filter)
-				if not name then break end
-				if name == aura and (unitCaster == "player" or (unit == "pet" and unitCaster == "pet")) and stack > 0 then
-					for i = 1, stack do cmAMs[i]:Show() end
-					for i = stack+1, count do cmAMs[i]:Hide() end
-					found = true
-					break
-				end
-			end
-		end
-		if found == false then
-			for i = 1, count do cmAMs[i]:Hide() end
-		end
-	end)
-
-	return cmAMs[1]
-end
---]]

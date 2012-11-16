@@ -8,6 +8,9 @@ local UI = Engine.UI
 
 local CheckSpec = Engine.CheckSpec
 local DefaultBoolean = Engine.DefaultBoolean
+local GetAnchor = Engine.GetAnchor
+local GetWidth = Engine.GetWidth
+local GetHeight = Engine.GetHeight
 local PowerColor = UI.PowerColor
 local ClassColor = UI.ClassColor
 
@@ -92,8 +95,10 @@ function plugin:UpdateGraphics()
 		self.bar = bar
 	end
 	bar:ClearAllPoints()
-	bar:Point(unpack(self.settings.anchor))
-	bar:Size(self.settings.width, self.settings.height)
+	-- bar:Point(unpack(self.settings.anchor))
+	-- bar:Size(self.settings.width, self.settings.height)
+	bar:Point(unpack(GetAnchor(self.settings)))
+	bar:Size(GetWidth(self.settings), GetHeight(self.settings))
 	--
 	if not bar.status then
 		bar.status = CreateFrame("StatusBar", nil, bar)
@@ -150,24 +155,3 @@ function plugin:SettingsModified()
 		self:UpdateVisibility()
 	end
 end
-
--- ----------------------------------------------
--- -- test
--- ----------------------------------------------
--- local C = Engine.Config
--- local settings = C[UI.MyClass]
--- if not settings then return end
--- for i, pluginSettings in ipairs(settings) do
-	-- if pluginSettings.kind == "RESOURCE" then
-		-- local setting = Engine.DeepCopy(pluginSettings)
-		-- setting.anchor = {"CENTER", UIParent, "CENTER", 0, i*30}
-		-- setting.specs = {"any"}
-		-- setting.enable = true
-		-- setting.autohide = false
-		-- local instance = Engine:NewPluginInstance("RESOURCE", "RESOURCE"..tostring(i), setting)
-		-- instance:Initialize()
-		-- if setting.enable then
-			-- instance:Enable()
-		-- end
-	-- end
--- end
