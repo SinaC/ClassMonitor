@@ -151,7 +151,7 @@ end
 -- overridden methods
 function plugin:Initialize()
 	-- set defaults
-	self.settings.count = self.settings.count or 1
+	self.settings.count = self.settings.count or 3
 	self.settings.colors = self.settings.colors or self.settings.color or UI.ClassColor()-- or CreateColorArray(color, self.settings.count)
 	self.settings.text = DefaultBoolean(self.settings.text, false)
 	-- no default for self.settings.map

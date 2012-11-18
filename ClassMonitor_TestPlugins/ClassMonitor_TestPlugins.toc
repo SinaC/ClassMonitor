@@ -1,9 +1,0 @@
-## Interface: 50001
-## Version: 0.0.1
-## Author: SinaC
-## Title: |cFF148587Class|r Monitor Test Plugins
-## Notes: Additional plugins for ClassMonitor
-## RequiredDeps: ClassMonitor
-## OptionalDeps: Tukui, ElvUI, ClassMonitor_ConfigUI
-
-plugin1.lua

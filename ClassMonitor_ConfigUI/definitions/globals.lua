@@ -35,7 +35,7 @@ end
 local function DeletePluginInstance(info)
 	local pluginName = info.arg.section.name
 	local invalid = info.arg.section.invalid
-print("DELETING plugin instance:"..tostring(pluginName))
+--print("DELETING plugin instance:"..tostring(pluginName))
 	-- delete option
 	G.Options.args[pluginName] = nil
 	-- "delete" from saved variables
