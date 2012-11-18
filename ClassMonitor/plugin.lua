@@ -154,6 +154,7 @@ function Engine:NewPluginInstance(pluginName, instanceName, settings)
 	--assert(category, "Plugin "..tostring(pluginName).." not found")
 	--assert(not category.instances[instanceName], "Plugin instance "..tostring(instanceName).." already exists")
 	--return category:new(instanceName, settings)
+--print("NEW INSTANCE:"..tostring(category.instances[instanceName]))
 	if not category or category.instances[instanceName] then
 		return nil
 	end

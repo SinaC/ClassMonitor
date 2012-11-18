@@ -57,11 +57,16 @@ local function DeletePluginInstance(info)
 		end
 	end
 	-- delete from config
+	local indexToDelete = nil
 	for k, setting in pairs(G.Config) do
 		if setting.name == pluginName then
-			G.Config[k] = nil
+			indexToDelete = k
 			break
 		end
+	end
+	if indexToDelete then
+--print("DELETE FROM CONFIG:"..tostring(pluginName))
+		G.Config[indexToDelete] = nil
 	end
 	-- rebuild auto anchor
 	if invalid ~= true then
@@ -398,7 +403,7 @@ local function SetNewPluginKind(info, value)
 		name = "CM_"..tostring(value).."_"..tostring(index)
 		index = index + 1
 		for _, section in pairs(G.Config) do
-			if section.name == name then
+			if section.name == name or _G[name] ~= nil then
 				restart = true
 				break
 			end
@@ -445,6 +450,7 @@ local function CreateNewPluginInstance(info)
 		instance = G:PluginCreateFunction(plugin.kind, plugin.name, plugin)
 	end
 	if instance then
+--print("INSTANCE CREATED")
 		-- add plugin to saved variables
 		G.SavedPerChar.Plugins[plugin.name] = plugin -- overwrite existing if any (may happen with .deleted == true)
 		-- add plugin to config

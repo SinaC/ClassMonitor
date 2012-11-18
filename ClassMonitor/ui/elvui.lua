@@ -32,14 +32,15 @@ UI.SetFontString = function(parent, fontHeight, fontStyle)
 	return fs
 end
 
-local function ConvertColor(color)
-	return { color.r, color.g, color.b, color.a or 1 }
-end
+-- local function ConvertColor(color)
+	-- return { color.r, color.g, color.b, color.a or 1 }
+-- end
 
 UI.ClassColor = function(className)
 	local class = className or E.myclass
 	local color = RAID_CLASS_COLORS[class]
-	return ConvertColor(color)
+	--return ConvertColor(color)
+	return E:GetColorTable(color)
 end
 
 UI.PowerColor = function(resourceName)
@@ -75,7 +76,8 @@ UI.PowerColor = function(resourceName)
 --print("resourceName:"..tostring(resourceName).."  "..tostring(color and color.r).."  "..tostring(color and color.g).."  "..tostring(color and color.b))
 	--local color = E.db.unitframe.colors.power[resourceName]
 	if color then
-		return ConvertColor(color)
+		--return ConvertColor(color)
+		return E:GetColorTable(color)
 	end
 end
 
@@ -88,9 +90,18 @@ UI.HealthColor = function(unit)
 	elseif UnitIsPlayer(unit) or (UnitPlayerControlled(unit) and not UnitIsPlayer(unit)) then
 		color = RAID_CLASS_COLORS[E.myclass]
 	elseif UnitReaction(unit, "player") then
-		color = UF.db.colors.reaction[UnitReaction(unit, "player")]
+		local reaction = UnitReaction(unit, "player")
+		if 1 == reaction or 2 == reaction or 3 == reaction then
+			color = UF.db.colors.reaction.GOOD
+		elseif 4 == reaction then
+			color = UF.db.colors.reaction.NEUTRAL
+		elseif 5 == reaction or 6 == reaction or 7 == reaction or 8 == reaction then
+			color = UF.db.colors.reaction.BAD
+		end
+		--color = UF.db.colors.reaction[UnitReaction(unit, "player")]
 	end
-	return ConvertColor(color)
+	--return ConvertColor(color)-- or {1,1,1,1})
+	return E:GetColorTable(color)
 end
 
 UI.CreateMover = function(name, width, height, anchor, text)
