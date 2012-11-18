@@ -1,6 +1,7 @@
 3.4.2.1
 Bug fixed in ElvUI unit color
 Bug fixed while re-creating a deleted plugin during the same play session
+Bug in width/height config (stupid copy/paste)
 
 3.4.2
 Auto-grid anchor activated (still experimental)

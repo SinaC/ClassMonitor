@@ -256,7 +256,7 @@ D.Helpers.WidthAndHeight = {
 			name = L.Height,
 			desc = L.HeightDesc,
 			type = "range",
-			min = 80, max = 300, step = 1,
+			min = 10, max = 50, step = 1,
 			get = D.Helpers.GetValueUsingInfo,
 			set = D.Helpers.SetValueUsingInfo,
 		}

@@ -88,7 +88,8 @@ UI.HealthColor = function(unit)
 	elseif not UnitIsConnected(unit) then
 		color = UF.db.colors.disconnected
 	elseif UnitIsPlayer(unit) or (UnitPlayerControlled(unit) and not UnitIsPlayer(unit)) then
-		color = RAID_CLASS_COLORS[E.myclass]
+		local class = select(2, UnitClass(unit)) or E.MyClass
+		color = RAID_CLASS_COLORS[class]
 	elseif UnitReaction(unit, "player") then
 		local reaction = UnitReaction(unit, "player")
 		if 1 == reaction or 2 == reaction or 3 == reaction then
