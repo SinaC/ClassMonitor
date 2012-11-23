@@ -5,17 +5,14 @@ local UI = Engine.UI
 
 if UI.MyClass ~= "SHAMAN" and UI.MyClass ~= "DRUID" then return end -- Totems for shaman and Mushrooms for druid
 
--- ONLY ON PTR
---if not Engine.IsPTR() then return end
-
 local ToClock = Engine.ToClock
 local CheckSpec = Engine.CheckSpec
 local PixelPerfect = Engine.PixelPerfect
 local DefaultBoolean = Engine.DefaultBoolean
 local GetColor = Engine.GetColor
-local GetAnchor = Engine.GetAnchor
-local GetWidth = Engine.GetWidth
-local GetHeight = Engine.GetHeight
+
+
+
 
 --
 local plugin = Engine:NewPlugin("TOTEMS")
@@ -85,14 +82,13 @@ function plugin:UpdateGraphics()
 		frame:Hide()
 		self.frame = frame
 	end
+	local frameWidth = self:GetWidth()
+	local height = self:GetHeight()
 	frame:ClearAllPoints()
-	-- frame:Point(unpack(self.settings.anchor))
-	-- frame:Size(self.settings.width, self.settings.height)
-	frame:Point(unpack(GetAnchor(self.settings)))
-	frame:Size(GetWidth(self.settings), GetHeight(self.settings))
+	frame:Point(unpack(self:GetAnchor()))
+	frame:Size(frameWidth, height)
 	-- Create totems
-	--local width, spacing = PixelPerfect(self.settings.width, self.settings.count)
-	local width, spacing = PixelPerfect(GetWidth(self.settings), self.settings.count)
+	local width, spacing = PixelPerfect(frameWidth, self.settings.count)
 	self.totems = self.totems or {}
 	for i = 1, self.settings.count do
 		local totem = self.totems[i]
@@ -105,7 +101,7 @@ function plugin:UpdateGraphics()
 			-- keep a link to plugin for UpdateTotem method
 			totem.plugin = self
 		end
-		totem:Size(width, self.settings.height)
+		totem:Size(width, height)
 		totem:ClearAllPoints()
 		if i == 1 then
 			totem:Point("TOPLEFT", self.frame, "TOPLEFT", 0, 0)
@@ -116,8 +112,7 @@ function plugin:UpdateGraphics()
 			totem.status = CreateFrame("StatusBar", nil, totem)
 			totem.status:SetStatusBarTexture(UI.NormTex)
 			totem.status:SetFrameLevel(6)
-			totem.status:Point("TOPLEFT", totem, "TOPLEFT", 2, -2)
-			totem.status:Point("BOTTOMRIGHT", totem, "BOTTOMRIGHT", -2, 2)
+			totem.status:SetInside()
 			totem.status:GetStatusBarTexture():SetHorizTile(false)
 		end
 		local color = GetColor(self.settings.colors, i, UI.ClassColor())
@@ -186,7 +181,7 @@ function plugin:SettingsModified()
 	--
 	self:UpdateGraphics()
 	--
-	if self.settings.enable == true then
+	if self:IsEnabled() then
 		self:Enable()
 		self:UpdateVisibility()
 	end

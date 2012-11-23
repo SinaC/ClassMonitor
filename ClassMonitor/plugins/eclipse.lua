@@ -7,12 +7,9 @@ if UI.MyClass ~= "DRUID" then return end -- Only for druid
 
 local DefaultBoolean = Engine.DefaultBoolean
 local GetColor = Engine.GetColor
-local GetAnchor = Engine.GetAnchor
-local GetWidth = Engine.GetWidth
-local GetHeight = Engine.GetHeight
 
--- ONLY ON PTR
---if not Engine.IsPTR() then return end
+
+
 
 --
 local plugin = Engine:NewPlugin("ECLIPSE")
@@ -51,7 +48,6 @@ function plugin:UpdateVisibility(event)
 end
 
 function plugin:UpdateDirection()
-if true then return end
 	if self.settings.text == true then
 		local direction = GetEclipseDirection()
 		if direction == "sun" then
@@ -73,7 +69,6 @@ if true then return end
 end
 
 function plugin:UpdateAura()
-if true then return end
 	self.inEclipse = false -- no eclipse
 	for i = 1, 40, 1 do
 		local name, _, _, _, _, _, _, _, _, _, spellID = UnitAura("player", i, "HELPFUL|PLAYER")
@@ -118,11 +113,11 @@ function plugin:UpdateGraphics()
 		bar:Hide()
 		self.bar = bar
 	end
+	local width = self:GetWidth()
+	local height = self:GetHeight()
 	bar:ClearAllPoints()
-	--bar:Point(unpack(self.settings.anchor))
-	--bar:Size(self.settings.width, self.settings.height)
-	bar:Point(unpack(GetAnchor(self.settings)))
-	bar:Size(GetWidth(self.settings), GetHeight(self.settings))
+	bar:Point(unpack(self:GetAnchor()))
+	bar:Size(width, height)
 
 	-- lunar status bar
 	if not bar.lunar then
@@ -131,11 +126,10 @@ function plugin:UpdateGraphics()
 	end
 	bar.lunar:ClearAllPoints()
 	bar.lunar:Point("TOPLEFT", bar, "TOPLEFT", 2, -2)
-	--bar.lunar:Size(self.settings.width-4, self.settings.height-4)
-	bar.lunar:Size(GetWidth(self.settings)-4, GetHeight(self.settings)-4)
+	bar.lunar:Size(width-4, height-4)
 	bar.lunar:SetStatusBarColor(unpack(GetColor(self.settings.colors, 1, DefaultColors[1])))
 	bar.lunar:SetMinMaxValues(0, 100)
-	bar.lunar:SetValue(0) -- needed for a correct refresh while changing width
+	bar.lunar:SetValue(0) -- needed for a correct refresh while changing settings
 
 	-- solar status bar
 	if not bar.solar then
@@ -144,11 +138,10 @@ function plugin:UpdateGraphics()
 	end
 	bar.solar:ClearAllPoints()
 	bar.solar:Point("LEFT", bar.lunar:GetStatusBarTexture(), "RIGHT", 0, 0) -- solar will move when lunar moves
-	--bar.solar:Size(self.settings.width-4, self.settings.height-4)
-	bar.solar:Size(GetWidth(self.settings)-4, GetHeight(self.settings)-4)
+	bar.solar:Size(width-4, height-4)
 	bar.solar:SetStatusBarColor(unpack(GetColor(self.settings.colors, 2, DefaultColors[2])))
 	bar.solar:SetMinMaxValues(0, 100)
-	bar.solar:SetValue(0) -- needed for a correct refresh while changing width
+	bar.solar:SetValue(0) -- needed for a correct refresh while changing settings
 
 	-- direction
 	if self.settings.text == true and not bar.directionText then
@@ -188,7 +181,7 @@ function plugin:SettingsModified()
 	--
 	self:UpdateGraphics()
 	--
-	if self.settings.enable == true then
+	if self:IsEnabled() then
 		self:Enable()
 		self:UpdateVisibility()
 	end

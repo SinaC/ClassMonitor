@@ -15,12 +15,13 @@ local function IsHideIfMaxDisabled(info)
 end
 
 local options = {
-	[1] = D.Helpers.Name,
-	[2] = D.Helpers.DisplayName,
-	[3] = D.Helpers.Kind,
-	[4] = D.Helpers.Enable,
-	[5] = D.Helpers.Autohide,
-	[6] = {
+	[1] = D.Helpers.Description,
+	[2] = D.Helpers.Name,
+	[3] = D.Helpers.DisplayName,
+	[4] = D.Helpers.Kind,
+	[5] = D.Helpers.Enabled,
+	[6] = D.Helpers.Autohide,
+	[7] = {
 		key = "hideifmax",
 		name = L.ResourceHideifmax,
 		desc = L.ResourceHideifmaxDesc,
@@ -29,9 +30,9 @@ local options = {
 		set = D.Helpers.SetValue,
 		disabled = IsHideIfMaxDisabled
 	},
-	[7] = D.Helpers.WidthAndHeight,
-	[8] = D.Helpers.Specs,
-	[9] = {
+	[8] = D.Helpers.WidthAndHeight,
+	[9] = D.Helpers.Specs,
+	[10] = {
 		key = "text",
 		name = L.CurrentValue,
 		desc = L.ResourceTextDesc,
@@ -41,8 +42,8 @@ local options = {
 		disabled = D.Helpers.IsPluginDisabled
 	},
 	-- TODO: colors (one entry by resource_type)
-	[11] = D.Helpers.Anchor,
-	[12] = D.Helpers.AutoGridAnchor,
+	[12] = D.Helpers.Anchor,
+	[13] = D.Helpers.AutoGridAnchor,
 }
 
 D.Helpers:NewPluginDefinition("RESOURCE", options, L.PluginShortDescription_RESOURCE, L.PluginDescription_RESOURCE)

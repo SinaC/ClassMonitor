@@ -55,8 +55,8 @@ if GetLocale() == "frFR" then
 	L.KindDesc = "Type de monitor"
 	--L.PluginShortDescription_Mover = "Cadre"
 
-	L.Enable = "Actif"
-	L.EnableDesc = "Activer ou non ce plugin"
+	L.Enabled = "Actif"
+	L.EnabledDesc = "Activer ou non ce plugin"
 
 	L.Autohide = "En combat"
 	L.AutohideDesc = "Activer le plugin uniquement en combat"
@@ -214,9 +214,9 @@ if GetLocale() == "frFR" then
 	L.PluginShortDescription_TANKSHIELD = "Bouclier de tank"
 	L.PluginDescription_TANKSHIELD = "Affiche une barre pour les tanks avec le montant restant que le bouclier peut absorber, ainsi que le temps restant"
 	L.PluginShortDescription_BURNINGEMBERS = "Braises ardentes"
-	L.PluginDescription_BURNINGEMBERS = "Affiche des barres avec le montant actuel de braises vivantes"
+	L.PluginDescription_BURNINGEMBERS = "Affiche des barres avec le montant actuel de braises vivantes pour les d\195\169monistes sp\195\169cialis\195\169s destruction"
 	L.PluginShortDescription_DEMONICFURY = "Fureur d\195\169moniaque"
-	L.PluginDescription_DEMONICFURY = "Affiche une barre avec la valeur actuelle de fureur d\195\169moniaque"
+	L.PluginDescription_DEMONICFURY = "Affiche une barre avec la valeur actuelle de fureur d\195\169moniaque pour les d\195\169monistes sp\195\169cialis\195\169s d\195\169monologie"
 	L.PluginShortDescription_RECHARGE = "Cooldown avec charges"
 	L.PluginDescription_RECHARGE = "Affiche des barres pour les charges d'un sort \195\160 temps de recharge avec charges comme la Roulade du moine ou la D\195\169fense sauvage du druide"
 	L.PluginShortDescription_RECHARGEBAR = "Barre de cooldown avec charges"

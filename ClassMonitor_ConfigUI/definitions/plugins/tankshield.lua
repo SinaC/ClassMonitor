@@ -5,13 +5,14 @@ local D = Engine.Definitions
 
 local color = D.Helpers.CreateColorsDefinition("color", 1, {L.BarColor})
 local options = {
-	[1] = D.Helpers.Name,
-	[2] = D.Helpers.DisplayName,
-	[3] = D.Helpers.Kind,
-	[4] = D.Helpers.Enable,
-	[5] = D.Helpers.Autohide,
-	[6] = D.Helpers.WidthAndHeight,
-	[7] = {
+	[1] = D.Helpers.Description,
+	[2] = D.Helpers.Name,
+	[3] = D.Helpers.DisplayName,
+	[4] = D.Helpers.Kind,
+	[5] = D.Helpers.Enabled,
+	[6] = D.Helpers.Autohide,
+	[7] = D.Helpers.WidthAndHeight,
+	[8] = {
 		key = "duration",
 		name = L.Duration,
 		desc = L.TankshieldDurationDesc,
@@ -20,9 +21,9 @@ local options = {
 		set = D.Helpers.SetValue,
 		disabled = D.Helpers.IsPluginDisabled
 	},
-	[8] = color,
-	[9] = D.Helpers.Anchor,
-	[10] = D.Helpers.AutoGridAnchor,
+	[9] = color,
+	[10] = D.Helpers.Anchor,
+	[11] = D.Helpers.AutoGridAnchor,
 }
 
 D.Helpers:NewPluginDefinition("TANKSHIELD", options, L.PluginShortDescription_TANKSHIELD, L.PluginDescription_TANKSHIELD)

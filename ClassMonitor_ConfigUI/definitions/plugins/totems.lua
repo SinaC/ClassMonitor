@@ -4,14 +4,15 @@ local L = Engine.Locales
 local D = Engine.Definitions
 
 local options = {
-	[1] = D.Helpers.Name,
-	[2] = D.Helpers.DisplayName,
-	[3] = D.Helpers.Kind,
-	[4] = D.Helpers.Enable,
-	[5] = D.Helpers.Autohide,
-	[6] = D.Helpers.WidthAndHeight,
-	[7] = D.Helpers.Specs,
-	[8] = {
+	[1] = D.Helpers.Description,
+	[2] = D.Helpers.Name,
+	[3] = D.Helpers.DisplayName,
+	[4] = D.Helpers.Kind,
+	[5] = D.Helpers.Enabled,
+	[6] = D.Helpers.Autohide,
+	[7] = D.Helpers.WidthAndHeight,
+	[8] = D.Helpers.Specs,
+	[9] = {
 		key = "count",
 		name = L.Count,
 		desc = L.TotemsCountDesc,
@@ -24,7 +25,7 @@ local options = {
 		set = D.Helpers.SetValue,
 		disabled = D.Helpers.IsPluginDisabled
 	},
-	[9] = {
+	[10] = {
 		key = "text",
 		name = L.TimeLeft,
 		desc = L.TotemsTextDesc,
@@ -35,8 +36,8 @@ local options = {
 	},
 	-- TODO: map
 	-- TODO: colors
-	[12] = D.Helpers.Anchor,
-	[13] = D.Helpers.AutoGridAnchor,
+	[13] = D.Helpers.Anchor,
+	[14] = D.Helpers.AutoGridAnchor,
 }
 
 D.Helpers:NewPluginDefinition("TOTEMS", options, L.PluginShortDescription_TOTEMS, L.PluginDescription_TOTEMS)

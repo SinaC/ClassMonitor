@@ -4,15 +4,16 @@ local L = Engine.Locales
 local D = Engine.Definitions
 
 local options = {
-	[1] = D.Helpers.Name,
-	[2] = D.Helpers.DisplayName,
-	[3] = D.Helpers.Kind,
-	[4] = D.Helpers.Enable,
-	[5] = D.Helpers.Autohide,
-	[6] = D.Helpers.WidthAndHeight,
+	[1] = D.Helpers.Description,
+	[2] = D.Helpers.Name,
+	[3] = D.Helpers.DisplayName,
+	[4] = D.Helpers.Kind,
+	[5] = D.Helpers.Enabled,
+	[6] = D.Helpers.Autohide,
+	[7] = D.Helpers.WidthAndHeight,
 	-- TODO: colors
-	[8] = D.Helpers.Anchor,
-	[9] = D.Helpers.AutoGridAnchor,
+	[9] = D.Helpers.Anchor,
+	[10] = D.Helpers.AutoGridAnchor,
 }
 
 D.Helpers:NewPluginDefinition("BURNINGEMBERS", options, L.PluginShortDescription_BURNINGEMBERS, L.PluginDescription_BURNINGEMBERS)

@@ -1,3 +1,10 @@
+1.0.6
+IMPORTANT change for plugin developer: D.Helpers.Enable renamed to D.Helpers.Enabled
+Bug fixed in plugin creation
+Description option added for each plugin
+Better default anchoring when creating new plugin
+ReloadUI added in reset
+
 1.0.5
 Width and height grouped
 Auto-grid anchor added

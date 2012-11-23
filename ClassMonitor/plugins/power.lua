@@ -3,16 +3,14 @@ local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
 local UI = Engine.UI
 
--- ONLY ON PTR
---if not Engine.IsPTR() then return end
-
 local CheckSpec = Engine.CheckSpec
 local PixelPerfect = Engine.PixelPerfect
 local DefaultBoolean = Engine.DefaultBoolean
 local GetColor = Engine.GetColor
-local GetAnchor = Engine.GetAnchor
-local GetWidth = Engine.GetWidth
-local GetHeight = Engine.GetHeight
+
+-- self.count = max power ever
+-- self.maxValue = current max power
+
 
 --
 local plugin = Engine:NewPlugin("POWER")
@@ -50,7 +48,7 @@ function plugin:UpdateMaxValue(event, unit, powerType)
 	if maxValue ~= self.maxValue then
 		-- compute new width, spacing
 		--local width, spacing = PixelPerfect(self.settings.width, maxValue)
-		local width, spacing = PixelPerfect(GetWidth(self.settings), maxValue)
+		local width, spacing = PixelPerfect(self:GetWidth(), maxValue)
 		if maxValue > self.count then
 			self.count = maxValue
 		end
@@ -120,10 +118,10 @@ print("POWERTYPE:"..tostring(powerType).."  "..tostring(self.settings.powerType)
 			self.count = maxValue
 		end
 		-- update points (create any needed points)
-		--local width, spacing = PixelPerfect(self.settings.width, maxValue)
-		local width, spacing = PixelPerfect(GetWidth(self.settings), maxValue)
+		local width, spacing = PixelPerfect(self:GetWidth(), maxValue)
+		local height = self:GetHeight()
 		for i = 1, self.count do
-			self:UpdatePointGraphics(i, width, spacing)
+			self:UpdatePointGraphics(i, width, height, spacing)
 			self.points[i]:Hide()
 		end
 		-- update current max
@@ -140,7 +138,7 @@ print("POWERTYPE:"..tostring(powerType).."  "..tostring(self.settings.powerType)
 	end
 end
 
-function plugin:UpdatePointGraphics(index, width, spacing)
+function plugin:UpdatePointGraphics(index, width, height, spacing)
 	--
 	local point = self.points[index]
 	if not point then
@@ -150,7 +148,7 @@ function plugin:UpdatePointGraphics(index, width, spacing)
 		point:Hide()
 		self.points[index] = point
 	end
-	point:Size(width, self.settings.height)
+	point:Size(width, height)
 	point:ClearAllPoints()
 	if index == 1 then
 		point:Point("TOPLEFT", self.frame, "TOPLEFT", 0, 0)
@@ -162,8 +160,7 @@ function plugin:UpdatePointGraphics(index, width, spacing)
 		point.status = CreateFrame("StatusBar", nil, point)
 		point.status:SetStatusBarTexture(UI.NormTex)
 		point.status:SetFrameLevel(6)
-		point.status:Point("TOPLEFT", point, "TOPLEFT", 2, -2)
-		point.status:Point("BOTTOMRIGHT", point, "BOTTOMRIGHT", -2, 2)
+		point.status:SetInside()
 	end
 	--
 	local color = GetColor(self.settings.colors, index, UI.ClassColor())
@@ -185,17 +182,16 @@ function plugin:UpdateGraphics()
 		frame:Hide()
 		self.frame = frame
 	end
+	local frameWidth = self:GetWidth()
+	local height = self:GetHeight()
 	frame:ClearAllPoints()
-	--frame:Point(unpack(self.settings.anchor))
-	--frame:Size(self.settings.width, self.settings.height)
-	frame:Point(unpack(GetAnchor(self.settings)))
-	frame:Size(GetWidth(self.settings), GetHeight(self.settings))
+	frame:Point(unpack(self:GetAnchor()))
+	frame:Size(frameWidth, height)
 	-- Create points
-	--local width, spacing = PixelPerfect(self.settings.width, self.maxValue)
-	local width, spacing = PixelPerfect(GetWidth(self.settings), self.maxValue)
+	local width, spacing = PixelPerfect(frameWidth, self.maxValue)
 	self.points = self.points or {}
 	for i = 1, self.count do
-		self:UpdatePointGraphics(i, width, spacing)
+		self:UpdatePointGraphics(i, width, height, spacing)
 	end
 end
 
@@ -205,8 +201,6 @@ function plugin:Initialize()
 	self.settings.count = self.settings.count or 1 -- starts with count = 1 if count not found in settings
 	self.settings.filled = DefaultBoolean(self.settings.filled, false)
 	self.settings.powerType = self.settings.powerType or SPELL_POWER_HOLY_POWER --
-	--local color = self.settings.color or UI.PowerColor(self.settings.powerType) or UI.ClassColor()
-	--self.settings.colors = self.settings.colors or CreateColorArray(color, self.settings.count)
 	self.settings.colors = self.settings.colors or self.settings.color or UI.PowerColor(self.settings.powerType) or UI.ClassColor()
 	--
 	self.count = self.settings.count
@@ -239,7 +233,7 @@ function plugin:SettingsModified()
 	--
 	self:UpdateGraphics()
 	--
-	if self.settings.enable == true then
+	if self:IsEnabled() then
 		self:Enable()
 		self:UpdateVisibility()
 	end

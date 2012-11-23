@@ -27,7 +27,7 @@ local resolution = GetCVar("gxResolution")
 local uiscale = min(2, max(.64, 768/string.match(resolution, "%d+x(%d+)")))
 local mult = 768 / string.match(GetCVar("gxResolution"), "%d+x(%d+)") / uiscale
 --print(tostring(mult).."  "..tostring(resolution).."  "..tostring(uiscale))
-local Scale = function(x)
+local function Scale(x)
 	return mult*math.floor(x/mult+.5)
 end
 
@@ -68,13 +68,24 @@ local function SetTemplate(f, t, tex)
 		bgFile = texture, 
 		edgeFile = blank, 
 		tile = false, tileSize = 0, edgeSize = mult, 
-		insets = { left = -mult, right = -mult, top = -mult, bottom = -mult}
+		insets = {left = -mult, right = -mult, top = -mult, bottom = -mult}
 	})
 
 	if t == "Transparent" then backdropa = 0.8 else backdropa = 1 end
 
 	f:SetBackdropColor(backdropr, backdropg, backdropb, backdropa)
 	f:SetBackdropBorderColor(borderr, borderg, borderb)
+end
+
+local function SetInside(obj, anchor, xOffset, yOffset)
+	xOffset = xOffset or 2
+	yOffset = yOffset or 2
+	anchor = anchor or obj:GetParent()
+
+	if obj:GetPoint() then obj:ClearAllPoints() end
+
+	obj:Point("TOPLEFT", anchor, "TOPLEFT", xOffset, -yOffset)
+	obj:Point("BOTTOMRIGHT", anchor, "BOTTOMRIGHT", -xOffset, yOffset)
 end
 
 local function Kill(object)
@@ -92,6 +103,7 @@ local function addapi(object)
 	if not object.Height then mt.Height = Height end
 	if not object.Point then mt.Point = Point end
 	if not object.SetTemplate then mt.SetTemplate = SetTemplate end
+	if not object.SetInside then mt.SetInside = SetInside end
 	if not object.Kill then mt.Kill = Kill end
 end
 
@@ -129,6 +141,9 @@ local ResourceColor = {
 	["POWER_TYPE_PYRITE"] = {0.60, 0.09, 0.17}
 }
 
+local UnitTappedColor = {.6,.6,.6}
+local UnitDisconnectedColor = {.6, .6, .6}
+
 --
 UI.BorderColor = bordercolor
 UI.PetBattleHider = petBattleHider
@@ -147,7 +162,7 @@ end
 
 UI.ClassColor = function(className)
 	local class = className or UI.MyClass
-	return { RAID_CLASS_COLORS[class].r, RAID_CLASS_COLORS[class].g, RAID_CLASS_COLORS[class].b}
+	return {RAID_CLASS_COLORS[class].r, RAID_CLASS_COLORS[class].g, RAID_CLASS_COLORS[class].b}
 end
 
 UI.PowerColor = function(resourceName)
@@ -157,14 +172,16 @@ end
 UI.HealthColor = function(unit)
 	local color = {1, 1, 1, 1}
 	if UnitIsTapped(unit) and not UnitIsTappedByPlayer(unit) then
-		color = {.6,.6,.6}
+		color = UnitTappedColor
 	elseif not UnitIsConnected(unit) then
-		color = {.6, .6, .6}
+		color = UnitDisconnectedColor
 	elseif UnitIsPlayer(unit) or (UnitPlayerControlled(unit) and not UnitIsPlayer(unit)) then
-		local class = select(2, UnitClass(unit))
-		color = { RAID_CLASS_COLORS[class].r, RAID_CLASS_COLORS[class].g, RAID_CLASS_COLORS[class].b}
+		local class = select(2, UnitClass(unit)) or UI.MyClass
+		color = {RAID_CLASS_COLORS[class].r, RAID_CLASS_COLORS[class].g, RAID_CLASS_COLORS[class].b}
 	elseif UnitReaction(unit, "player") then
-		color = { 218/255, 197/255, 92/255 } -- TODO
+		local reaction = UnitReaction(unit, "player")
+		local reactionColor = FACTION_BAR_COLORS[reaction]
+		color = reactionColor and {reactionColor.r, reactionColor.g, reactionColor.b} or {218/255, 197/255, 92/255}
 	end
 	return color
 end

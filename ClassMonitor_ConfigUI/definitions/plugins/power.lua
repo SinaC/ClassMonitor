@@ -14,14 +14,15 @@ local function GetPowerTypes()
 end
 
 local options = {
-	[1] = D.Helpers.Name,
-	[2] = D.Helpers.DisplayName,
-	[3] = D.Helpers.Kind,
-	[4] = D.Helpers.Enable,
-	[5] = D.Helpers.Autohide,
-	[6] = D.Helpers.WidthAndHeight,
-	[7] = D.Helpers.Specs,
-	[8] = {
+	[1] = D.Helpers.Description,
+	[2] = D.Helpers.Name,
+	[3] = D.Helpers.DisplayName,
+	[4] = D.Helpers.Kind,
+	[5] = D.Helpers.Enabled,
+	[6] = D.Helpers.Autohide,
+	[7] = D.Helpers.WidthAndHeight,
+	[8] = D.Helpers.Specs,
+	[9] = {
 		key = "powerType",
 		name = L.PowerType,
 		desc = L.PowerTypeDesc,
@@ -31,7 +32,7 @@ local options = {
 		set = D.Helpers.SetValue,
 		disabled = D.Helpers.IsPluginDisabled
 	},
-	[9] = {
+	[10] = {
 		key = "count",
 		name = L.PowerCount,
 		desc = L.PowerCountDesc,
@@ -41,7 +42,7 @@ local options = {
 		set = D.Helpers.SetValue,
 		disabled = D.Helpers.IsPluginDisabled
 	},
-	[10] = {
+	[11] = {
 		key = "filled",
 		name = L.Filled,
 		desc = L.PowerFilledDesc,
@@ -51,8 +52,8 @@ local options = {
 		disabled = D.Helpers.IsPluginDisabled
 	},
 	-- TODO: colors
-	[12] = D.Helpers.Anchor,
-	[13] = D.Helpers.AutoGridAnchor,
+	[13] = D.Helpers.Anchor,
+	[14] = D.Helpers.AutoGridAnchor,
 }
 
 D.Helpers:NewPluginDefinition("POWER", options, L.PluginShortDescription_POWER, L.PluginDescription_POWER)

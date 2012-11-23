@@ -3,16 +3,13 @@ local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
 local UI = Engine.UI
 
--- ONLY ON PTR
---if not Engine.IsPTR() then return end
-
 local CheckSpec = Engine.CheckSpec
 local DefaultBoolean = Engine.DefaultBoolean
 local HealthColor = UI.HealthColor
 local FormatNumber = Engine.FormatNumber
-local GetAnchor = Engine.GetAnchor
-local GetWidth = Engine.GetWidth
-local GetHeight = Engine.GetHeight
+
+
+
 
 --
 local plugin = Engine:NewPlugin("HEALTH")
@@ -30,19 +27,15 @@ function plugin:Update(elapsed)
 		self.bar.status:SetValue(value)
 		if self.settings.text == true then
 			if value == valueMax then
-				--if value > 10000 then
-				--	self.bar.text:SetFormattedText("%.1fk", value/1000)
-				--else
-				--	self.bar.text:SetText(value)
-				--end
 				self.bar.text:SetText(FormatNumber(value))
 			else
 				local percentage = (value * 100) / valueMax
-				if value > 10000 then
-					self.bar.text:SetFormattedText("%2d%% - %.1fk", percentage, value/1000)
-				else
-					self.bar.text:SetFormattedText("%2d%% - %u", percentage, value)
-				end
+				self.bar.text:SetFormattedText("%2d%% - "..FormatNumber(value), percentage)
+				-- if value > 10000 then
+					-- self.bar.text:SetFormattedText("%2d%% - %.1fk", percentage, value/1000)
+				-- else
+					-- self.bar.text:SetFormattedText("%2d%% - %u", percentage, value)
+				-- end
 			end
 		end
 		self.timeSinceLastUpdate = 0
@@ -79,17 +72,14 @@ function plugin:UpdateGraphics()
 		self.bar = bar
 	end
 	bar:ClearAllPoints()
-	--bar:Size(self.settings.width, self.settings.height)
-	--bar:Point(unpack(self.settings.anchor))
-	bar:Point(unpack(GetAnchor(self.settings)))
-	bar:Size(GetWidth(self.settings), GetHeight(self.settings))
+	bar:Point(unpack(self:GetAnchor()))
+	bar:Size(self:GetWidth(), self:GetHeight())
 	--
 	if not bar.status then
 		bar.status = CreateFrame("StatusBar", nil, bar)
 		bar.status:SetStatusBarTexture(UI.NormTex)
 		bar.status:SetFrameLevel(6)
-		bar.status:Point("TOPLEFT", bar, "TOPLEFT", 2, -2)
-		bar.status:Point("BOTTOMRIGHT", bar, "BOTTOMRIGHT", -2, 2)
+		bar.status:SetInside()
 	end
 	bar.status:SetMinMaxValues(0, UnitHealthMax(self.settings.unit))
 	--
@@ -136,7 +126,7 @@ function plugin:SettingsModified()
 	--
 	self:UpdateGraphics()
 	--
-	if self.settings.enable == true then
+	if self:IsEnabled() then
 		self:Enable()
 		self:UpdateVisibility()
 	end

@@ -35,7 +35,7 @@ function Engine:AutoGridAnchor(settings, globalWidth, globalHeight, verticalSpac
 	local master = nil
 	local mover = nil
 	for _, setting in pairs(settings) do
-		if setting.kind ~= "MOVER" and setting.enable == true and setting.invalid ~= true and setting.deleted ~= true then
+		if setting.kind ~= "MOVER" and setting.enabled == true and setting.__invalid ~= true and setting.__deleted ~= true then
 			-- set default indices + get lower/upper bounds
 			setting.verticalIndex = setting.verticalIndex or index
 			setting.horizontalIndex = setting.horizontalIndex or 0
@@ -47,6 +47,7 @@ function Engine:AutoGridAnchor(settings, globalWidth, globalHeight, verticalSpac
 			if not master then
 				master = setting
 			else
+				local previousMaster = master
 				-- master is lowest positive vertical index or highest negative vertical index if no positive vertical index
 				-- if 2 or more identical vertical index, master is the lowest horizontal index
 				if master.verticalIndex == setting.verticalIndex then
@@ -56,14 +57,17 @@ function Engine:AutoGridAnchor(settings, globalWidth, globalHeight, verticalSpac
 				elseif master.verticalIndex < 0 then
 					if setting.verticalIndex < 0 and setting.verticalIndex > master.verticalIndex then
 						master = setting
-					elseif setting.verticalIndex > 0 then
+					elseif setting.verticalIndex >= 0 then
 						master = setting
 					end
 				else
-					if setting.verticalIndex > 0 and setting.verticalIndex < master.verticalIndex then
+					if setting.verticalIndex >= 0 and setting.verticalIndex < master.verticalIndex then
 						master = setting
 					end
 				end
+-- if previousMaster ~= master then
+-- print("PREVIOUS MASTER:"..tostring(previousMaster.name).." "..tostring(previousMaster.verticalIndex).." "..tostring(previousMaster.horizontalIndex))
+-- end
 			end
 			-- add setting to list
 			list[setting.verticalIndex] = list[setting.verticalIndex] or {hMin = 9, hMax = 0, count = 0, list = {}}
@@ -90,7 +94,7 @@ function Engine:AutoGridAnchor(settings, globalWidth, globalHeight, verticalSpac
 	-- master is anchored on mover if it exists
 	if mover then
 --print("REANCHORING MASTER:"..tostring(master.name))
-		master["autogridanchor"] = {"TOPLEFT", mover.name, "TOPLEFT", 0, 0}
+		master.__autogridanchor = {"TOPLEFT", mover.name, "TOPLEFT", 0, 0}
 	end
 
 --[[
@@ -98,7 +102,6 @@ function Engine:AutoGridAnchor(settings, globalWidth, globalHeight, verticalSpac
 	first cell of line must be anchored to first of previous cell (TOPLEFT, BOTTOMLEFT, 0, v)
 	not first cell of line must be anchored to previous cell (TOPLEFT, TOPRIGHT, h, 0)
 	every plugin the same cell than master must be anchored to master (TOPLEFT, TOPLEFT, 0, 0)
-	TODO: number of horizontal cell in a line gives count
 --]]
 
 --print("MASTER:"..tostring(master.name))
@@ -122,18 +125,18 @@ function Engine:AutoGridAnchor(settings, globalWidth, globalHeight, verticalSpac
 						local firstPluginOfCurrentCellOfCurrentLine = nil -- keep first plugin of current cell
 						for _, setting in pairs(hEntry) do
 							-- each plugin in one cell
-							setting.autogridwidth = width -- new width
-							setting.autogridheight = globalHeight -- same height for each plugin
+							setting.__autogridwidth = width -- new width
+							setting.__autogridheight = globalHeight -- same height for each plugin
 							if setting ~= master then
 								if setting.verticalIndex == master.verticalIndex and setting.horizontalIndex == master.horizontalIndex then
 --print("SAME AS MASTER:"..tostring(setting.name))
-									setting.autogridanchor = {"TOPLEFT", master.name, "TOPLEFT", 0, 0} -- every plugin in master cell must be anchored to master (if not master itself)
+									setting.__autogridanchor = {"TOPLEFT", master.name, "TOPLEFT", 0, 0} -- every plugin in master cell must be anchored to master (if not master itself)
 								elseif not firstPluginOfPreviousCellOfCurrentLine then -- no previous cell -> first cell
 --print("FIRST CELL OF LINE:"..tostring(setting.name))
-									setting.autogridanchor = {"BOTTOMLEFT", firstPluginOfFirstCellOfPreviousLine.name, "TOPLEFT", 0, verticalSpacing} -- every plugins in first cell must be anchored to first of previous line
+									setting.__autogridanchor = {"BOTTOMLEFT", firstPluginOfFirstCellOfPreviousLine.name, "TOPLEFT", 0, verticalSpacing} -- every plugins in first cell must be anchored to first of previous line
 								else
 --print("NEXT CELL OF LINE:"..tostring(setting.name))
-									setting.autogridanchor = {"TOPLEFT", firstPluginOfPreviousCellOfCurrentLine.name, "TOPRIGHT", spacing, 0} -- every plugins in next cells must be anchored to previous cell
+									setting.__autogridanchor = {"TOPLEFT", firstPluginOfPreviousCellOfCurrentLine.name, "TOPRIGHT", spacing, 0} -- every plugins in next cells must be anchored to previous cell
 								end
 							end
 							if not firstPluginOfCurrentCellOfCurrentLine then firstPluginOfCurrentCellOfCurrentLine = setting end -- store first plugin of current cell
@@ -167,18 +170,18 @@ function Engine:AutoGridAnchor(settings, globalWidth, globalHeight, verticalSpac
 						local firstPluginOfCurrentCellOfCurrentLine = nil -- keep first plugin of current cell
 						for _, setting in pairs(hEntry) do
 							-- each plugin in one cell
-							setting.autogridwidth = width -- new width
-							setting.autogridheight = globalHeight -- same height for each plugin
+							setting.__autogridwidth = width -- new width
+							setting.__autogridheight = globalHeight -- same height for each plugin
 							if setting ~= master then
 								if setting.verticalIndex == master.verticalIndex and setting.horizontalIndex == master.horizontalIndex then
 --print("SAME AS MASTER:"..tostring(setting.name))
-									setting.autogridanchor = {"TOPLEFT", master.name, "TOPLEFT", 0, 0} -- every plugin in master cell must be anchored to master (if not master itself)
+									setting.__autogridanchor = {"TOPLEFT", master.name, "TOPLEFT", 0, 0} -- every plugin in master cell must be anchored to master (if not master itself)
 								elseif not firstPluginOfPreviousCellOfCurrentLine then -- no previous cell -> first cell
 --print("FIRST CELL OF LINE:"..tostring(setting.name))
-									setting.autogridanchor = {"TOPLEFT", firstPluginOfFirstCellOfPreviousLine.name, "BOTTOMLEFT", 0, -verticalSpacing} -- every plugins in first cell must be anchored to first of previous line
+									setting.__autogridanchor = {"TOPLEFT", firstPluginOfFirstCellOfPreviousLine.name, "BOTTOMLEFT", 0, -verticalSpacing} -- every plugins in first cell must be anchored to first of previous line
 								else
 --print("NEXT CELL OF LINE:"..tostring(setting.name))
-									setting.autogridanchor = {"TOPLEFT", firstPluginOfPreviousCellOfCurrentLine.name, "TOPRIGHT", spacing, 0} -- every plugins in next cells must be anchored to previous cell
+									setting.__autogridanchor = {"TOPLEFT", firstPluginOfPreviousCellOfCurrentLine.name, "TOPRIGHT", spacing, 0} -- every plugins in next cells must be anchored to previous cell
 								end
 							end
 							if not firstPluginOfCurrentCellOfCurrentLine then firstPluginOfCurrentCellOfCurrentLine = setting end -- store first plugin of current cell
@@ -194,8 +197,8 @@ function Engine:AutoGridAnchor(settings, globalWidth, globalHeight, verticalSpac
 		end
 	end
 
---[[
 	-- DUMP
+--[[
 	print("MIN: "..tostring(vMin).."  MAX: "..tostring(vMax).."  master: "..tostring(master and master.name or ""))
 	for v = vMin, vMax do
 		local vEntry = list[v]
@@ -206,7 +209,7 @@ function Engine:AutoGridAnchor(settings, globalWidth, globalHeight, verticalSpac
 				local hEntry = vEntry.list[h]
 				if hEntry then -- may have gaps
 					for _, setting in pairs(hEntry) do
-						print("  "..tostring(setting.name).." w:"..tostring(setting.autogridwidth or setting.width).." h:"..tostring(setting.autogridheight or setting.height).." a:"..tostring(setting["autogridanchor"] and setting["autogridanchor"][1])..","..tostring(setting["autogridanchor"] and setting["autogridanchor"][2])..","..tostring(setting["autogridanchor"] and setting["autogridanchor"][3])..","..tostring(setting["autogridanchor"] and setting["autogridanchor"][4])..","..tostring(setting["autogridanchor"] and setting["autogridanchor"][5]))
+						print("  "..tostring(setting.name).." w:"..tostring(setting.__autogridwidth or setting.width).." h:"..tostring(setting.__autogridheight or setting.height).." a:"..tostring(setting.__autogridanchor and setting.__autogridanchor[1])..","..tostring(setting.__autogridanchor and setting.__autogridanchor[2])..","..tostring(setting.__autogridanchor and setting.__autogridanchor[3])..","..tostring(setting.__autogridanchor and setting.__autogridanchor[4])..","..tostring(setting.__autogridanchor and setting.__autogridanchor[5]))
 					end
 				end
 				print("}")
@@ -215,7 +218,6 @@ function Engine:AutoGridAnchor(settings, globalWidth, globalHeight, verticalSpac
 		end
 	end
 --]]
-
 	-- clean up
 	wipe(list)
 end

@@ -1,9 +1,6 @@
 local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
 
--- ONLY ON PTR
---if not Engine.IsPTR() then return end
-
 local Plugins = {} -- List of plugins
 
 ------------------------------------------------
@@ -116,6 +113,31 @@ function Plugin:SettingsModified()
 end
 
 ------------------------------------------------
+-- public methods
+------------------------------------------------
+-- Return current anchor in function of anchoring mode
+function Plugin:GetAnchor()
+--print("GetAnchor:"..tostring(ClassMonitorDataPerChar.Global.autogridanchor).."  "..tostring(settings.__autogridanchor).."  "..tostring(settings.anchor))
+	return (ClassMonitorDataPerChar.Global.autogridanchor == true and self.settings.__autogridanchor) or self.settings.anchor
+end
+
+-- Return current width in function of anchoring mode
+function Plugin:GetWidth()
+--print("GetWidth:"..tostring(ClassMonitorDataPerChar.Global.autogridanchor).."  "..tostring(settings.__autogridwidth).."  "..tostring(settings.width))
+	return (ClassMonitorDataPerChar.Global.autogridanchor == true and self.settings.__autogridwidth) or self.settings.width
+end
+
+-- Return current height in function of anchoring mode
+function Plugin:GetHeight()
+--print("GetHeight:"..tostring(ClassMonitorDataPerChar.Global.autogridanchor).."  "..tostring(settings.__autogridheight).."  "..tostring(settings.height))
+	return (ClassMonitorDataPerChar.Global.autogridanchor == true and self.settings.__autogridheight) or self.settings.height
+end
+
+function Plugin:IsEnabled()
+	return self.settings.enabled
+end
+
+------------------------------------------------
 -- Plugin factory
 ------------------------------------------------
 -- function Plugin:NewInstance(instanceName, settings)
@@ -178,7 +200,8 @@ function Engine:UpdatePluginInstance(pluginName, instanceName)
 	--assert(instance, "Plugin instance "..tostring(instanceName).." not found")
 	if not instance then return true end
 	-- update instance
-	instance:SettingsModified()
+	--instance:SettingsModified()
+	Engine.safecall(instance.SettingsModified, instance)
 	return true
 end
 
@@ -186,7 +209,8 @@ function Engine:UpdateAllPlugins()
 	for _, pluginCategory in pairs(Plugins) do
 		for _, instance in pairs(pluginCategory.instances) do
 --print("UPDATE:"..tostring(instance).."  "..tostring(instance.name))
-			instance:SettingsModified()
+			--instance:SettingsModified()
+			Engine.safecall(instance.SettingsModified, instance)
 		end
 	end
 end
@@ -198,9 +222,19 @@ function Engine:CreatePluginInstance(pluginName, instanceName, settings)
 --print("CreatePluginInstance:"..tostring(pluginName).."  "..tostring(instanceName).."  "..tostring(settings))
 	local instance = Engine:NewPluginInstance(pluginName, instanceName, settings)
 	if instance then
-		instance:Initialize()
-		if settings.enable == true then
-			instance:Enable()
+		--instance:Initialize()
+		local success = Engine.safecall(instance.Initialize, instance)
+		if success then
+			if settings.enabled == true then
+				--instance:Enable()
+				Engine.safecall(instance.Enable, instance)
+			end
+		else
+			-- remove plugin instance
+			local category = Plugins[pluginName]
+			category[instanceName] = nil
+			-- set as invalid
+			settings.__invalid = true
 		end
 	end
 	return instance
@@ -232,7 +266,8 @@ function Engine:DeletePluginInstance(pluginName, instanceName)
 	local instance = category.instances[instanceName]
 	if not instance then return false end
 	-- Disable instance, no real deletion
-	instance:Disable()
+	--instance:Disable()
+	Engine.safecall(instance.Disable, instance)
 	return true
 end
 

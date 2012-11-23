@@ -27,12 +27,12 @@ Engine.UI = {}
 -- [DONE]auto anchors (based on index in config, index 0 is on mover, -1 above, +1 below, ...) (if 2 with the same index, they are put on the same line)
 --	[FIXED] KNOWN ISSUE: instead of setting anchor, width, height -> set autogridanchor, autogridwidth, autogridheight (in each plugin, call a function to get actual anchor, width, height in function of current anchor mode)
 -- placeholder for each plugin in config mode
--- external plugin code + definition (expose ClassMonitor.Engine and ClassMonitor_ConfigUI.Engine namespace)
--- set vertical/horizontal indexes in config
--- frames with identical coordinates (verticalIndex and horizontalIndex are anchored at the same place)
+-- [DONE]external plugin code + definition (expose ClassMonitor.Engine and ClassMonitor_ConfigUI.Engine namespace)
+-- [DONE]set vertical/horizontal indexes in config
+-- [DONE]frames with identical coordinates (verticalIndex and horizontalIndex are anchored at the same place)
 -- remove MOVER from plugin
 -- new plugin for monk brew: 1st phase: display charge count and time left, 2nd phase (when brew activated): buff time left
--- when a plugin settings are invalid, create a text in plugin bar to display an error message
--- if section in saved variables contains deleted = true, remove setting from config
+-- [DONE]when a plugin settings are invalid, create a text in plugin bar to display an error message
+-- [DONE]if section in saved variables contains deleted = true, remove setting from config
 -- multiple CD/recharge in one frame, display only active CD -> frame size is changed in function of number of active CD
 -- multiple aura in one frame, display only active AURA -> frame size is changed in function of number of active AURA

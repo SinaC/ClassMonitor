@@ -3,16 +3,13 @@ local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
 local UI = Engine.UI
 
--- ONLY ON PTR
---if not Engine.IsPTR() then return end
-
 local CheckSpec = Engine.CheckSpec
 local PixelPerfect = Engine.PixelPerfect
 local DefaultBoolean = Engine.DefaultBoolean
 local GetColor = Engine.GetColor
-local GetAnchor = Engine.GetAnchor
-local GetWidth = Engine.GetWidth
-local GetHeight = Engine.GetHeight
+
+
+
 
 --
 local plugin = Engine:NewPlugin("AURA")
@@ -55,14 +52,13 @@ function plugin:UpdateGraphics()
 		frame:Hide()
 		self.frame = frame
 	end
+	local frameWidth = self:GetWidth()
+	local height = self:GetHeight()
 	frame:ClearAllPoints()
-	-- frame:Point(unpack(self.settings.anchor))
-	-- frame:Size(self.settings.width, self.settings.height)
-	frame:Point(unpack(GetAnchor(self.settings)))
-	frame:Size(GetWidth(self.settings), GetHeight(self.settings))
+	frame:Point(unpack(self:GetAnchor()))
+	frame:Size(frameWidth, height)
 	-- Create stacks
-	--local width, spacing = PixelPerfect(self.settings.width, self.settings.count)
-	local width, spacing = PixelPerfect(GetWidth(self.settings), self.settings.count)
+	local width, spacing = PixelPerfect(frameWidth, self.settings.count)
 	self.stacks = self.stacks or {}
 	for i = 1, self.settings.count do
 		local stack = self.stacks[i]
@@ -73,7 +69,7 @@ function plugin:UpdateGraphics()
 			stack:Hide()
 			self.stacks[i] = stack
 		end
-		stack:Size(width, self.settings.height)
+		stack:Size(width, height)
 		stack:ClearAllPoints()
 		if i == 1 then
 			stack:Point("TOPLEFT", self.frame, "TOPLEFT", 0, 0)
@@ -84,8 +80,7 @@ function plugin:UpdateGraphics()
 			stack.status = CreateFrame("StatusBar", nil, stack)
 			stack.status:SetStatusBarTexture(UI.NormTex)
 			stack.status:SetFrameLevel(6)
-			stack.status:Point("TOPLEFT", stack, "TOPLEFT", 2, -2)
-			stack.status:Point("BOTTOMRIGHT", stack, "BOTTOMRIGHT", -2, 2)
+			stack.status:SetInside()
 		end
 		local color = GetColor(self.settings.colors, i, UI.ClassColor())
 		if self.settings.filled == true then
@@ -106,8 +101,6 @@ function plugin:Initialize()
 	self.settings.filled = DefaultBoolean(self.settings.filled, false)
 	self.settings.count = self.settings.count or 1
 	self.settings.filter = self.settings.filter or "HELPFUL"
-	--local color = self.settings.color or UI.ClassColor() -- TODO: use GetColor(settings, index) instead of using settings.colors[index]
-	--self.settings.colors = self.settings.colors or CreateColorArray(color, self.settings.count) -- TODO: use GetColor(settings, index) instead of using settings.colors[index]
 	self.settings.colors = self.settings.colors or self.settings.color or UI.ClassColor()
 	-- no default for spellID
 	--
@@ -143,7 +136,7 @@ function plugin:SettingsModified()
 	--
 	self:UpdateGraphics()
 	--
-	if self.settings.enable == true then
+	if self.settings.enabled == true then
 		self:Enable()
 		self:UpdateVisibility()
 	end

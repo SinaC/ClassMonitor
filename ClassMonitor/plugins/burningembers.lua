@@ -5,17 +5,16 @@ local UI = Engine.UI
 
 if UI.MyClass ~= "WARLOCK" then return end -- Available only for warlocks
 
--- ONLY ON PTR
---if not Engine.IsPTR() then return end
-
 local PixelPerfect = Engine.PixelPerfect
-local GetAnchor = Engine.GetAnchor
-local GetWidth = Engine.GetWidth
-local GetHeight = Engine.GetHeight
+
+
+
 local PowerColor = UI.PowerColor
 
 --
 local plugin = Engine:NewPlugin("BURNINGEMBERS")
+
+local DefaultColor = {222/255, 95/255,  95/255, 1}
 
 -- own methods
 function plugin:UpdateValue()
@@ -29,10 +28,10 @@ function plugin:UpdateValue()
 			self.count = numBars
 		end
 		-- update bars (create any needed bars)
-		--local width, spacing = PixelPerfect(self.settings.width, numBars)
-		local width, spacing = PixelPerfect(GetWidth(self.settings), numBars)
+		local width, spacing = PixelPerfect(self:GetWidth(), numBars)
+		local height = self:GetHeight()
 		for i = 1, self.count do
-			self:UpdateBarGraphics(i, width, spacing)
+			self:UpdateBarGraphics(i, width, height, spacing)
 			self.bars[i]:Hide()
 		end
 		-- update current max
@@ -68,7 +67,7 @@ function plugin:UpdateVisibility(event)
 	end
 end
 
-function plugin:UpdateBarGraphics(index, width, spacing)
+function plugin:UpdateBarGraphics(index, width, height, spacing)
 	--
 	local bar = self.bars[index]
 	if not bar then
@@ -78,7 +77,7 @@ function plugin:UpdateBarGraphics(index, width, spacing)
 		bar:Hide()
 		self.bars[index] = bar
 	end
-	bar:Size(width, self.settings.height)
+	bar:Size(width, height)
 	bar:ClearAllPoints()
 	if index == 1 then
 		bar:Point("TOPLEFT", self.frame, "TOPLEFT", 0, 0)
@@ -90,8 +89,7 @@ function plugin:UpdateBarGraphics(index, width, spacing)
 		bar.status = CreateFrame("StatusBar", nil, bar)
 		bar.status:SetStatusBarTexture(UI.NormTex)
 		bar.status:SetFrameLevel(6)
-		bar.status:Point("TOPLEFT", bar, "TOPLEFT", 2, -2)
-		bar.status:Point("BOTTOMRIGHT", bar, "BOTTOMRIGHT", -2, 2)
+		bar.status:SetInside()
 	end
 	bar.status:SetStatusBarColor(unpack(self.settings.color))
 end
@@ -104,24 +102,23 @@ function plugin:UpdateGraphics()
 		frame:Hide()
 		self.frame = frame
 	end
+	local frameWidth = self:GetWidth()
+	local height = self:GetHeight()
 	frame:ClearAllPoints()
-	-- frame:Point(unpack(self.settings.anchor))
-	-- frame:Size(self.settings.width, self.settings.height)
-	frame:Point(unpack(GetAnchor(self.settings)))
-	frame:Size(GetWidth(self.settings), GetHeight(self.settings))
+	frame:Point(unpack(self:GetAnchor()))
+	frame:Size(frameWidth, height)
 	-- Create bars
-	--local width, spacing = PixelPerfect(self.settings.width, self.numBars)
-	local width, spacing = PixelPerfect(GetWidth(self.settings), self.numBars)
+	local width, spacing = PixelPerfect(frameWidth, self.numBars)
 	self.bars = self.bars or {}
 	for i = 1, self.count do
-		self:UpdateBarGraphics(i, width, spacing)
+		self:UpdateBarGraphics(i, width, height, spacing)
 	end
 end
 
 -- overridden methods
 function plugin:Initialize()
 	-- set defaults
-	self.settings.color = self.settings.color or PowerColor(SPELL_POWER_BURNING_EMBERS) or {222/255, 95/255,  95/255, 1}
+	self.settings.color = self.settings.color or PowerColor(SPELL_POWER_BURNING_EMBERS) or DefaultColor
 	--
 	self.count = 4
 	self.numBars = self.count
@@ -154,7 +151,7 @@ function plugin:SettingsModified()
 	--
 	self:UpdateGraphics()
 	--
-	if self.settings.enable == true then
+	if self:IsEnabled() then
 		self:Enable()
 		self:UpdateVisibility()
 	end

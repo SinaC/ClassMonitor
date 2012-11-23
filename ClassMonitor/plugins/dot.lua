@@ -1,20 +1,16 @@
--- Dot Plugin, written to Ildyria
+-- Dot Plugin, written to Ildyria (edited by SinaC)
 local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
 local UI = Engine.UI
 
-
 local _, _, _, toc = GetBuildInfo()
-
--- ONLY ON PTR
---if not Engine.IsPTR() then return end
 
 local CheckSpec = Engine.CheckSpec
 local DefaultBoolean = Engine.DefaultBoolean
 local GetColor = Engine.GetColor
-local GetAnchor = Engine.GetAnchor
-local GetWidth = Engine.GetWidth
-local GetHeight = Engine.GetHeight
+
+
+
 
 --
 local plugin = Engine:NewPlugin("DOT")
@@ -41,9 +37,7 @@ function plugin:Update(elapsed)
 	self.timeSinceLastUpdate = self.timeSinceLastUpdate + elapsed
 	if self.timeSinceLastUpdate > 0.1 and self.auraName then
 --print("DMG:"..tostring(self.dmg))
-		--local name, _, _, _, _, duration, expTime = 
 		local name, duration, expTime, value1, _
-		--UnitAura("target", self.auraName, nil, "PLAYER|HARMFUL")
 if toc > 50001 then
 		name, _, _, _, _, duration, expTime, _, _, _, _, _, _, _, value1 = UnitAura("target", self.auraName, nil, "PLAYER|HARMFUL") -- 5.1
 else
@@ -63,34 +57,22 @@ end
 			if self.settings.latency == true and remainTime <= 0.4 then 
 				color = {1, 0, 0, 1} -- red
 			else
-				-- if self.settings.threshold == 0 then
-					-- color = (self.settings.colors and self.settings.colors[1]) or self.settings.color or {255/255, 165/255, 0, 1} -- bad: orange
-				-- elseif self.settings.threshold*.75 >= self.dmg then
-					-- color = (self.settings.colors and self.settings.colors[1]) or self.settings.color or {255/255, 165/255, 0, 1} -- bad: orange
-					-- -- print("attend encore")
-				-- elseif self.settings.threshold >= self.dmg then
-					-- -- print("hoh")
-					-- color = (self.settings.colors and self.settings.colors[2]) or self.settings.color or {255/255, 255/255, 0, 1} -- 0,75% -- yellow
-				-- else
-					-- -- print("GOOOO")
-					-- color = (self.settings.colors and self.settings.colors[3]) or self.settings.color or {127/255, 255/255, 0, 1} -- > 100% GO -- green
-				-- end
 				if self.settings.threshold == 0 then
-					color = GetColor(self.settings.colors, 1, DefaultColors[1])--self.settings.colors[1] -- bad: orange
+					color = GetColor(self.settings.colors, 1, DefaultColors[1]) -- bad: orange
 				elseif self.settings.threshold*.75 >= self.dmg then
-					color = GetColor(self.settings.colors, 1, DefaultColors[1])--self.settings.colors[1] -- bad: orange
+					color = GetColor(self.settings.colors, 1, DefaultColors[1]) -- bad: orange
 				elseif self.settings.threshold >= self.dmg then
-					color = GetColor(self.settings.colors, 2, DefaultColors[2])--self.settings.colors[2] -- 0,75% -- yellow
+					color = GetColor(self.settings.colors, 2, DefaultColors[2]) -- 0,75% -- yellow
 				else
-					color = GetColor(self.settings.colors, 3, DefaultColors[3]) -- self.settings.colors[3] -- > 100% GO -- green
+					color = GetColor(self.settings.colors, 3, DefaultColors[3]) -- > 100% GO -- green
 				end
 			end
 			self.bar.status:SetStatusBarColor(unpack(color))
 			self.bar.status:SetMinMaxValues(0, duration or 1)
 			self.bar.status:SetValue(remainTime)
 			self.bar.text:SetText(self.dmg)
-			self.timeSinceLastUpdate = 0
 		end
+		self.timeSinceLastUpdate = 0
 	end
 end
 
@@ -156,19 +138,16 @@ function plugin:UpdateGraphics()
 		self.bar = bar
 	end
 	bar:ClearAllPoints()
-	-- bar:Point(unpack(self.settings.anchor))
-	-- bar:Size(self.settings.width, self.settings.height)
-	bar:Point(unpack(GetAnchor(self.settings)))
-	bar:Size(GetWidth(self.settings), GetHeight(self.settings))
+	bar:Point(unpack(self:GetAnchor()))
+	bar:Size(self:GetWidth(), self:GetHeight())
 
 	if not bar.status then
 		bar.status = CreateFrame("StatusBar", nil, bar)
 		bar.status:SetStatusBarTexture(UI.NormTex)
 		bar.status:SetFrameLevel(6)
-		bar.status:Point("TOPLEFT", bar, "TOPLEFT", 2, -2)
-		bar.status:Point("BOTTOMRIGHT", bar, "BOTTOMRIGHT", -2, 2)
+		bar.status:SetInside()
+		bar.status:SetMinMaxValues(0, 1) -- dummy value
 	end
-	bar.status:SetMinMaxValues(0, 1) -- dummy value
 
 	if not bar.text then
 		bar.text = UI.SetFontString(bar.status, 12)
@@ -221,7 +200,7 @@ function plugin:SettingsModified()
 	--
 	self:UpdateGraphics()
 	--
-	if self.settings.enable == true then
+	if self:IsEnabled() then
 		self:Enable()
 		self:UpdateVisibility()
 	end

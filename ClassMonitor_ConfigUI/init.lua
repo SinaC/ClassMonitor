@@ -11,7 +11,7 @@ TODO:
 	[DONE]saved variables
 	[DONE]anchor
 	colors
-	add/delete new plugin instances
+	[DONE]add/delete new plugin instances
 	[DONE]reload UI when modification are done
 	global enable/disable in classmonitor root node
 	description in classmonitor root node
@@ -23,6 +23,6 @@ TODO:
 	[DONE]auto grid anchor  +  vertical/horizontalIndex in the same group --> dummy key, real key is set in getValue/setValue
 	[DONE]width, height in the same group --> dummy key, real key is set in getValue/setValue
 	[REMOVED]add spellName input in addition to spellID + add a function to get image instead of using GetSpellIDAndSetSpellIcon
-	in plugin kind list, only display available plugin
-	french traduction of kind definition/explanation
+	[DONE]in plugin kind list, only display available plugin
+	[DONE]french traduction of kind definition/explanation
 --]]

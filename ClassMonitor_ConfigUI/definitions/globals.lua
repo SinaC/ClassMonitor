@@ -19,10 +19,10 @@ end
 
 local function GetDisplayName(info)
 	-- get displayName or name and appends (*) if plugin is disabled
-	local displayName = info.arg.section.displayName or info.arg.section.name
-	if info.arg.section.invalid == true then
+	local displayName = info.arg.section.displayName or info.arg.section.name or info.arg.section.kind or "UNKNOWN"
+	if info.arg.section.__invalid == true then
 		displayName = displayName .. "(**)"
-	elseif info.arg.section.enable == false then
+	elseif info.arg.section.enabled == false then
 		displayName = displayName .. "(*)"
 	end
 	return displayName
@@ -34,12 +34,12 @@ end
 
 local function DeletePluginInstance(info)
 	local pluginName = info.arg.section.name
-	local invalid = info.arg.section.invalid
+	local invalid = info.arg.section.__invalid
 --print("DELETING plugin instance:"..tostring(pluginName))
 	-- delete option
 	G.Options.args[pluginName] = nil
 	-- "delete" from saved variables
-	G.SavedPerChar.Plugins[pluginName] = { deleted = true } -- we don't delete it, we just remove every setting and set deleted to true
+	G.SavedPerChar.Plugins[pluginName] = { __deleted = true } -- we don't delete it, we just remove every setting and set deleted to true
 	-- disable plugin
 	if invalid ~= true then
 		if G.PluginDeleteFunction and type(G.PluginDeleteFunction) == "function" then
@@ -130,7 +130,7 @@ D.Globals.CreateOptionFromDefinition = function(definition, orderID, sectionNode
 		args = {
 		}
 	}
-	if sectionNode.invalid ~= true then -- invalid plugin can only be deleted
+	if sectionNode.__invalid ~= true then -- invalid plugin can only be deleted
 		for k, v in pairs(definition) do
 			-- clone
 			local option = Engine.DeepCopy(v) -- clone to avoid modifying original option definition
@@ -279,7 +279,7 @@ local function ResetConfig()
 	G.SavedPerChar.Global = { -- crash if we don't recreate at least an empty array
 	}
 	-- reload
-	--ReloadUI()
+	ReloadUI()
 end
 
 function D.Globals.CreateResetOption(index)
@@ -403,7 +403,7 @@ local function SetNewPluginKind(info, value)
 		name = "CM_"..tostring(value).."_"..tostring(index)
 		index = index + 1
 		for _, section in pairs(G.Config) do
-			if section.name == name or _G[name] ~= nil then
+			if section.name == name or _G[name] ~= nil then -- search in setting and in global cache
 				restart = true
 				break
 			end
@@ -429,7 +429,6 @@ local function IsCreateNewPluginButtonHidden(info)
 end
 
 local function CreateNewPluginInstance(info)
-	-- TODO: better anchor, vertical and horizontal index
 	local plugin = {
 		name = newPlugin.name,
 		kind = newPlugin.kind,
@@ -439,10 +438,68 @@ local function CreateNewPluginInstance(info)
 		width = G.SavedPerChar.Global.width,
 		height = G.SavedPerChar.Global.height,
 		specs = {"any"},
-		anchor = {"CENTER", "UIParent", "CENTER", 0, 0},
-		verticalIndex = 10, -- set to bottom
-		horizontalIndex = 0
+		anchor = {"CENTER", "UIParent", "CENTER", 0, 0}, -- dummy value
+		verticalIndex = 10, -- dummy value
+		horizontalIndex = 0 -- dummy value
 	}
+	-- autogrid vertical index is set upmost (positive index) and horizontal is set leftmost
+	local maxVerticalIndex = 0
+	for _, setting in pairs(G.Config) do
+--print(tostring(setting.name).."  "..tostring(setting.verticalIndex))
+		if setting.kind ~= "MOVER" and setting.verticalIndex and maxVerticalIndex <= setting.verticalIndex then
+--print("changing MAX")
+			maxVerticalIndex = setting.verticalIndex + 1
+		end
+	end
+	if maxVerticalIndex > 20 then -- if max is 21, we are on the last line maybe not alone, find leftmost
+		-- check other one the line only if 
+		plugin.verticalIndex = 20
+		local maxHorizontalIndex = 0
+		for _, setting in pairs(G.Config) do
+			if setting.kind ~= "MOVER" and setting.verticalIndex and setting.verticalIndex == plugin.verticalIndex then
+				if setting.horizontalIndex and maxHorizontalIndex <= setting.horizontalIndex then
+					maxHorizontalIndex = setting.horizontalIndex + 1
+				end
+			end
+		end
+		if maxHorizontalIndex > 9 then -- from 0 to 9
+			maxHorizontalIndex = 9
+		end
+		plugin.horizontalIndex = maxHorizontalIndex
+	else
+		-- alone on a line
+		plugin.horizontalIndex = 0
+		plugin.verticalIndex = maxVerticalIndex
+	end
+	-- attach frame to most bottom frame and leftmost (lowest bottom value)
+	-- this is the actual position, if autogrid anchor is set we'll receive these values
+	local bottomFrameName = nil
+	local bottomValue = GetScreenHeight()
+	local leftValue = 0
+	for k, setting in pairs(G.Config) do
+		local frame = _G[setting.name]
+		local bottom = frame:GetBottom()
+		local left = frame:GetLeft()
+--print(tostring(setting.name).."  BOTTOM:"..tostring(bottom).."  LEFT:"..tostring(left))
+		if not bottomFrameName or bottom < bottomValue then
+--print("UPDATE TOP")
+			bottomValue = bottom
+			leftValue = left
+			bottomFrameName = setting.name
+		elseif bottom == bottomValue and left < leftValue then
+--print("UPDATE LEFT")
+			leftValue = left
+			bottomFrameName = setting.name
+		end
+	end
+	if bottomFrameName then
+--print("FRAME"..tostring(bottomFrameName).." -> "..tostring(bottomValue).."  "..tostring(leftValue))
+		plugin.anchor = {"TOPLEFT", bottomFrameName, "BOTTOMLEFT", 0, -3}
+	else
+		-- no bottom frame found, set anchor to center
+		plugin.anchor = {"CENTER", "UIParent", "CENTER", 0, 0}
+	end
+	--
 --print("CREATE NEW PLUGIN:"..tostring(plugin.name).."  "..tostring(plugin.displayName).."  "..tostring(plugin.kind))
 	local instance = nil
 	-- create plugin instance, call initialize method
@@ -452,11 +509,10 @@ local function CreateNewPluginInstance(info)
 	if instance then
 --print("INSTANCE CREATED")
 		-- add plugin to saved variables
-		G.SavedPerChar.Plugins[plugin.name] = plugin -- overwrite existing if any (may happen with .deleted == true)
+		G.SavedPerChar.Plugins[plugin.name] = Engine.DeepCopy(plugin) -- overwrite existing if any (may happen with .__deleted == true)   create a copy to avoid saving internal value added later in plugin setting such as autogridanchor, autogridwidth, autogridheight
 		-- add plugin to config
 		tinsert(G.Config, plugin)
 		-- add entry in options 
-		--Engine.InitializeConfigUI(G.Config, G.SavedPerChar, G.SavedPerAccount, G.PluginUpdateFunction, G.PluginCreateFunction, G.AutoGridAnchorFunction)-- TODO: remove this quick and dirty hack
 		local definition = D[plugin.kind] or D.DefaultPluginDefinition
 		G.Options.args[plugin.name] = D.Globals.CreateOptionFromDefinition(definition, 100--[[TODO get last index--]], plugin)
 		-- rebuild auto anchor

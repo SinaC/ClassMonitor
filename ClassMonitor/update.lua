@@ -11,26 +11,6 @@ local PlayerName = select(1, UnitName("player"))
 local MessagePrefix = "CMVersion"
 local SendAddonMessage = SendAddonMessage
 
-local function SplitVersion(version)
-	local major, minor, build, revision = strsplit(".", version, 4)
-	return tonumber(major or 0), tonumber(minor or 0), tonumber(build or 0), tonumber(revision or 0)
-end
-
-local function CompareVersion(remoteVersion)
-	local major, minor, build, revision = SplitVersion(LocalVersion)
-	local remoteMajor, remoteMinor, remoteBuild, remoteRevision = SplitVersion(remoteVersion)
-
-	if remoteMajor > major then return 1
-	elseif remoteMajor < major then return -1
-	elseif remoteMinor > minor then return 1
-	elseif remoteMinor < minor then return -1
-	elseif remoteBuild > build then return 1
-	elseif remoteBuild < build then return -1
-	elseif remoteRevision > revision then return 1
-	elseif remoteRevision < revision then return -1
-	else return 0 end
-end
-
 --
 local function CheckVersion(self, event, prefix, message, channel, sender)
 --print("CheckVersion:"..tostring(event).."  "..tostring(prefix).."  "..tostring(message).."  "..tostring(channel).."  "..tostring(sender))
@@ -38,7 +18,7 @@ local function CheckVersion(self, event, prefix, message, channel, sender)
 		if (prefix ~= MessagePrefix) or (sender == PlayerName) then 
 			return
 		end
-		if (CompareVersion(message) == 1 ) then -- We received a higher version, we're outdated. :(
+		if (Engine.CompareVersion(LocalVersion, message) == 1 ) then -- We received a higher version, we're outdated. :(
 			print("|cffffff00"..L.classmonitor_outdated.."|r")
 			self:UnregisterEvent("CHAT_MSG_ADDON")
 		end

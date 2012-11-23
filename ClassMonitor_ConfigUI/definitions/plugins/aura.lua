@@ -147,17 +147,18 @@ local __TestDefinition = {
 --]]
 
 local options = {
-	[1] = D.Helpers.Name,
-	[2] = D.Helpers.DisplayName,
-	[3] = D.Helpers.Kind,
-	[4] = D.Helpers.Enable,
-	[5] = D.Helpers.Autohide,
-	[6] = D.Helpers.WidthAndHeight,
+	[1] = D.Helpers.Description,
+	[2] = D.Helpers.Name,
+	[3] = D.Helpers.DisplayName,
+	[4] = D.Helpers.Kind,
+	[5] = D.Helpers.Enabled,
+	[6] = D.Helpers.Autohide,
+	[7] = D.Helpers.WidthAndHeight,
 	[8] = D.Helpers.Specs,
-	[8] = D.Helpers.Unit,
-	[9] = D.Helpers.Spell,
-	[10] = D.Helpers.Filter,
-	[11] = {
+	[9] = D.Helpers.Unit,
+	[10] = D.Helpers.Spell,
+	[11] = D.Helpers.Filter,
+	[12] = {
 		key = "count",
 		name = L.AuraCount,
 		desc = L.AuraCountDesc,
@@ -167,7 +168,7 @@ local options = {
 		set = D.Helpers.SetValue,
 		disabled = D.Helpers.IsPluginDisabled
 	},
-	[12] = {
+	[13] = {
 		key = "filled",
 		name = L.Filled,
 		desc = L.AuraFilledDesc,
@@ -177,8 +178,8 @@ local options = {
 		disabled = D.Helpers.IsPluginDisabled
 	},
 	-- TODO: colors
-	[14] = D.Helpers.Anchor,
-	[15] = D.Helpers.AutoGridAnchor,
+	[15] = D.Helpers.Anchor,
+	[16] = D.Helpers.AutoGridAnchor,
 --	[0] = __TestDefinition
 }
 

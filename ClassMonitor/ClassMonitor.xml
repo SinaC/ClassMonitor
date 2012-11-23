@@ -12,6 +12,7 @@
 <!--Every file included below this, must check if Engine.Enabled is true-->
 
 	<Script file="functions.lua"/>
+	<Script file="safecall.lua"/>
 
 	<Script file="config\config.lua"/>
 	<Script file="config\profiles.lua"/>

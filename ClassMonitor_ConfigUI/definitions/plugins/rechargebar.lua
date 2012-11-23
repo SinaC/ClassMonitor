@@ -5,14 +5,15 @@ local D = Engine.Definitions
 
 local color = D.Helpers.CreateColorsDefinition("color", 1, {L.BarColor})
 local options = {
-	[1] = D.Helpers.Name,
-	[2] = D.Helpers.DisplayName,
-	[3] = D.Helpers.Kind,
-	[4] = D.Helpers.Enable,
-	[5] = D.Helpers.Autohide,
-	[6] = D.Helpers.WidthAndHeight,
-	[7] = D.Helpers.Specs,
-	[8] = {
+	[1] = D.Helpers.Description,
+	[2] = D.Helpers.Name,
+	[3] = D.Helpers.DisplayName,
+	[4] = D.Helpers.Kind,
+	[5] = D.Helpers.Enabled,
+	[6] = D.Helpers.Autohide,
+	[7] = D.Helpers.WidthAndHeight,
+	[8] = D.Helpers.Specs,
+	[9] = {
 		key = "text",
 		name = L.TimeLeft,
 		desc = L.RechargeBarTextDesc,
@@ -21,10 +22,10 @@ local options = {
 		set = D.Helpers.SetValue,
 		disabled = D.Helpers.IsPluginDisabled
 	},
-	[9] = D.Helpers.Spell,
-	[10] = color,
-	[11] = D.Helpers.Anchor,
-	[12] = D.Helpers.AutoGridAnchor,
+	[10] = D.Helpers.Spell,
+	[11] = color,
+	[12] = D.Helpers.Anchor,
+	[13] = D.Helpers.AutoGridAnchor,
 }
 
 D.Helpers:NewPluginDefinition("RECHARGEBAR", options, L.PluginShortDescription_RECHARGEBAR, L.PluginDescription_RECHARGEBAR)

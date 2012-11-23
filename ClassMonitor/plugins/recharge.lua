@@ -20,9 +20,9 @@ local ToClock = Engine.ToClock
 local CheckSpec = Engine.CheckSpec
 local PixelPerfect = Engine.PixelPerfect
 local DefaultBoolean = Engine.DefaultBoolean
-local GetAnchor = Engine.GetAnchor
-local GetWidth = Engine.GetWidth
-local GetHeight = Engine.GetHeight
+
+
+
 
 --
 local plugin = Engine:NewPlugin("RECHARGE")
@@ -64,10 +64,10 @@ function plugin:UpdateValue()
 			self.count = maxCharges
 		end
 		-- update bars (create any needed bars)
-		--local width, spacing = PixelPerfect(self.settings.width, maxCharges)
-		local width, spacing = PixelPerfect(GetWidth(self.settings), maxCharges)
+		local width, spacing = PixelPerfect(self:GetWidth(), maxCharges)
+		local height = self:GetHeight()
 		for i = 1, self.count do
-			self:UpdateBarGraphics(i, width, spacing)
+			self:UpdateBarGraphics(i, width, height, spacing)
 			self.bars[i]:Hide()
 		end
 		-- update current max
@@ -132,7 +132,7 @@ function plugin:UpdateVisibility(event)
 	end
 end
 
-function plugin:UpdateBarGraphics(index, width, spacing)
+function plugin:UpdateBarGraphics(index, width, height, spacing)
 	--
 	local bar = self.bars[index]
 	if not bar then
@@ -142,7 +142,7 @@ function plugin:UpdateBarGraphics(index, width, spacing)
 		bar:Hide()
 		self.bars[index] = bar
 	end
-	bar:Size(width, self.settings.height)
+	bar:Size(width, height)
 	bar:ClearAllPoints()
 	if index == 1 then
 		bar:Point("TOPLEFT", self.frame, "TOPLEFT", 0, 0)
@@ -154,12 +154,11 @@ function plugin:UpdateBarGraphics(index, width, spacing)
 		bar.status = CreateFrame("StatusBar", nil, bar)
 		bar.status:SetStatusBarTexture(UI.NormTex)
 		bar.status:SetFrameLevel(6)
-		bar.status:Point("TOPLEFT", bar, "TOPLEFT", 2, -2)
-		bar.status:Point("BOTTOMRIGHT", bar, "BOTTOMRIGHT", -2, 2)
-		bar.status:SetStatusBarColor(unpack(self.settings.color))
+		bar.status:SetInside()
 		bar.status:SetMinMaxValues(0, 300) -- dummy value
 		bar.status:SetValue(0)
 	end
+	bar.status:SetStatusBarColor(unpack(self.settings.color))
 	--
 	if self.settings.text == true and not bar.text then
 		bar.text = UI.SetFontString(bar.status, 12)
@@ -176,17 +175,16 @@ function plugin:UpdateGraphics()
 		frame:Hide()
 		self.frame = frame
 	end
+	local frameWidth = self:GetWidth()
+	local height = self:GetHeight()
 	frame:ClearAllPoints()
-	-- frame:Point(unpack(self.settings.anchor))
-	-- frame:Size(self.settings.width, self.settings.height)
-	frame:Point(unpack(GetAnchor(self.settings)))
-	frame:Size(GetWidth(self.settings), GetHeight(self.settings))
+	frame:Point(unpack(self:GetAnchor()))
+	frame:Size(frameWidth, height)
 	-- Create bars
-	--local width, spacing = PixelPerfect(self.settings.width, self.numBars)
-	local width, spacing = PixelPerfect(GetWidth(self.settings), self.numBars)
+	local width, spacing = PixelPerfect(frameWidth, self.numBars)
 	self.bars = self.bars or {}
 	for i = 1, self.count do
-		self:UpdateBarGraphics(i, width, spacing)
+		self:UpdateBarGraphics(i, width, height, spacing)
 	end
 end
 
@@ -231,7 +229,7 @@ function plugin:SettingsModified()
 	--
 	self:UpdateGraphics()
 	--
-	if self.settings.enable == true then
+	if self:IsEnabled() then
 		self:Enable()
 		self:UpdateVisibility()
 	end

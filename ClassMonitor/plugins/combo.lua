@@ -12,9 +12,9 @@ local CheckSpec = Engine.CheckSpec
 local PixelPerfect = Engine.PixelPerfect
 local DefaultBoolean = Engine.DefaultBoolean
 local GetColor = Engine.GetColor
-local GetAnchor = Engine.GetAnchor
-local GetWidth = Engine.GetWidth
-local GetHeight = Engine.GetHeight
+
+
+
 
 --
 local plugin = Engine:NewPlugin("COMBO")
@@ -61,14 +61,13 @@ function plugin:UpdateGraphics()
 		frame:Hide()
 		self.frame = frame
 	end
+	local frameWidth = self:GetWidth()
+	local height = self:GetHeight()
 	frame:ClearAllPoints()
-	--frame:Point(unpack(self.settings.anchor))
-	--frame:Size(self.settings.width, self.settings.height)
-	frame:Point(unpack(GetAnchor(self.settings)))
-	frame:Size(GetWidth(self.settings), GetHeight(self.settings))
+	frame:Point(unpack(self:GetAnchor()))
+	frame:Size(frameWidth, height)
 	-- Create points
-	--local width, spacing = PixelPerfect(self.settings.width, self.count)
-	local width, spacing = PixelPerfect(GetWidth(self.settings), self.count)
+	local width, spacing = PixelPerfect(frameWidth, self.count)
 	self.points = self.points or {}
 	for i = 1, self.count do
 		local point = self.points[i]
@@ -79,7 +78,7 @@ function plugin:UpdateGraphics()
 			point:Hide()
 			self.points[i] = point
 		end
-		point:Size(width, self.settings.height)
+		point:Size(width, height)
 		point:ClearAllPoints()
 		if i == 1 then
 			point:Point("TOPLEFT", frame, "TOPLEFT", 0, 0)
@@ -90,16 +89,16 @@ function plugin:UpdateGraphics()
 			point.status = CreateFrame("StatusBar", nil, point)
 			point.status:SetStatusBarTexture(UI.NormTex)
 			point.status:SetFrameLevel(6)
-			point.status:Point("TOPLEFT", point, "TOPLEFT", 2, -2)
-			point.status:Point("BOTTOMRIGHT", point, "BOTTOMRIGHT", -2, 2)
+			point.status:SetInside()
 		end
-		local color = GetColor(self.settings.color, i, DefaultColors[i])
+		local color = GetColor(self.settings.colors, i, DefaultColors[i])
 		if self.settings.filled == true then
 			point.status:SetStatusBarColor(unpack(color))
 			point.status:Show()
 			point:SetBackdropBorderColor(unpack(UI.BorderColor))
 		else
 			point:SetBackdropBorderColor(unpack(color))
+			--point:SetBackdropColor(1, 0, 1, 1) just a test
 			if point.status then point.status:Hide() end
 		end
 	end
@@ -138,7 +137,7 @@ function plugin:SettingsModified()
 	--
 	self:UpdateGraphics()
 	--
-	if self.settings.enable == true then
+	if self:IsEnabled() then
 		self:Enable()
 		self:UpdateVisibility()
 	end

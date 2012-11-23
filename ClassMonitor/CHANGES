@@ -1,3 +1,22 @@
+3.4.3
+IMPORTANT change for plugin developer: .enable renamed to .enabled, should now use self:IsEnabled() to check this value (instead of using self.settings.enable)
+Graphical glitch fixed in DEMONICFURY, RECHARGE plugin
+SetInside used with each statusbar instead of setting manually anchoring (Pixel perfect correct with ElvUI)
+GetColor added in public namespace
+GetAnchor, GetWidth and GetHeight added in Plugin metatable (mandatory for external plugin if they don't want to break autogrid anchoring)
+External plugin sample HelloWorld and Castbar added
+Unit reaction added in Native UI
+Safecall methods from plugin to avoid crashing ClassMonitor with bugged extern plugins
+Plugin with OnUpdate event handler modified to avoid refreshing on every call
+Colors can be set again in COMBO plugin
+Anchor cycle and unknown anchor handled more efficiently
+Bone shield default position fixed
+Bug fixed in ECLIPSE plugin (never code when you're tired)
+
+3.4.2.2
+Bug fixed while creating new plugin + autogrid anchor, sometimes frame was pointing to a not yet exiting frame
+Bug fixed in autogrid anchoring master assignation
+
 3.4.2.1
 Bug fixed in ElvUI unit color
 Bug fixed while re-creating a deleted plugin during the same play session

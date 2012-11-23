@@ -11,9 +11,9 @@ if UI.MyClass ~= "DEATHKNIGHT" then return end -- only for DK
 local PixelPerfect = Engine.PixelPerfect
 local DefaultBoolean = Engine.DefaultBoolean
 local GetColor = Engine.GetColor
-local GetAnchor = Engine.GetAnchor
-local GetWidth = Engine.GetWidth
-local GetHeight = Engine.GetHeight
+
+
+
 
 --
 local plugin = Engine:NewPlugin("RUNES")
@@ -77,14 +77,13 @@ function plugin:UpdateGraphics()
 		frame:Hide()
 		self.frame = frame
 	end
+	local frameWidth = self:GetWidth()
+	local height = self:GetHeight()
 	frame:ClearAllPoints()
-	-- frame:Point(unpack(self.settings.anchor))
-	-- frame:Size(self.settings.width, self.settings.height)
-	frame:Point(unpack(GetAnchor(self.settings)))
-	frame:Size(GetWidth(self.settings), GetHeight(self.settings))
+	frame:Point(unpack(self:GetAnchor()))
+	frame:Size(frameWidth, height)
 	-- Create runes
-	--local width, spacing = PixelPerfect(self.settings.width, self.count)
-	local width, spacing = PixelPerfect(GetWidth(self.settings), self.count)
+	local width, spacing = PixelPerfect(frameWidth, self.count)
 	self.runes = self.runes or {}
 	for i = 1, self.count do
 		local rune = self.runes[i]
@@ -94,7 +93,7 @@ function plugin:UpdateGraphics()
 			rune:SetFrameStrata("BACKGROUND")
 			self.runes[i] = rune
 		end
-		rune:Size(width, self.settings.height)
+		rune:Size(width, height)
 		rune:ClearAllPoints()
 		if i == 1 then
 			rune:Point("TOPLEFT", self.frame, "TOPLEFT", 0, 0)
@@ -105,8 +104,7 @@ function plugin:UpdateGraphics()
 			rune.status = CreateFrame("StatusBar", nil, rune)
 			rune.status:SetStatusBarTexture(UI.NormTex)
 			rune.status:SetFrameLevel(6)
-			rune.status:Point("TOPLEFT", rune, "TOPLEFT", 2, -2)
-			rune.status:Point("BOTTOMRIGHT", rune, "BOTTOMRIGHT", -2, 2)
+			rune.status:SetInside()
 			rune.status:SetMinMaxValues(0, 10)
 		end
 		local colorIndex = math.ceil(self.settings.runemap[i]/2)
@@ -155,7 +153,7 @@ function plugin:SettingsModified()
 	--
 	self:UpdateGraphics()
 	--
-	if self.settings.enable == true then
+	if self:IsEnabled() then
 		self:Enable()
 		self:UpdateVisibility()
 	end

@@ -112,8 +112,8 @@ end
 
 ----------------------------------------------------------------------------------------
 D.Helpers.IsPluginDisabled = function(info)
---print("IsDisabled:"..tostring(info.arg.key).."  "..tostring(not info.arg.section.enable))
-	return not info.arg.section.enable
+--print("IsDisabled:"..tostring(info.arg.key).."  "..tostring(not info.arg.section.enabled))
+	return not info.arg.section.enabled
 end
 
 ----------------------------------------------------------------------------------------
@@ -140,7 +140,7 @@ D.Helpers.Name = {
 
 local function ValidateDisplayName(info, value)
 	for _, setting in pairs(G.Config) do
-		if setting.displayName == value and setting.deleted ~= true then
+		if setting.displayName == value and setting.__deleted ~= true then
 			return string.format(L.PluginNameAlreadyExists, value)
 		end
 	end
@@ -157,29 +157,6 @@ D.Helpers.DisplayName = {
 	disabled = D.Helpers.IsPluginDisabled
 }
 
--- TODO: only display available plugin
--- local kindValues = {
-	-- --["MOVER"] = L.PluginShortDescription_Mover,
-	-- ["AURA"] = L.PluginShortDescription_Aura,
-	-- ["AURABAR"] = L.PluginShortDescription_AuraBar,
-	-- ["RESOURCE"] = L.PluginShortDescription_Resource,
-	-- ["COMBO"] = L.PluginShortDescription_Combo,
-	-- ["POWER"] = L.PluginShortDescription_Power,
-	-- ["RUNES"] = L.PluginShortDescription_Runes,
-	-- ["ECLIPSE"] = L.PluginShortDescription_Eclipse,
-	-- ["ENERGIZE"] = L.PluginShortDescription_Energize,
-	-- ["HEALTH"] = L.PluginShortDescription_Health,
-	-- ["DOT"] = L.PluginShortDescription_Dot,
-	-- ["TOTEMS"] = L.PluginShortDescription_Totems,
-	-- ["BANDITSGUILE"] = L.PluginShortDescription_BanditsGuile,
-	-- ["STAGGER"] = L.PluginShortDescription_Stagger,
-	-- ["TANKSHIELD"] = L.PluginShortDescription_TankShield,
-	-- ["BURNINGEMBERS"] = L.PluginShortDescription_BurningEmbers,
-	-- ["DEMONICFURY"] = L.PluginShortDescription_DemonicFury,
-	-- ["RECHARGE"] = L.PluginShortDescription_Recharge,
-	-- ["RECHARGEBAR"] = L.PluginShortDescription_RechargeBar,
-	-- ["CD"] = L.PluginShortDescription_CD,
--- }
 local kindValues = nil
 local function GetKindValues()
 	if not kindValues then
@@ -204,7 +181,7 @@ D.Helpers.Kind =  {
 	disabled = true,
 }
 
-local function SetEnable(info, value)
+local function SetEnabled(info, value)
 	D.Helpers.SetValue(info, value)
 	if G.SavedPerChar.Global.autogridanchor == true then
 		if G.AutoGridAnchorFunction and type(G.AutoGridAnchorFunction) == "function" then
@@ -213,14 +190,14 @@ local function SetEnable(info, value)
 	end
 end
 
-D.Helpers.Enable = {
-	key = "enable",
-	name = L.Enable,
-	desc = L.EnableDesc,
+D.Helpers.Enabled = {
+	key = "enabled",
+	name = L.Enabled,
+	desc = L.EnabledDesc,
 	type = "toggle",
 	get = D.Helpers.GetValue,
 	--set = D.Helpers.SetValue,
-	set = SetEnable
+	set = SetEnabled
 }
 
 D.Helpers.Autohide = {
@@ -262,27 +239,6 @@ D.Helpers.WidthAndHeight = {
 		}
 	}
 }
--- D.Helpers.Width = {
-	-- key = "width",
-	-- name = L.Width,
-	-- desc = L.WidthDesc,
-	-- type = "range",
-	-- min = 80, max = 300, step = 1,
-	-- get = D.Helpers.GetValue,
-	-- set = D.Helpers.SetValue,
-	-- disabled = D.Helpers.IsPluginDisabled
--- }
-
--- D.Helpers.Height = {
-	-- key = "height",
-	-- name = L.Height,
-	-- desc = L.HeightDesc,
-	-- type = "range",
-	-- min = 10, max = 50, step = 1,
-	-- get = D.Helpers.GetValue,
-	-- set = D.Helpers.SetValue,
-	-- disabled = D.Helpers.IsPluginDisabled
--- }
 
 local filterValues = {
 	["HELPFUL"] = L.FilterValueHelpful,
@@ -320,6 +276,15 @@ D.Helpers.Unit = {
 	get = D.Helpers.GetValue,
 	set = D.Helpers.SetValue,
 	disabled = D.Helpers.IsPluginDisabled
+}
+
+local function GetPluginDescription(info)
+	return info.arg.section.kind ~= "" and (Engine.Descriptions[info.arg.section.kind].long or L.NoPluginDescription) or ""
+end
+D.Helpers.Description = {
+	key = "description",
+	name = GetPluginDescription,
+	type = "description",
 }
 
 ----------------------------------------------------------------------------------------

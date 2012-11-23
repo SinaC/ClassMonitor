@@ -9,9 +9,9 @@ local UI = Engine.UI
 local ToClock = Engine.ToClock
 local CheckSpec = Engine.CheckSpec
 local DefaultBoolean = Engine.DefaultBoolean
-local GetAnchor = Engine.GetAnchor
-local GetWidth = Engine.GetWidth
-local GetHeight = Engine.GetHeight
+
+
+
 
 --
 local plugin = Engine:NewPlugin("AURABAR")
@@ -28,6 +28,7 @@ function plugin:Update(elapsed)
 				self.bar.durationText:SetText("")
 			end
 		end
+		self.timeSinceLastUpdate = 0
 	end
 end
 
@@ -72,17 +73,14 @@ function plugin:UpdateGraphics()
 		self.bar = bar
 	end
 	bar:ClearAllPoints()
-	--bar:Point(unpack(self.settings.anchor))
-	--bar:Size(self.settings.width, self.settings.height)
-	bar:Point(unpack(GetAnchor(self.settings)))
-	bar:Size(GetWidth(self.settings), GetHeight(self.settings))
+	bar:Point(unpack(self:GetAnchor()))
+	bar:Size(self:GetWidth(), self:GetHeight())
 	--
 	if not bar.status then
 		bar.status = CreateFrame("StatusBar", nil, bar)
 		bar.status:SetStatusBarTexture(UI.NormTex)
 		bar.status:SetFrameLevel(6)
-		bar.status:Point("TOPLEFT", bar, "TOPLEFT", 2, -2)
-		bar.status:Point("BOTTOMRIGHT", bar, "BOTTOMRIGHT", -2, 2)
+		bar.status:SetInside()
 	end
 	bar.status:SetStatusBarColor(unpack(self.settings.color))
 	bar.status:SetMinMaxValues(0, self.settings.count)
@@ -141,7 +139,7 @@ function plugin:SettingsModified()
 	--
 	self:UpdateGraphics()
 	--
-	if self.settings.enable == true then
+	if self:IsEnabled() then
 		self:Enable()
 		self:UpdateVisibilityAndValue()
 	end

@@ -2,26 +2,47 @@ local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
 
 
+local function SplitVersion(version)
+	local major, minor, build, revision = strsplit(".", version, 4)
+	return tonumber(major or 0), tonumber(minor or 0), tonumber(build or 0), tonumber(revision or 0)
+end
+
+Engine.CompareVersion = function (localVersion, remoteVersion)
+	local major, minor, build, revision = SplitVersion(localVersion)
+	local remoteMajor, remoteMinor, remoteBuild, remoteRevision = SplitVersion(remoteVersion)
+
+	if remoteMajor > major then return 1
+	elseif remoteMajor < major then return -1
+	elseif remoteMinor > minor then return 1
+	elseif remoteMinor < minor then return -1
+	elseif remoteBuild > build then return 1
+	elseif remoteBuild < build then return -1
+	elseif remoteRevision > revision then return 1
+	elseif remoteRevision < revision then return -1
+	else return 0 end
+end
+
+--[[
 -- Return current anchor in function of anchoring mode
 Engine.GetAnchor = function(settings)
---print("GetAnchor:"..tostring(ClassMonitorDataPerChar.Global.autogridanchor).."  "..tostring(settings.autogridanchor).."  "..tostring(settings.anchor))
-	return (ClassMonitorDataPerChar.Global.autogridanchor == true and settings.autogridanchor) or settings.anchor
+--print("GetAnchor:"..tostring(ClassMonitorDataPerChar.Global.autogridanchor).."  "..tostring(settings.__autogridanchor).."  "..tostring(settings.anchor))
+	return (ClassMonitorDataPerChar.Global.autogridanchor == true and settings.__autogridanchor) or settings.anchor
 end
 
 -- Return current width in function of anchoring mode
 Engine.GetWidth = function(settings)
---print("GetWidth:"..tostring(ClassMonitorDataPerChar.Global.autogridanchor).."  "..tostring(settings.autogridwidth).."  "..tostring(settings.width))
-	return (ClassMonitorDataPerChar.Global.autogridanchor == true and settings.autogridwidth) or settings.width
+--print("GetWidth:"..tostring(ClassMonitorDataPerChar.Global.autogridanchor).."  "..tostring(settings.__autogridwidth).."  "..tostring(settings.width))
+	return (ClassMonitorDataPerChar.Global.autogridanchor == true and settings.__autogridwidth) or settings.width
 end
 
 -- Return current height in function of anchoring mode
 Engine.GetHeight = function(settings)
---print("GetHeight:"..tostring(ClassMonitorDataPerChar.Global.autogridanchor).."  "..tostring(settings.autogridheight).."  "..tostring(settings.height))
-	return (ClassMonitorDataPerChar.Global.autogridanchor == true and settings.autogridheight) or settings.height
+--print("GetHeight:"..tostring(ClassMonitorDataPerChar.Global.autogridanchor).."  "..tostring(settings.__autogridheight).."  "..tostring(settings.height))
+	return (ClassMonitorDataPerChar.Global.autogridanchor == true and settings.__autogridheight) or settings.height
 end
+--]]
 
-
--- Return colors[index] or default color colors is nil or colors[index] doesn't exist
+-- Return colors[index] or default color colors if is nil or colors[index] doesn't exist
 Engine.GetColor = function(colors, index, default)
 	if not colors then return default end -- colors is nil
 	if type(colors) ~= "table" then return default end -- colors must be a color or a table of color
