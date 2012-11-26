@@ -12,9 +12,6 @@ local CheckSpec = Engine.CheckSpec
 local DefaultBoolean = Engine.DefaultBoolean
 local GetColor = Engine.GetColor
 
-
-
-
 --
 local plugin = Engine:NewPlugin("STAGGER")
 
@@ -57,7 +54,7 @@ function plugin:UpdateVisibilityAndValue(event)
 			local staggerTotal = staggerTick * math.floor(duration)
 			local hp = math.ceil(100 * staggerTotal / UnitHealthMax("player"))
 			if self.settings.text == true then
-				self.bar.valueText:SetText(tostring(staggerTick).." - "..FormatNumber(staggerTotal).." ("..hp.."%)")
+				self.bar.valueText:SetText(FormatNumber(staggerTick).." - "..FormatNumber(staggerTotal).." ("..hp.."%)")
 			end
 			if hp <= self.settings.threshold then
 				self.bar.status:SetValue(hp)

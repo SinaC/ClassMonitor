@@ -7,9 +7,6 @@ local ToClock = Engine.ToClock
 local CheckSpec = Engine.CheckSpec
 local DefaultBoolean = Engine.DefaultBoolean
 
-
-
-
 --
 local plugin = Engine:NewPlugin("CD")
 

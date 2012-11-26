@@ -5,15 +5,9 @@ local UI = Engine.UI
 
 if UI.MyClass ~= "ROGUE" then return end -- meaningless for non-rogue
 
--- ONLY ON PTR
---if not Engine.IsPTR() then return end
-
 local PixelPerfect = Engine.PixelPerfect
 local DefaultBoolean = Engine.DefaultBoolean
 local GetColor = Engine.GetColor
-
-
-
 
 --
 local plugin = Engine:NewPlugin("BANDITSGUILE")

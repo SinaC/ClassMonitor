@@ -8,9 +8,6 @@ if UI.MyClass ~= "DRUID" then return end -- Only for druid
 local DefaultBoolean = Engine.DefaultBoolean
 local GetColor = Engine.GetColor
 
-
-
-
 --
 local plugin = Engine:NewPlugin("ECLIPSE")
 

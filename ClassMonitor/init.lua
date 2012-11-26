@@ -36,3 +36,4 @@ Engine.UI = {}
 -- [DONE]if section in saved variables contains deleted = true, remove setting from config
 -- multiple CD/recharge in one frame, display only active CD -> frame size is changed in function of number of active CD
 -- multiple aura in one frame, display only active AURA -> frame size is changed in function of number of active AURA
+-- include spec check and autohide in plugin root level -> instead of showing/hiding it will disable/enable plugin

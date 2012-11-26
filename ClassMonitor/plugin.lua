@@ -14,10 +14,26 @@ local Plugin = {}
 function Plugin:new(name, settings)
 	assert(type(name) == "string", "Trying to create a plugin with non-string name")
 	local p = {}
-
+--print("self==Plugin: "..tostring(name).."  "..tostring(self).."  "..tostring(Plugin).."  "..tostring(self == Plugin))
 	setmetatable(p, self)
 	self.__index = self
 
+	if self == Plugin then
+--print("New plugin category:"..tostring(name))
+		-- plugin category
+		p.pluginName = name
+		p.instances = {}
+	else
+		assert(settings and type(settings) == "table", "Missing settings while creating plugin instance "..tostring(name).." kind "..tostring(self.pluginName))
+--print("New plugin instance:"..tostring(name))
+		-- plugin instance
+		p.eventHandler = CreateFrame("Frame")
+		p.eventHandler.plugin = p -- loop back :)  used by OnEvent and OnUpdate to get plugin from event handler
+		p.name = name
+		p.settings = settings
+		p.instances[name] = p -- save instance
+	end
+--[[
 	-- add datas
 	if not settings then
 --print("New plugin category:"..tostring(name))
@@ -33,7 +49,7 @@ function Plugin:new(name, settings)
 		p.settings = settings
 		p.instances[name] = p -- save instance
 	end
-
+--]]
 	return p
 end
 

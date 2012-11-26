@@ -11,7 +11,6 @@ local GetColor = Engine.GetColor
 -- self.count = max power ever
 -- self.maxValue = current max power
 
-
 --
 local plugin = Engine:NewPlugin("POWER")
 

@@ -5,15 +5,9 @@ local UI = Engine.UI
 
 if UI.MyClass ~= "DEATHKNIGHT" then return end -- only for DK
 
--- ONLY ON PTR
---if not Engine.IsPTR() then return end
-
 local PixelPerfect = Engine.PixelPerfect
 local DefaultBoolean = Engine.DefaultBoolean
 local GetColor = Engine.GetColor
-
-
-
 
 --
 local plugin = Engine:NewPlugin("RUNES")

@@ -3,6 +3,7 @@
 
 	<Script file="locales\english.lua"/>
 	<Script file="locales\french.lua"/>
+	<Script file="locales\chinese.lua"/>
 
 	<Script file="functions.lua"/>
 

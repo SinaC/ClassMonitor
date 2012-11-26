@@ -3,14 +3,9 @@ local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
 local UI = Engine.UI
 
--- ONLY ON PTR
---if not Engine.IsPTR() then return end
-
 local CheckSpec = Engine.CheckSpec
 local DefaultBoolean = Engine.DefaultBoolean
-
-
-
+local FormatNumber = Engine.FormatNumber
 local PowerColor = UI.PowerColor
 local ClassColor = UI.ClassColor
 
@@ -29,21 +24,24 @@ function plugin:Update(elapsed)
 			if p == SPELL_POWER_MANA then
 				local valueMax = UnitPowerMax("player", p)
 				if value == valueMax then
-					if value > 10000 then
-						self.bar.valueText:SetFormattedText("%.1fk", value/1000)
-					else
-						self.bar.valueText:SetText(value)
-					end
+					-- if value > 10000 then
+						-- self.bar.valueText:SetFormattedText("%.1fk", value/1000)
+					-- else
+						-- self.bar.valueText:SetText(value)
+					-- end
+					self.bar.valueText:SetText(FormatNumber(value))
 				else
 					local percentage = (value * 100) / valueMax
-					if value > 10000 then
-						self.bar.valueText:SetFormattedText("%2d%% - %.1fk", percentage, value/1000 )
-					else
-						self.bar.valueText:SetFormattedText("%2d%% - %u", percentage, value )
-					end
+					-- if value > 10000 then
+						-- self.bar.valueText:SetFormattedText("%2d%% - %.1fk", percentage, value/1000 )
+					-- else
+						-- self.bar.valueText:SetFormattedText("%2d%% - %u", percentage, value )
+					-- end
+					self.bar.valueText:SetFormattedText("%2d%% - "..FormatNumber(value), percentage)
 				end
 			else
-				self.bar.valueText:SetText(value)
+				--self.bar.valueText:SetText(value)
+				self.bar.valueText:SetText(FormatNumber(value))
 			end
 		end
 		self.timeSinceLastUpdate = 0

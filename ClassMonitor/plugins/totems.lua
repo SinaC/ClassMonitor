@@ -11,9 +11,6 @@ local PixelPerfect = Engine.PixelPerfect
 local DefaultBoolean = Engine.DefaultBoolean
 local GetColor = Engine.GetColor
 
-
-
-
 --
 local plugin = Engine:NewPlugin("TOTEMS")
 

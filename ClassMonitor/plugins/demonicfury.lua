@@ -9,9 +9,6 @@ local PowerColor = UI.PowerColor
 local ClassColor = UI.ClassColor
 local DefaultBoolean = Engine.DefaultBoolean
 
-
-
-
 --
 local plugin = Engine:NewPlugin("DEMONICFURY")
 

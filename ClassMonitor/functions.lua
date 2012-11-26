@@ -42,7 +42,7 @@ Engine.GetHeight = function(settings)
 end
 --]]
 
--- Return colors[index] or default color colors if is nil or colors[index] doesn't exist
+-- Return colors[index] or default color colors if nil or colors[index] doesn't exist
 Engine.GetColor = function(colors, index, default)
 	if not colors then return default end -- colors is nil
 	if type(colors) ~= "table" then return default end -- colors must be a color or a table of color
@@ -74,8 +74,7 @@ Engine.PixelPerfect = function(totalWidth, count)
 			end
 			spacing = 1
 			width = width + 1
-		end
-		if total == totalWidth then
+		elseif total == totalWidth then
 			return width, spacing
 		end
 		spacing = spacing + 1

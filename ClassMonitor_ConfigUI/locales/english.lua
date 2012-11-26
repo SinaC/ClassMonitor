@@ -187,7 +187,6 @@ L.TankshieldDurationDesc = "Display shield time left"
 L.TotemsCountDesc = "Totem/mushrooms count"
 L.TotemsTextDesc = "Display time left on each totem/mushroom"
 
-
 --------
 L.PluginShortDescription_AURA = "Aura stacks"
 L.PluginDescription_AURA = "Display stacks for a buff/debuff"

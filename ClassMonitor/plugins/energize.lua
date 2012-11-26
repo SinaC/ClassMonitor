@@ -5,9 +5,7 @@ local UI = Engine.UI
 
 local CheckSpec = Engine.CheckSpec
 local DefaultBoolean = Engine.DefaultBoolean
-
-
-
+local ToClock = Engine.ToClock
 
 --
 local plugin = Engine:NewPlugin("ENERGIZE")
@@ -32,7 +30,9 @@ function plugin:Update(elapsed)
 			self:UnregisterUpdate()
 			self.bar:Hide()
 		else
+			local timeLeft = self.settings.duration - (GetTime() - self.startTime)
 			self.bar.status:SetValue(newValue)
+			self.bar.timeLeftText:SetText(ToClock(timeLeft))
 		end
 		self.timeSinceLastUpdate = 0
 	end
@@ -47,6 +47,7 @@ function plugin:CombatLog(_, _, eventType, _, caster, _, _, _, target, _, _, _, 
 		else
 			self.bar.status:SetValue(self.settings.duration)
 		end
+		self.bar.timeLeftText:SetText(ToClock(self.settings.duration))
 		self.startTime = GetTime()
 		self.timeSinceLastUpdate = GetTime()
 		self:RegisterUpdate(plugin.Update)
@@ -58,6 +59,7 @@ function plugin:CombatLog(_, _, eventType, _, caster, _, _, _, target, _, _, _, 
 		else
 			self.bar.status:SetValue(self.settings.duration)
 		end
+		self.bar.timeLeftText:SetText(ToClock(self.settings.duration))
 		self.startTime = GetTime()
 		self.timeSinceLastUpdate = GetTime()
 		self:RegisterUpdate(plugin.Update)
@@ -95,6 +97,12 @@ function plugin:UpdateGraphics()
 	end
 	bar.status:SetMinMaxValues(0, self.settings.duration)
 	bar.status:SetStatusBarColor(unpack(self.settings.color))
+
+	if not bar.timeLeftText then
+		bar.timeLeftText = UI.SetFontString(bar.status, 12)
+		bar.timeLeftText:Point("RIGHT", bar.status)
+	end
+	bar.timeLeftText:SetText("")
 end
 
 -- overridden methods

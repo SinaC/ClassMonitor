@@ -3,11 +3,6 @@ local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
 local UI = Engine.UI
 
--- ONLY ON PTR
---if not Engine.IsPTR() then return end
-
-local _, _, _, toc = GetBuildInfo()
-
 local cfg = {
 	["WARRIOR"] = { spellID = 112048, specs = {3} }, -- Shield Barrier
 	["MONK"] = { spellID = 115295, specs = {1} }, -- Guard
@@ -20,12 +15,12 @@ local spellName = GetSpellInfo(cfg[UI.MyClass].spellID)
 if not spellName then return end
 local specs = cfg[UI.MyClass].specs
 
+local _, _, _, toc = GetBuildInfo()
+
 local ToClock = Engine.ToClock
 local CheckSpec = Engine.CheckSpec
 local DefaultBoolean = Engine.DefaultBoolean
-
-
-
+local FormatNumber = Engine.FormatNumber
 
 --
 local plugin = Engine:NewPlugin("TANKSHIELD")
@@ -69,7 +64,8 @@ end
 		if name == spellName and unitCaster == "player" and value1 ~= nil and type(value1) == "number" and value1 > 0 then
 			--self.bar.status:SetValue(duration)
 			self.bar.status:SetMinMaxValues(0, duration)
-			self.bar.valueText:SetText(tostring(value1))
+			--self.bar.valueText:SetText(tostring(value1))
+			self.bar.valueText:SetText(FormatNumber(value1))
 			self.expirationTime = expirationTime -- save to use in Update
 			visible = true
 		end

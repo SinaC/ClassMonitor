@@ -3,9 +3,6 @@ local ADDON_NAME, Engine = ...
 if not Engine.Enabled then return end
 local UI = Engine.UI
 
--- ONLY ON PTR
---if not Engine.IsPTR() then return end
-
 --[[
 Savage Defense uses a new mechanic - Recharge time. The 1.5 cooldown displayed here is accurate (though it seems confusing with the Omni CC add-on that seems to show a 9 second cooldown).
 You have up to 3 charges stored at a time.
@@ -19,9 +16,6 @@ It's a new way of thinking about cooldowns, and I personally am excited to see w
 local ToClock = Engine.ToClock
 local CheckSpec = Engine.CheckSpec
 local DefaultBoolean = Engine.DefaultBoolean
-
-
-
 
 --
 local plugin = Engine:NewPlugin("RECHARGEBAR")

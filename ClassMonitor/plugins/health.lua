@@ -8,9 +8,6 @@ local DefaultBoolean = Engine.DefaultBoolean
 local HealthColor = UI.HealthColor
 local FormatNumber = Engine.FormatNumber
 
-
-
-
 --
 local plugin = Engine:NewPlugin("HEALTH")
 

@@ -8,9 +8,7 @@ local _, _, _, toc = GetBuildInfo()
 local CheckSpec = Engine.CheckSpec
 local DefaultBoolean = Engine.DefaultBoolean
 local GetColor = Engine.GetColor
-
-
-
+local FormatNumber = Engine.FormatNumber
 
 --
 local plugin = Engine:NewPlugin("DOT")
@@ -70,7 +68,7 @@ end
 			self.bar.status:SetStatusBarColor(unpack(color))
 			self.bar.status:SetMinMaxValues(0, duration or 1)
 			self.bar.status:SetValue(remainTime)
-			self.bar.text:SetText(self.dmg)
+			self.bar.text:SetText(FormatNumber(self.dmg))
 		end
 		self.timeSinceLastUpdate = 0
 	end

@@ -84,7 +84,7 @@ local function BuildAce3Options()
 end
 
 if ElvUI then
-	local E, _, _, _, _, _ = unpack(ElvUI) --Import: Engine, Locales, PrivateDB, ProfileDB, GlobalDB, Localize Underscore
+	local E = unpack(ElvUI) --Import: Engine, Locales, PrivateDB, ProfileDB, GlobalDB, Localize Underscore
 
 	--
 	Engine.InitializeConfigUI = function(config, savedPerChar, savedPerAccount, updatePluginFunction, createPluginFunction, deletePluginFunction, autoGridAnchorFunction, getPluginListFunction)

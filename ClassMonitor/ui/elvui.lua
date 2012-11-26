@@ -11,11 +11,13 @@ Engine.Enabled = true -- ElvUI found
 ------------
 --- ElvUI
 ------------
-local E, _, _, P, _, _ = unpack(ElvUI)
+--local E, _, _, P, _, _ = unpack(ElvUI)
+local E = unpack(ElvUI)
 
 local UF = E:GetModule("UnitFrames")
 
-UI.BorderColor = P.general.bordercolor
+--UI.BorderColor = P.general.bordercolor
+UI.BorderColor = E["media"].bordercolor
 UI.NormTex = E["media"].normTex
 UI.MyClass = E.myclass
 UI.MyName = E.myname

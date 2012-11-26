@@ -5,16 +5,10 @@ local UI = Engine.UI
 
 if UI.MyClass ~= "ROGUE" and UI.MyClass ~= "DRUID" then return end -- combo not needed for other classes
 
--- ONLY ON PTR
---if not Engine.IsPTR() then return end
-
 local CheckSpec = Engine.CheckSpec
 local PixelPerfect = Engine.PixelPerfect
 local DefaultBoolean = Engine.DefaultBoolean
 local GetColor = Engine.GetColor
-
-
-
 
 --
 local plugin = Engine:NewPlugin("COMBO")

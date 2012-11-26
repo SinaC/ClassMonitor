@@ -6,9 +6,6 @@ local UI = Engine.UI
 if UI.MyClass ~= "WARLOCK" then return end -- Available only for warlocks
 
 local PixelPerfect = Engine.PixelPerfect
-
-
-
 local PowerColor = UI.PowerColor
 
 --

@@ -1,7 +1,7 @@
 ## Interface: 50001
 ## Version: 1.0.6
 ## Author: SinaC
-## Credits: Elv, Starinnia
+## Credits: Elv, Starinnia, Puffina
 ## Title: |cFF148587Class|r Monitor Config
 ## Notes: Config for ClassMonitor
 ## RequiredDeps: ClassMonitor
