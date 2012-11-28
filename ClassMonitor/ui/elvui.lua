@@ -64,7 +64,7 @@ UI.PowerColor = function(resourceName)
 		--elseif resourceName == SPELL_POWER_ECLIPSE then
 		elseif resourceName == SPELL_POWER_HOLY_POWER then
 			color = UF.db.colors.holyPower
-		--elseif resourceName == SPELL_POWER_LIGHT_FORCE then
+		--elseif resourceName == SPELL_POWER_CHI then
 		elseif resourceName == SPELL_POWER_SHADOW_ORBS then 
 			color = UF.db.colors.classResources.PRIEST
 		elseif resourceName == SPELL_POWER_BURNING_EMBERS then 

@@ -1,3 +1,6 @@
+1.1.0
+SPELL_POWER_LIGHT_FORCE replaced with SPELL_POWER_CHI
+
 1.0.6
 IMPORTANT change for plugin developer: D.Helpers.Enable renamed to D.Helpers.Enabled
 Bug fixed in plugin creation

@@ -1,3 +1,7 @@
+3.4.4
+TOC updated for 5.1
+SPELL_POWER_LIGHT_FORCE replaced with SPELL_POWER_CHI
+
 3.4.3
 IMPORTANT change for plugin developer: .enable renamed to .enabled, you should now use self:IsEnabled() to check this value (instead of using self.settings.enable)
 Graphical glitch fixed in DEMONICFURY, RECHARGE plugin

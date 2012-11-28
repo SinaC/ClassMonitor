@@ -6,7 +6,7 @@ local D = Engine.Definitions
 local powerTypes = {
 	[SPELL_POWER_HOLY_POWER] = L.PowerValueHolyPower,
 	[SPELL_POWER_SOUL_SHARDS] = L.PowerValueSoulShards,
-	[SPELL_POWER_LIGHT_FORCE or 12] = L.PowerValueChi, -- TODO: Bug in 5.1
+	[SPELL_POWER_CHI] = L.PowerValueChi,
 	[SPELL_POWER_SHADOW_ORBS] = L.PowerValueShadowOrbs,
 }
 local function GetPowerTypes()

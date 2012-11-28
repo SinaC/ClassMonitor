@@ -38,7 +38,7 @@ Engine.Config = {
 
 	POWER (holy power/soul shard/light force, ...):
 	autohide = true|false											hide or not while out of combat [default: false]
-	powerType = SPELL_POWER_HOLY_POWER|SPELL_POWER_SOUL_SHARDS|SPELL_POWER_LIGHT_FORCE|SPELL_POWER_SHADOW_ORBS	power to monitor (can be any power type (http://www.wowwiki.com/PowerType) for SPELL_POWER_BURNING_EMBERS|SPELL_POWER_DEMONIC_FURY, use specific plugin
+	powerType = SPELL_POWER_HOLY_POWER|SPELL_POWER_SOUL_SHARDS|SPELL_POWER_CHI|SPELL_POWER_SHADOW_ORBS	power to monitor (can be any power type (http://www.wowwiki.com/PowerType) for SPELL_POWER_BURNING_EMBERS|SPELL_POWER_DEMONIC_FURY, use specific plugin
 	count = number													max number of points to display
 	anchor =														see note below
 	--width = number													width of power point [default: 85]
@@ -884,7 +884,7 @@ Engine.Config = {
 			name = "CM_CHI",
 			displayName = L.classmonitor_MONK_CHICHARGES,
 			kind = "POWER",
-			powerType = SPELL_POWER_LIGHT_FORCE or 12, -- Bug in 5.1
+			powerType = SPELL_POWER_CHI,
 			count = 5,
 			anchor = { "BOTTOMLEFT", "CM_RESOURCE", "TOPLEFT", 0, 3 },
 			width = 262,
