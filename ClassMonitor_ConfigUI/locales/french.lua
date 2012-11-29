@@ -114,8 +114,10 @@ if GetLocale() == "frFR" then
 	L.AuraCountDesc = "Nombre maximum de charges"
 	L.AuraFilledDesc = "Remplir la charge ou seulement afficher le bord"
 
-	L.AurabarTextDesc = "Affiche le nombre de charges actuels/nombre maximum de charges"
+	L.AurabarTextDesc = "Affiche le nombre de charges"
 	L.AurabarDurationDesc = "Afficher la dur\195\169e restant"
+	L.AurabarShowspellname = "Nom de l'aura"
+	L.AurabarShowspellnameDesc = "Afficher le nom de l'aura"
 
 	--L.BanditsGuileShallow = GetSpellInfo(84745)
 	--L.BanditsGuileModerate = GetSpellInfo(84746)

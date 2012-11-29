@@ -115,9 +115,11 @@ L.AuraCount = "Maximum stack count"
 L.AuraCountDesc = "Maximum stack count"
 L.AuraFilledDesc = "Stack filled or not"
 
-L.AurabarTextDesc = "Display current stack/maximum stack"
+L.AurabarTextDesc = "Display current stack count"
 L.AurabarDurationDesc = "Display aura time left"
 L.AurabarColor = "Bar color"
+L.AurabarShowspellname = "Aura name"
+L.AurabarShowspellnameDesc = "Display aura name"
 
 L.BanditsGuileShallow = GetSpellInfo(84745)
 L.BanditsGuileModerate = GetSpellInfo(84746)

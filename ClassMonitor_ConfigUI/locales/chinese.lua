@@ -5,8 +5,8 @@ if GetLocale() == "zhCN" then
 
 L.CLASSMONITOR_CONFIG_RL = "已经做出了一至多项改动，请重载界面。"
 L.CLASSMONITOR_RESETCONFIG_CONFIRM = "这会重置所有已做出的设置，且需要重载界面。你确定要这样做吗？"
-L.CLASSMONITOR_CREATENEWPLUGIN_CONFIRM = "这将创建一个'%s'类型的新模组'%s'。你确定要这样做吗？"
-L.CLASSMONITOR_SWITCHAUTOGRIDANCHOR_CONFIRM = "该功能仍然处于试验阶段。你确定要使用它吗？如果插件报错，请使用/clm rest恢复默认设置:)。"
+L.CLASSMONITOR_CREATENEWPLUGIN_CONFIRM = "这将创建名为%s'，'%s'类型的模组。你确定要这样做吗？"
+L.CLASSMONITOR_SWITCHAUTOGRIDANCHOR_CONFIRM = "该功能仍然处于试验阶段。你确定要使用它吗？如果插件报错，请使用/clm reset恢复默认设置:)。"
 L.CLASSMONITOR_DELETEPLUGIN_CONFIRM = "这将会删除模组'%s'，以此模组为锚点的模组将会重定位。此操作不可撤消，你确定要这样做吗？"
 
 L.NoPluginDescription = "没有检测到该模组的描述"

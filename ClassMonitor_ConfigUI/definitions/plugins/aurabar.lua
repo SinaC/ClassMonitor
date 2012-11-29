@@ -16,12 +16,21 @@ local options = {
 	[9] = D.Helpers.Unit,
 	[10] = D.Helpers.Spell,
 	[11] = D.Helpers.Fill,
+	-- [12] = {
+		-- key = "count",
+		-- name = L.AuraCount,
+		-- desc = L.AuraCountDesc,
+		-- type = "range",
+		-- min = 1, max = 100, step = 1,
+		-- get = D.Helpers.GetValue,
+		-- set = D.Helpers.SetValue,
+		-- disabled = D.Helpers.IsPluginDisabled
+	-- },
 	[12] = {
-		key = "count",
-		name = L.AuraCount,
-		desc = L.AuraCountDesc,
-		type = "range",
-		min = 1, max = 100, step = 1,
+		key = "showspellname",
+		name = L.AurabarShowspellname,
+		desc = L.AurabarShowspellnameDesc,
+		type = "toggle",
 		get = D.Helpers.GetValue,
 		set = D.Helpers.SetValue,
 		disabled = D.Helpers.IsPluginDisabled
