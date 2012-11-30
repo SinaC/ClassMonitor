@@ -18,6 +18,7 @@ UI.PetBattleHider = TukuiPetBattleHider
 UI.NormTex = C["media"].normTex
 UI.MyClass = T.myclass
 UI.MyName = T.myname
+UI.Border = 2
 
 UI.SetFontString = function(parent, fontHeight, fontStyle)
 	local fs = parent:CreateFontString(nil, "OVERLAY")

@@ -1,5 +1,6 @@
 3.4.5
 AURABAR: count removed and show spell name added
+UI.Border added (sometimes useful when we cannot use :SetInside)
 
 3.4.4
 TOC updated for 5.1

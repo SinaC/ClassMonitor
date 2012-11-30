@@ -14,7 +14,7 @@ local plugin = Engine:NewPlugin("AURABAR")
 function plugin:Update(elapsed)
 	self.timeSinceLastUpdate = self.timeSinceLastUpdate + elapsed
 	if self.timeSinceLastUpdate > 0.2 then
-		local timeLeft = self.expirationTime - GetTime()
+			local timeLeft = self.expirationTime - GetTime()
 		if self.settings.duration == true then
 			if timeLeft > 0 then
 				self.bar.durationText:SetText(ToClock(timeLeft))

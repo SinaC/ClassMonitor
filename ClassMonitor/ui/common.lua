@@ -10,6 +10,7 @@ UI.PetBattleHider = nil
 UI.NormTex = nil
 UI.MyClass = nil
 UI.MyName = nil
+UI.Border = nil
 
 -- Functions
 UI.SetFontString = function(parent, fontHeight, fontStyle)

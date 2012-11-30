@@ -653,6 +653,7 @@ Engine.Config = {
 			-- 5,6 = Frost
 			-- (Note: All numbers must be included or it will break)
 			runemap = { 1, 2, 3, 4, 5, 6 },
+			--runemap = { 1, 2, 1, 2, 1, 2 },
 			verticalIndex = -1,
 			horizontalIndex = 0,
 		},

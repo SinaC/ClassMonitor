@@ -21,6 +21,7 @@ UI.BorderColor = E["media"].bordercolor
 UI.NormTex = E["media"].normTex
 UI.MyClass = E.myclass
 UI.MyName = E.myname
+UI.Border = E.Border
 
 -- Hider Secure (mostly used to hide stuff while in pet battle)  ripped from Tukui
 local petBattleHider = CreateFrame("Frame", "ElvUIClassMonitorPetBattleHider", UIParent, "SecureHandlerStateTemplate")
