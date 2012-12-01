@@ -1,3 +1,6 @@
+3.4.5.1
+Rare issue fixed with RegisterAddonMessagePrefix
+
 3.4.5
 AURABAR: count removed and show spell name added
 UI.Border added (sometimes useful when we cannot use :SetInside)

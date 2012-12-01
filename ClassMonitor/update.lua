@@ -11,6 +11,8 @@ local PlayerName = select(1, UnitName("player"))
 local MessagePrefix = "CMVersion"
 local SendAddonMessage = SendAddonMessage
 
+local registered = nil
+
 --
 local function CheckVersion(self, event, prefix, message, channel, sender)
 --print("CheckVersion:"..tostring(event).."  "..tostring(prefix).."  "..tostring(message).."  "..tostring(channel).."  "..tostring(sender))
@@ -22,7 +24,7 @@ local function CheckVersion(self, event, prefix, message, channel, sender)
 			print("|cffffff00"..L.classmonitor_outdated.."|r")
 			self:UnregisterEvent("CHAT_MSG_ADDON")
 		end
-	else
+	elseif registered == true then
 		-- Tell everyone what version we use.
 		local bg = UnitInBattleground("player")
 		if bg and bg > 0 then
@@ -43,4 +45,5 @@ ClassMonitorVersionFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
 ClassMonitorVersionFrame:RegisterEvent("CHAT_MSG_ADDON")
 ClassMonitorVersionFrame:SetScript("OnEvent", CheckVersion)
 
-RegisterAddonMessagePrefix(MessagePrefix)
+registered = RegisterAddonMessagePrefix(MessagePrefix)
+-- if registered is not true, we cannot send message because prefix has not been registered
