@@ -231,4 +231,6 @@ if GetLocale() == "frFR" then
 	L.PluginDescription_RECHARGEBAR = "Affiche une barre avec le nombre courant et total de charge plus le temps restant d'un sort \195\160 temps de recharge avec charges comme la Roulade du moine ou la D\195\169fense sauvage du druide"
 	L.PluginShortDescription_CD = "Cooldown"
 	L.PluginDescription_CD = "Affiche une barre avec le nom et le temps de recharge restant d'un sort \195\160 temps de recharge"
+	L.PluginShortDescription_STATUE = "Barre de statue/ghoule/puit de lumi\195\168re et banni\195\168re"
+	L.PluginDescription_STATUE = "Display a bar with timeleft/uptime of monk statue, DK ghoul, priest lightwell and warrior's banner"
 end

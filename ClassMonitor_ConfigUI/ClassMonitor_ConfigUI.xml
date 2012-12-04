@@ -28,9 +28,10 @@
 	<Script file="definitions\plugins\banditsguile.lua"/>
 	<Script file="definitions\plugins\stagger.lua"/>
 	<Script file="definitions\plugins\tankshield.lua"/>
+	<Script file="definitions\plugins\cd.lua"/>
 	<Script file="definitions\plugins\recharge.lua"/>
 	<Script file="definitions\plugins\rechargebar.lua"/>
-	<Script file="definitions\plugins\cd.lua"/>
+	<Script file="definitions\plugins\statue.lua"/>
 
 	<Script file="tukuiAce3Skin.lua"/>
 

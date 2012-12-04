@@ -191,6 +191,8 @@ if GetLocale() == "zhCN" then
 	--ALREADY LOCALIZED IN ENGLISH.LUA --L.StaggerModerate = GetSpellInfo(124274)
 	--ALREADY LOCALIZED IN ENGLISH.LUA --L.StaggerHeavy = GetSpellInfo(124273)
 
+	L.StatueTextDesc = "显示雕像/光明之泉/食尸鬼/战旗的剩余持续时间"
+
 	L.TankshieldDurationDesc = "显示护盾剩余时间"
 
 	L.TotemsCountDesc = "图腾/蘑菇数量"
@@ -235,4 +237,6 @@ if GetLocale() == "zhCN" then
 	L.PluginDescription_RECHARGEBAR = "提供一个监视条，显示充能类技能（比如和尚的滚地翻和小德的野蛮防御）冷却时间的当前、最大值以及剩余时间"
 	L.PluginShortDescription_CD = "冷却时间"
 	L.PluginDescription_CD = "在一个监视条上显示法术名称及剩余冷却时间"
+	L.PluginShortDescription_STATUE = "雕像/光明之泉/食尸鬼/战旗监视条"
+	L.PluginDescription_STATUE = "在一个监视条上显示以下技能的剩余时间：武僧雕像、死骑食尸鬼、牧师光明之泉和战士战旗"
 end

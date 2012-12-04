@@ -39,6 +39,7 @@
 	<Script file="plugins\CD.lua"/>
 	<Script file="plugins\recharge.lua"/>
 	<Script file="plugins\rechargebar.lua"/>
+	<Script file="plugins\statue.lua"/>
 
 	<Script file="autoanchor.lua"/>
 	<Script file="core.lua"/>

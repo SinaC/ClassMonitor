@@ -517,7 +517,7 @@ Engine.Config = {
 			kind = "ENERGIZE",
 			specs = {1}, -- Discipline
 			spellID = 47755, -- Rapture
-			anchor = { "TOPLEFT", "CM_MANA", "BOTTOMLEFT", 0, -2 },
+			anchor = { "TOPLEFT", "CM_MANA", "BOTTOMLEFT", 0, -3 },
 			width = 262,
 			height = 16,
 			filling = true,
@@ -525,6 +525,18 @@ Engine.Config = {
 			verticalIndex = 1,
 			horizontalIndex = 0,
 		},
+		{
+			name = "CM_STATUE",
+			displayName = L.classmonitor_PRIEST_LIGHTWELL,
+			kind = "STATUE",
+			specs = {2}, -- Holy
+			anchor = { "TOPLEFT", "CM_MANA", "BOTTOMLEFT", 0, -3 },
+			width = 262,
+			height = 16,
+			text = true,
+			verticalIndex = 2,
+			horizontalIndex = 0,
+		}
 	},
 	["MAGE"] = {
 		{
@@ -703,6 +715,17 @@ Engine.Config = {
 			verticalIndex = -2,
 			horizontalIndex = 0,
 		},
+		{
+			name = "CM_STATUE",
+			displayName = L.classmonitor_DEATHKNIGHT_GHOUL,
+			kind = "STATUE",
+			anchor = { "TOPLEFT", "CM_BLOODSHIELD", "BOTTOMLEFT", 0, -3 },
+			width = 262,
+			height = 16,
+			text = true,
+			verticalIndex = 2,
+			horizontalIndex = 0,
+		}
 	},
 	["HUNTER"] = {
 		{
@@ -777,6 +800,17 @@ Engine.Config = {
 			height = 16,
 			duration = true,
 			verticalIndex = 1,
+			horizontalIndex = 0,
+		},
+		{
+			name = "CM_STATUE",
+			displayName = L.classmonitor_WARRIOR_BANNER,
+			kind = "STATUE",
+			anchor = { "TOPLEFT", "CM_SHIELDBARRIER", "BOTTOMLEFT", 0, -3 },
+			width = 262,
+			height = 16,
+			text = true,
+			verticalIndex = 2,
 			horizontalIndex = 0,
 		}
 	},
@@ -1009,6 +1043,17 @@ Engine.Config = {
 			duration = true,
 			verticalIndex = 2,
 			horizontalIndex = 1,
+		},
+		{
+			name = "CM_STATUE",
+			displayName = L.classmonitor_MONK_STATUE,
+			kind = "STATUE",
+			anchor = { "TOPLEFT", "CM_GUARD", "BOTTOMLEFT", 0, -3 },
+			width = 262,
+			height = 16,
+			text = true,
+			verticalIndex = 3,
+			horizontalIndex = 0,
 		}
 	},
 }
