@@ -1,3 +1,6 @@
+3.4.6.1
+Bug fixed in ENERGIZE plugin, duration was always reset to 10 :/ (thanks Nize)
+
 3.4.6
 Statue plugin added (monk statue, priest light well, dk ghoul and warrior banner)
 
