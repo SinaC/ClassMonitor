@@ -20,6 +20,7 @@ end
 local function GetDisplayName(info)
 	-- get displayName or name and appends (*) if plugin is disabled
 	local displayName = info.arg.section.displayName or info.arg.section.name or info.arg.section.kind or "UNKNOWN"
+--print("DISPLAY:"..tostring(displayName).."  "..tostring(info.arg.section.__invalid).."  "..tostring(info.arg.section.enabled))
 	if info.arg.section.__invalid == true then
 		displayName = displayName .. "(**)"
 	elseif info.arg.section.enabled == false then
@@ -433,7 +434,7 @@ local function CreateNewPluginInstance(info)
 		name = newPlugin.name,
 		kind = newPlugin.kind,
 		displayName = newPlugin.displayName,
-		enable = false,
+		enabled = false, -- disabled by default
 		autohide = true,
 		width = G.SavedPerChar.Global.width,
 		height = G.SavedPerChar.Global.height,
