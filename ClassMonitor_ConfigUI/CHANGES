@@ -1,3 +1,6 @@
+1.2.1
+Updated for patch 5.2
+
 1.1.4
 Bug fixed in plugin creation (was supposed to start disabled)
 
