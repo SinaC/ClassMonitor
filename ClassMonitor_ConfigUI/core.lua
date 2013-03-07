@@ -48,6 +48,7 @@ local function BuildAce3Options()
 		name = "Class Monitor",
 		args = {
 		},
+		order = 500
 	}
 	local index = 1
 	-- Add global width option
@@ -83,7 +84,8 @@ local function BuildAce3Options()
 	return options
 end
 
-if ElvUI then
+--if ElvUI then
+if false then -- Quick and dirty workaround for problem with ElvUI config. Will be fixed later.
 	local E = unpack(ElvUI) --Import: Engine, Locales, PrivateDB, ProfileDB, GlobalDB, Localize Underscore
 
 	--
@@ -111,7 +113,8 @@ if ElvUI then
 		E:ToggleConfig()
 		ACD:SelectGroup("ElvUI", "ClassMonitor") -- try to select classmonitor node
 	end
-elseif Tukui then
+--elseif Tukui then
+elseif Tukui or Elvui then -- Quick and dirty workaround for problem with ElvUI config. Will be fixed later.
 	local blizOptions = nil
 
 	Engine.InitializeConfigUI = function(config, savedPerChar, savedPerAccount, updatePluginFunction, createPluginFunction, deletePluginFunction, autoGridAnchorFunction, getPluginListFunction)
