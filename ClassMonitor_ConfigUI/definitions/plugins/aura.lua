@@ -163,7 +163,7 @@ local options = {
 		name = L.AuraCount,
 		desc = L.AuraCountDesc,
 		type = "range",
-		min = 1, max = 10, step = 1,
+		min = 1, max = 16, step = 1,
 		get = D.Helpers.GetValue,
 		set = D.Helpers.SetValue,
 		disabled = D.Helpers.IsPluginDisabled
