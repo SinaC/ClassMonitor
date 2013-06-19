@@ -36,7 +36,7 @@ local function GetRunemap(info)
 	elseif option == "slot6" then
 		value = tostring(section[info.arg.key][6])
 	end
---print("GetRunemap:"..tostring(option).."  "..table.concat(section[info.arg.key],",").."  "..tostring(value))
+print("GetRunemap:"..tostring(option).."  "..table.concat(section[info.arg.key],",").."  "..tostring(value))
 	return value
 end
 
@@ -56,7 +56,8 @@ local function SetRunemap(info, value)
 	elseif option == "slot6" then
 		section[info.arg.key][6] = tonumber(value)
 	end
---print("SetRunemap:"..tostring(option).."  "..table.concat(section[info.arg.key],",").."  "..tostring(value))
+	D.Helpers.SaveValue(info.arg.section, info, section[info.arg.key])
+print("SetRunemap:"..tostring(option).."  "..table.concat(section[info.arg.key],",").."  "..tostring(value))
 end
 
 local runeMap = {
