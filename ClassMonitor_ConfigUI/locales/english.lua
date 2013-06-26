@@ -73,6 +73,9 @@ L.FilterDesc = "Buff or debuff"
 L.FilterValueHelpful = "Buff"
 L.FilterValueHarmful = "Debuff"
 
+L.Reverse = "Reverse order"
+L.ReverseDesc = "Display from right to left instead of left to right"
+
 L.Unit = "Unit"
 L.UnitDesc = "Unit to monitor"
 L.UnitValuePlayer = "Player"

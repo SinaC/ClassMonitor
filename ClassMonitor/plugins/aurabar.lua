@@ -64,6 +64,7 @@ function plugin:UpdateVisibilityAndValue(event)
 end
 
 function plugin:UpdateGraphics()
+--print("AURABAR:UpdateGraphics")
 	--
 	local bar = self.bar
 	if not bar then
@@ -107,6 +108,7 @@ end
 
 -- overridden methods
 function plugin:Initialize()
+--print("AURABAR:Initialize")
 	-- set defaults
 	self.settings.unit = self.settings.unit or "player"
 	self.settings.color = self.settings.color or UI.ClassColor()
@@ -122,6 +124,7 @@ function plugin:Initialize()
 end
 
 function plugin:Enable()
+--print("AURABAR:Enable")
 	self:RegisterEvent("PLAYER_ENTERING_WORLD", plugin.UpdateVisibilityAndValue)
 	self:RegisterEvent("PLAYER_REGEN_DISABLED", plugin.UpdateVisibilityAndValue)
 	self:RegisterEvent("PLAYER_REGEN_ENABLED", plugin.UpdateVisibilityAndValue)
@@ -133,6 +136,7 @@ function plugin:Enable()
 end
 
 function plugin:Disable()
+--print("AURABAR:Disable")
 	self:UnregisterAllEvents()
 	self:UnregisterUpdate()
 
@@ -140,6 +144,7 @@ function plugin:Disable()
 end
 
 function plugin:SettingsModified()
+--print("AURABAR:SettingsModified")
 	--
 	self:Disable()
 	--

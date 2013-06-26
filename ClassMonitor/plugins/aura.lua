@@ -68,10 +68,18 @@ function plugin:UpdateGraphics()
 		end
 		stack:Size(width, height)
 		stack:ClearAllPoints()
-		if i == 1 then
-			stack:Point("TOPLEFT", self.frame, "TOPLEFT", 0, 0)
+		if self.settings.reverse == true then
+			if i == 1 then
+				stack:Point("TOPRIGHT", self.frame, "TOPRIGHT", 0, 0)
+			else
+				stack:Point("RIGHT", self.stacks[i-1], "LEFT", spacing, 0)
+			end
 		else
-			stack:Point("LEFT", self.stacks[i-1], "RIGHT", spacing, 0)
+			if i == 1 then
+				stack:Point("TOPLEFT", self.frame, "TOPLEFT", 0, 0)
+			else
+				stack:Point("LEFT", self.stacks[i-1], "RIGHT", spacing, 0)
+			end
 		end
 		if self.settings.filled == true and not stack.status then
 			stack.status = CreateFrame("StatusBar", nil, stack)

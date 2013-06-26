@@ -73,6 +73,9 @@ if GetLocale() == "frFR" then
 	L.FilterValueHelpful = "Am\195\169lioration"
 	L.FilterValueHarmful = "Affaiblissement"
 
+	L.Reverse = "Order inverse"
+	L.ReverseDesc = "Affiche de droite \195\160 gauche \195\160 la place de gauche \195\160 droite"
+
 	L.Unit = "Unit\195\169"
 	L.UnitDesc = "Unit\195\169 \195\160 monitorer"
 	L.UnitValuePlayer = "Joueur"

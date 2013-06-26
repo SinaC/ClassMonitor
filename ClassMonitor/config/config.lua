@@ -47,6 +47,7 @@ Engine.Config = {
 	--spacing = number												space between power points [default: 3]
 	color|colors =													see note below [default: class color]
 	filled = true|false												is power point filled or not [default: false]
+	reverse = true|false											displayed from right to left instead of left to right [default: false]
 	specs = 														see note below [default: any]
 
 	AURA (buff/debuff):
@@ -62,6 +63,7 @@ Engine.Config = {
 	--spacing = number												space between buff stack if no bar[default: 3]
 	color|colors =													see note below [default: class color]
 	filled = true|false												is buff stack filled or not if no bar[default: false]
+	reverse = true|false											displayed from right to left instead of left to right [default: false]
 
 	AURABAR (buff/debuff):
 	autohide = true|false											hide or not while out of combat [default: true]
@@ -318,6 +320,7 @@ Engine.Config = {
 			--spacing = 3,
 			color = {228/255, 225/255, 16/255, 1},
 			filled = true,
+			reverse = false,
 			verticalIndex = -1,
 			horizontalIndex = 0,
 		},
@@ -369,6 +372,7 @@ Engine.Config = {
 			--spacing = 3,
 			color = {148/255, 130/255, 201/255, 1},
 			filled = false,
+			reverse = false,
 			verticalIndex = -1,
 			horizontalIndex = 0,
 		},
@@ -452,6 +456,7 @@ Engine.Config = {
 			--spacing = 3,
 			color = {0.33, 0.63, 0.33, 1},
 			filled = false,
+			reverse = false,
 			verticalIndex = -2,
 			horizontalIndex = 0,
 		},
@@ -508,6 +513,7 @@ Engine.Config = {
 			spacing = 3,
 			--color = {0.5, 0, 0.7, 1},
 			filled = false,
+			reverse = false,
 			verticalIndex = -1,
 			horizontalIndex = 0,
 		},
@@ -573,6 +579,7 @@ Engine.Config = {
 			height = 16,
 			--spacing = 3,
 			filled = false,
+			reverse = false,
 			-- width = 262,
 			-- height = 16,
 			-- bar = true,
@@ -683,6 +690,7 @@ Engine.Config = {
 			--spacing = 4,
 			color = { 0.33, 0.59, 0.33, 1 },
 			filled = true,
+			reverse = false,
 			verticalIndex = 1,
 			horizontalIndex = 0,
 		},
@@ -712,6 +720,7 @@ Engine.Config = {
 			--spacing = 3,
 			color = { 0.33, 0.59, 0.33, 1 },
 			filled = true,
+			reverse = false,
 			verticalIndex = -2,
 			horizontalIndex = 0,
 		},
@@ -764,6 +773,7 @@ Engine.Config = {
 			--spacing = 3,
 			--color = { 0.59, 0.63, 0.1, 1},
 			filled = true,
+			reverse = false,
 			verticalIndex = 1,
 			horizontalIndex = 0,
 		},
@@ -850,6 +860,7 @@ Engine.Config = {
 			--spacing = 4,
 			color = {0.5, 0, 0.7, 1},
 			filled = false,
+			reverse = false,
 			verticalIndex = -1,
 			horizontalIndex = 0,
 		},
@@ -867,6 +878,7 @@ Engine.Config = {
 			--spacing = 3,
 			color = {0.5, 0, 0.7, 1},
 			filled = false,
+			reverse = false,
 			verticalIndex = -1,
 			horizontalIndex = 0,
 		},
@@ -933,6 +945,7 @@ Engine.Config = {
 				[5] = {.33, .63, .33, 1},
 			},
 			filled = false,
+			reverse = false,
 			verticalIndex = -1,
 			horizontalIndex = 0,
 		},

@@ -14,8 +14,9 @@ local options = {
 	[7] = D.Helpers.WidthAndHeight,
 	[8] = D.Helpers.Specs,
 	[9] = D.Helpers.Unit,
-	[10] = D.Helpers.Spell,
-	[11] = D.Helpers.Fill,
+	[10] = D.Helpers.Filter,
+	[11] = D.Helpers.Spell,
+	[12] = D.Helpers.Fill,
 	-- [12] = {
 		-- key = "count",
 		-- name = L.AuraCount,
@@ -26,7 +27,7 @@ local options = {
 		-- set = D.Helpers.SetValue,
 		-- disabled = D.Helpers.IsPluginDisabled
 	-- },
-	[12] = {
+	[13] = {
 		key = "showspellname",
 		name = L.AurabarShowspellname,
 		desc = L.AurabarShowspellnameDesc,
@@ -35,7 +36,7 @@ local options = {
 		set = D.Helpers.SetValue,
 		disabled = D.Helpers.IsPluginDisabled
 	},
-	[13] = {
+	[14] = {
 		key = "text",
 		name = L.CurrentValue,
 		desc = L.AurabarTextDesc,
@@ -44,7 +45,7 @@ local options = {
 		set = D.Helpers.SetValue,
 		disabled = D.Helpers.IsPluginDisabled
 	},
-	[14] = {
+	[15] = {
 		key = "duration",
 		name = L.TimeLeft,
 		desc = L.AurabarDurationDesc,
@@ -53,9 +54,9 @@ local options = {
 		set = D.Helpers.SetValue,
 		disabled = D.Helpers.IsPluginDisabled
 	},
-	[15] = color,
-	[16] = D.Helpers.Anchor,
-	[17] = D.Helpers.AutoGridAnchor,
+	[16] = color,
+	[17] = D.Helpers.Anchor,
+	[18] = D.Helpers.AutoGridAnchor,
 }
 
 D.Helpers:NewPluginDefinition("AURABAR", options, L.PluginShortDescription_AURABAR, L.PluginDescription_AURABAR)

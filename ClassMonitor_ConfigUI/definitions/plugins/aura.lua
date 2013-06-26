@@ -177,6 +177,15 @@ local options = {
 		set = D.Helpers.SetValue,
 		disabled = D.Helpers.IsPluginDisabled
 	},
+	[14] = {
+		key = "reverse",
+		name = L.Reverse,
+		desc = L.ReverseDesc,
+		type = "toggle",
+		get = D.Helpers.GetValue,
+		set = D.Helpers.SetValue,
+		disabled = D.Helpers.IsPluginDisabled
+	},
 	-- TODO: colors
 	[15] = D.Helpers.Anchor,
 	[16] = D.Helpers.AutoGridAnchor,

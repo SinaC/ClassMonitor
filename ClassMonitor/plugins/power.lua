@@ -149,12 +149,19 @@ function plugin:UpdatePointGraphics(index, width, height, spacing)
 	end
 	point:Size(width, height)
 	point:ClearAllPoints()
-	if index == 1 then
-		point:Point("TOPLEFT", self.frame, "TOPLEFT", 0, 0)
+	if self.settings.reverse == true then
+		if index == 1 then
+			point:Point("TOPRIGHT", self.frame, "TOPRIGHT", 0, 0)
+		else
+			point:Point("RIGHT", self.points[index-1], "LEFT", -spacing, 0)
+		end
 	else
-		point:Point("LEFT", self.points[index-1], "RIGHT", spacing, 0)
+		if index == 1 then
+			point:Point("TOPLEFT", self.frame, "TOPLEFT", 0, 0)
+		else
+			point:Point("LEFT", self.points[index-1], "RIGHT", spacing, 0)
+		end
 	end
-	--
 	if self.settings.filled == true and not point.status then
 		point.status = CreateFrame("StatusBar", nil, point)
 		point.status:SetStatusBarTexture(UI.NormTex)
