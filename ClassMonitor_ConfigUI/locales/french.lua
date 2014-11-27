@@ -166,6 +166,10 @@ if GetLocale() == "frFR" then
 
 	L.RechargeBarTextDesc = "Afficher le temps restant"
 
+	L.ResolveLow = "faible"
+	L.ResolveMed = "moyen"
+	L.ResolveHigh = "haut"
+
 	L.ResourceTextDesc = "Afficher la valeur courante"
 	L.ResourceHideifmax = "Cacher si valeur maximale"
 	L.ResourceHideifmaxDesc = "Cacher quand la valeur courante est \195\169gale \195\160 la valeur maximale (hors combat)"
@@ -236,4 +240,6 @@ if GetLocale() == "frFR" then
 	L.PluginDescription_CD = "Affiche une barre avec le nom et le temps de recharge restant d'un sort \195\160 temps de recharge"
 	L.PluginShortDescription_STATUE = "Barre de statue/ghoule/puit de lumi\195\168re et banni\195\168re"
 	L.PluginDescription_STATUE = "Display a bar with timeleft/uptime of monk statue, DK ghoul, priest lightwell and warrior's banner"
+	L.PluginShortDescription_RESOLVE = "Résoudre"
+	L.PluginDescription_RESOLVE = "Display a bar with the current healing and absorption modifier and damage taken in the last 10 sec."
 end
