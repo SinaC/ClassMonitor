@@ -27,9 +27,9 @@ local GetColor = Engine.GetColor
 local plugin = Engine:NewPlugin("RESOLVE")
 
 local DefaultColors = {
-	[1] = {0, .4, 0, 1},
+	[1] = {.9, .2, .2, 1},
 	[2] = {.7, .7, .2, 1},
-	[3] = {.9, .2, .2, 1},
+	[3] = {0, .4, 0, 1},
 }
 
 -- own methods
