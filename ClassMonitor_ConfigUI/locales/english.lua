@@ -169,6 +169,10 @@ L.RechargeTextDesc = "Display time left on active charge"
 
 L.RechargeBarTextDesc = "Display time left"
 
+L.ResolveLow = "Low"
+L.ResolveMed = "Medium"
+L.ResolveHigh = "High"
+
 L.ResourceTextDesc = "Display current value"
 L.ResourceHideifmax = "Hide if max value"
 L.ResourceHideifmaxDesc = "Hide if current value equals maximum value (out of combat)"

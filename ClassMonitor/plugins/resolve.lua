@@ -21,10 +21,17 @@ local ToClock = Engine.ToClock
 local CheckSpec = Engine.CheckSpec
 local DefaultBoolean = Engine.DefaultBoolean
 local FormatNumber = Engine.FormatNumber
+local GetColor = Engine.GetColor
 local MaxResolveValue = 0
 
 --
 local plugin = Engine:NewPlugin("RESOLVE")
+
+local DefaultColors = {
+	[1] = {0, .4, 0, 1},
+	[2] = {.7, .7, .2, 1},
+	[3] = {.9, .2, .2, 1},
+}
 
 -- own methods
 function plugin:Update(elapsed)
@@ -54,6 +61,13 @@ function plugin:UpdateVisibilityAndValue(event)
 		local name, _, _, _, _, duration, _, unitCaster, _, _, _, _, _, _, ResolveValue, DamageTaken, _ =
 			UnitAura("player", spellName, nil, "HELPFUL");
 		if name == spellName and unitCaster == "player" then
+			if ResolveValue <= 50 then
+				self.bar.status:SetStatusBarColor(unpack(GetColor(self.settings.colors, 1, DefaultColors[1])))
+			elseif ResolveValue <= 100 then
+				self.bar.status:SetStatusBarColor(unpack(GetColor(self.settings.colors, 2, DefaultColors[2])))
+			else
+				self.bar.status:SetStatusBarColor(unpack(GetColor(self.settings.colors, 3, DefaultColors[3])))
+			end
 			self.bar.status:SetMinMaxValues(0, 100)
 			self.bar.valueText:SetText(string.format("%s%% (%s)", ResolveValue, FormatNumber(DamageTaken)))
 			visible = true
@@ -107,8 +121,7 @@ end
 -- overridden methods
 function plugin:Initialize()
 	-- set defaults
-	self.settings.color = self.settings.color or UI.ClassColor()
-	self.settings.duration = DefaultBoolean(self.settings.duration, false)
+	self.settings.colors = self.settings.colors or DefaultColors
 	--
 	self:UpdateGraphics()
 end
