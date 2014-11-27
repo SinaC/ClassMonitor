@@ -22,7 +22,6 @@ local CheckSpec = Engine.CheckSpec
 local DefaultBoolean = Engine.DefaultBoolean
 local FormatNumber = Engine.FormatNumber
 local GetColor = Engine.GetColor
-local MaxResolveValue = 0
 
 --
 local plugin = Engine:NewPlugin("RESOLVE")
@@ -39,10 +38,6 @@ function plugin:Update(elapsed)
 	if self.timeSinceLastUpdate > 0.2 then
 		local name, _, _, _, _, duration, _, unitCaster, _, _, _, _, _, _, ResolveValue, DamageTaken, _ =
 			UnitAura("player", spellName, nil, "HELPFUL");
-		if ResolveValue > MaxResolveValue then
-			MaxResolveValue = ResolveValue
-			self.bar.status:SetMinMaxValues(0, MaxResolveValue)
-		end
 		self.bar.status:SetValue(ResolveValue)
 		self.bar.valueText:SetText(string.format("%s%% (%s)", ResolveValue, FormatNumber(DamageTaken)))
 		self.timeSinceLastUpdate = 0
