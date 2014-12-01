@@ -170,6 +170,7 @@ if GetLocale() == "zhCN" then
 	L.ResolveLow = "矮"
 	L.ResolveMed = "中"
 	L.ResolveHigh = "高"
+	L.ResolveVeryHigh = "非常高"
 
 	L.ResourceTextDesc = "显示当前值"
 	L.ResourceHideifmax = "最大值时隐藏"

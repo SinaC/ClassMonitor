@@ -172,6 +172,7 @@ L.RechargeBarTextDesc = "Display time left"
 L.ResolveLow = "Low"
 L.ResolveMed = "Medium"
 L.ResolveHigh = "High"
+L.ResolveVeryHigh = "Very High"
 
 L.ResourceTextDesc = "Display current value"
 L.ResourceHideifmax = "Hide if max value"

@@ -169,6 +169,7 @@ if GetLocale() == "frFR" then
 	L.ResolveLow = "faible"
 	L.ResolveMed = "moyen"
 	L.ResolveHigh = "haut"
+	L.ResolveVeryHigh = "très haut"
 
 	L.ResourceTextDesc = "Afficher la valeur courante"
 	L.ResourceHideifmax = "Cacher si valeur maximale"

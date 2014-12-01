@@ -27,9 +27,10 @@ local GetColor = Engine.GetColor
 local plugin = Engine:NewPlugin("RESOLVE")
 
 local DefaultColors = {
-	[1] = {.9, .2, .2, 1},
-	[2] = {.7, .7, .2, 1},
-	[3] = {0, .4, 0, 1},
+	[1] = {0.2, 0.2, 0.2, 1},
+	[2] = {0.7, 0.7, 0.2, 1},
+	[3] = {0.0, 0.4, 0.0, 1},
+	[4] = {0.9, 0.2, 0.2, 1},
 }
 
 -- own methods
@@ -66,8 +67,10 @@ function plugin:UpdateVisibilityAndValue(event)
 				self.bar.status:SetStatusBarColor(unpack(GetColor(self.settings.colors, 1, DefaultColors[1])))
 			elseif ResolveValue <= 100 then
 				self.bar.status:SetStatusBarColor(unpack(GetColor(self.settings.colors, 2, DefaultColors[2])))
-			else
+			elseif ResolveValue <= 150 then
 				self.bar.status:SetStatusBarColor(unpack(GetColor(self.settings.colors, 3, DefaultColors[3])))
+			else
+				self.bar.status:SetStatusBarColor(unpack(GetColor(self.settings.colors, 4, DefaultColors[4])))
 			end
 			self.bar.status:SetMinMaxValues(0, 100)
 			self.bar.valueText:SetText(string.format("%s%% (%s)", ResolveValue, FormatNumber(DamageTaken)))
@@ -104,7 +107,6 @@ function plugin:UpdateGraphics()
 		bar.status:SetInside()
 		bar.status:SetMinMaxValues(0, 1) -- dummy value
 	end
-	bar.status:SetStatusBarColor(unpack(self.settings.color))
 
 	if not bar.valueText then
 		bar.valueText = UI.SetFontString(bar.status, 12)
@@ -123,7 +125,6 @@ end
 function plugin:Initialize()
 	-- set defaults
 	self.settings.colors = self.settings.colors or DefaultColors
-	--
 	self:UpdateGraphics()
 end
 

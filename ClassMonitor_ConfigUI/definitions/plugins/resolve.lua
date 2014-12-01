@@ -3,7 +3,7 @@ local ADDON_NAME, Engine = ...
 local L = Engine.Locales
 local D = Engine.Definitions
 
-local colors = D.Helpers.CreateColorsDefinition("colors", 3, { L.ResolveLow, L.ResolveMed, L.ResolveHigh } )
+local colors = D.Helpers.CreateColorsDefinition("colors", 4, { L.ResolveLow, L.ResolveMed, L.ResolveHigh, L.ResolveVeryHigh } )
 local options = {
 	[1] = D.Helpers.Description,
 	[2] = D.Helpers.Name,
