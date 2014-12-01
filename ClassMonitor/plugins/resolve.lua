@@ -125,6 +125,7 @@ end
 function plugin:Initialize()
 	-- set defaults
 	self.settings.colors = self.settings.colors or DefaultColors
+	self.settings.autohide = false
 	self:UpdateGraphics()
 end
 
