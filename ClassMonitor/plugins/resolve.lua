@@ -38,8 +38,14 @@ function plugin:Update(elapsed)
 	if self.timeSinceLastUpdate > 0.2 then
 		local name, _, _, _, _, duration, _, unitCaster, _, _, _, _, _, _, ResolveValue, DamageTaken, _ =
 			UnitAura("player", spellName, nil, "HELPFUL");
+		if DamageTaken > 0 then
+			self.bar:Show()
+			self.bar.valueText:SetText(string.format("%s%% (%s)", ResolveValue, FormatNumber(DamageTaken)))
+		else
+			self.bar:Hide()
+			self.bar.valueText:SetText("")
+		end
 		self.bar.status:SetValue(ResolveValue)
-		self.bar.valueText:SetText(string.format("%s%% (%s)", ResolveValue, FormatNumber(DamageTaken)))
 		self.timeSinceLastUpdate = 0
 	end
 end
