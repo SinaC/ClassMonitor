@@ -55,3 +55,5 @@ L.classmonitor_MONK_TIGEREYEBREWBAR = "Tigereye brew bar"
 L.classmonitor_MONK_ELUSIVEBREWBAR = "Elusive brew bar"
 L.classmonitor_MONK_GUARDBAR = "Guard bar"
 L.classmonitor_MONK_STATUE = "Statue"
+
+L.classmonitor_RESOLVE = "Resolve"

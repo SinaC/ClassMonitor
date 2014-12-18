@@ -169,6 +169,11 @@ L.RechargeTextDesc = "Display time left on active charge"
 
 L.RechargeBarTextDesc = "Display time left"
 
+L.ResolveLow = "Low"
+L.ResolveMed = "Medium"
+L.ResolveHigh = "High"
+L.ResolveVeryHigh = "Very High"
+
 L.ResourceTextDesc = "Display current value"
 L.ResourceHideifmax = "Hide if max value"
 L.ResourceHideifmaxDesc = "Hide if current value equals maximum value (out of combat)"
@@ -241,3 +246,5 @@ L.PluginShortDescription_CD = "Cooldown"
 L.PluginDescription_CD = "Display a bar with spell name and time left for cooldown"
 L.PluginShortDescription_STATUE = "Statue/Lightwell/Ghoul/Banner bar"
 L.PluginDescription_STATUE = "Display a bar with timeleft/uptime of monk statue, DK ghoul, priest lightwell and warrior's banner"
+L.PluginShortDescription_RESOLVE = "Resolve"
+L.PluginDescription_RESOLVE = "Display a bar with the current healing and absorption modifier and damage taken in the last 10 sec."

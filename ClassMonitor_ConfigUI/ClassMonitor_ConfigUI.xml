@@ -31,6 +31,7 @@
 	<Script file="definitions\plugins\cd.lua"/>
 	<Script file="definitions\plugins\recharge.lua"/>
 	<Script file="definitions\plugins\rechargebar.lua"/>
+	<Script file="definitions\plugins\resolve.lua"/>
 	<Script file="definitions\plugins\statue.lua"/>
 
 	<Script file="tukuiAce3Skin.lua"/>

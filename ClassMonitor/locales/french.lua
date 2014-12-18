@@ -56,4 +56,6 @@ if GetLocale() == "frFR" then
 	L.classmonitor_MONK_ELUSIVEBREWBAR = "Infusion insaisissable"
 	L.classmonitor_MONK_GUARDBAR = "Garde"
 	L.classmonitor_MONK_STATUE = "Statue"
+
+	L.classmonitor_RESOLVE = "Résoudre"
 end

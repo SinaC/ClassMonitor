@@ -59,4 +59,6 @@ L.classmonitor_MONK_ELUSIVEBREWBAR = "蒸馏：飘渺酒"
 L.classmonitor_MONK_GUARDBAR = "金钟罩"
 L.classmonitor_MONK_STATUE = "雕像"
 
+L.classmonitor_RESOLVE = "解析"
+
 end
